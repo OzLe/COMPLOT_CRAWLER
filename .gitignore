@@ -1,2 +1,4 @@
 *.csv
-*/network_log.json
+*/*network_log.json
+/resources/*
+resources*
