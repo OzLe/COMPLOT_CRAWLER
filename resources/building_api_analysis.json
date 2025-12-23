@@ -1,0 +1,99 @@
+{
+  "test_url": "https://ofaqim.complot.co.il/newengine/Pages/buildings2.aspx#building/389000400",
+  "requests": [
+    {
+      "url": "https://ofaqim.complot.co.il/newengine/Pages/buildings2.aspx",
+      "method": "GET",
+      "post_data": null,
+      "headers": {
+        "upgrade-insecure-requests": "1",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36",
+        "sec-ch-ua": "\"HeadlessChrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\""
+      },
+      "response_preview": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\r\n<html dir=\"rtl\" lang=\"he-il\">\r\n<head><meta http-equiv=\"Content-type\" content=\"text/html; charset=utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><link rel=\"shortcut icon\" href=\"/SiteCollectionImages/favicon.ico\" type=\"image/vnd.microsoft.icon\" id=\"favicon\" />\r\n\t\t\r\n\t\t<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>\t\t\r\n\t<style type=\"text/css\">body{overflow:auto !important}</style>\r\n\t<script type=\"text/javascript\" src=\"/Scripts/jquery-1.8.3.min.js\"></script>\r\n\t\r\n\t<style type=\"text/css\">.siteOnly * { font-size: 17px;color:black;line-height:normal }</style>\t\t\r\n\t<meta name=\"msapplication-TileImage\" content=\"/_layouts/15/images/SharePointMetroAppTile.png\" /><meta name=\"msapplication-TileColor\" content=\"#0072C6\" /><title>\r\n\tהועדה המקומית לתכנון ובניה אופקים- מרכז מידע - \r\n\tאיתור תיק בניין\r\n\r\n</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/Style%20Library/he-IL/Themable/Core%20Styles/pagelayouts15.css\"/>\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/_layouts/15/1037/styles/Themable/corev15.css?rev=ccLrLVwvb1cobC047ahdxw%3D%3DTAG0\"/>\n<script type=\"text/javascript\" src=\"/_layouts/15/1037/initstrings.js?rev=xs6zGzeEoL%2FmV2zOS6ks4Q%3D%3DTAG0\"></script>\n<script type=\"text/javascript\" src=\"/_layouts/15/init.js?rev=RHfoRxFuwXZ%2BOo2JABCoHA%3D%3DTAG0\"></script>\n<script type=\"text/javascript\" src=\"/_layouts/15/1037/strings.js?rev=oZzhJu4b5sTHBZRwKSlqLw%3D%3DTAG0\"></script>\n<script type=\"text/javascript\" src=\"/_layouts/15/ie55up.js?rev=FDfIxU6g4wVWGihfBF8EMQ%3D%3DTAG0\"></script>\n<script type=\"text/javascript\" src=\"/ScriptResource.axd?d=iQFaI2teEhHEpPkwVFxZzTJx4claJWMPCgz5p_jIbtro6Hsfb0o6JNIi7aNyHBQ9qLPKpjVWztQS8VS9o5srZi5GQNE7YUOaNIaRe4TTwqh8e0mOcGcOi0SSYBOtZNI0NjTNBXmfiyqTwGRVum0yrKYCQ-xJ6MxESm5__66jg_8smuKa88XbJ9QbfgDkKYXk0&amp;t=ffffffffc820c398\"></script>\n<script type=\"text/javascript\" src=\"/_layouts/15/blank.js?rev=nBzPIm07cpYr",
+      "response_length": 183963
+    },
+    {
+      "url": "https://handasi.complot.co.il/handasi2016/Scripts/Complot/building/min/_routes.min.js",
+      "method": "GET",
+      "post_data": null,
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://ofaqim.complot.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36",
+        "sec-ch-ua": "\"HeadlessChrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "response_preview": "var Router=Backbone.Router.extend({routes:{\"\":\"root\",\"search/*search_url\":\"search\",\"meeting/:vaada/:number\":\"meet\",\"taba/:numerator\":\"taba\",\"request/:bakasha\":\"request\",\"building/:tik\":\"building\",\"gush/:gush/:helka\":\"gush\",\"gushmakor/:gush/:helka\":\"gushmakor\",\"unified/:gush/:helka\":\"unified\"},root:function(){var a=\"/handasi2016/building/building-index.htm\";goTo(a)},search:function(a){var b=location.href;if(sessionStorage.getItem(b))loadStorage(b);else{var c=\"{0}{1}\",d=c.format(xpaBaseURL,a);goTo(d)}},meet:function(a,b){var c=getSiteId(),d=\"{0}GetMeetingFile&siteid={1}&v={2}&n={3}&arguments=siteid,v,n\",e=d.format(xpaBaseURL,c,a,b);setOuterPageBreadcrumbs(MEET_MODULE_TITLE,MEET_MODULE_URL,!0),goTo(e)},taba:function(a){var b=getSiteId(),c=\"{0}GetTabaFile&siteid={1}&n={2}&arguments=siteid,n\",d=c.format(xpaBaseURL,b,a);setOuterPageBreadcrumbs(TABA_MODULE_TITLE,TABA_MODULE_URL,!0),goTo(d)},request:function(a){var b=getSiteId(),c=\"{0}GetBakashaFile&siteid={1}&b={2}&arguments=siteid,b\",d=c.format(xpaBaseURL,b,a);setOuterPageBreadcrumbs(REQU_MODULE_TITLE,REQU_MODULE_URL,!0),goTo(d)},building:function(a){var b=getSiteId(),c=\"{0}GetTikFile&siteid={1}&t={2}&arguments=siteid,t\",d=c.format(xpaBaseURL,b,a);setOuterPageBreadcrumbs(BINY_MODULE_TITLE,BINY_MODULE_URL,!0),goTo(d)},gush:function(a,b){var c=getSiteId(),d=\"{0}GetGushFile&siteid={1}&g={2}&h={3}&arguments=siteid,g,h\",e=d.format(xpaBaseURL,c,a,b);setOuterPageBreadcrumbs(GUSH_MODULE_TITLE,GUSH_MODULE_URL,!0),goTo(e)},gushmakor:function(a,b){var c=getSiteId(),d=\"{0}GetGushMakorFile&siteid={1}&g={2}&h={3}&arguments=siteid,g,h\",e=d.format(xpaBaseURL,c,a,b);setOuterPageBreadcrumbs(GUSH_MODULE_TITLE,GUSH_MODULE_URL,!0),goTo(e)},unified:function(a,b){var c=getSiteId(),d=\"{0}GetUnifiedFile&siteid={1}&g={2}&h={3}&arguments=siteid,g,h\",e=d.format(xpaBaseURL,c,a,b);setOuterPageBreadcrumbs(UNIF_MODULE_TITLE,UNIF_MODULE_URL,!0),goTo(e)}});$(function(){new Router,Backbone.history.start()});",
+      "response_length": 1951
+    },
+    {
+      "url": "https://www.google-analytics.com/j/collect?v=1&_v=j102&a=84142874&t=pageview&_s=1&dl=https%3A%2F%2Fofaqim.complot.co.il%2Fnewengine%2FPages%2Fbuildings2.aspx&ul=en-us&dt=%D7%94%D7%95%D7%A2%D7%93%D7%94%20%D7%94%D7%9E%D7%A7%D7%95%D7%9E%D7%99%D7%AA%20%D7%9C%D7%AA%D7%9B%D7%A0%D7%95%D7%9F%20%D7%95%D7%91%D7%A0%D7%99%D7%94%20%D7%90%D7%95%D7%A4%D7%A7%D7%99%D7%9D-%20%D7%9E%D7%A8%D7%9B%D7%96%20%D7%9E%D7%99%D7%93%D7%A2%20-%20%D7%90%D7%99%D7%AA%D7%95%D7%A8%20%D7%AA%D7%99%D7%A7%20%D7%91%D7%A0%D7%99%D7%99%D7%9F&sr=1280x720&vp=1280x720&_u=IEBAAAABAAAAACAAI~&jid=39438910&gjid=1403955369&cid=281149595.1766494246&tid=UA-3512425-35&_gid=423619856.1766494246&_r=1&_slc=1&z=986077465",
+      "method": "POST",
+      "post_data": null,
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://ofaqim.complot.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36",
+        "sec-ch-ua": "\"HeadlessChrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+        "content-type": "text/plain",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "response_preview": "2,cG-6T16KN9CHB",
+      "response_length": 15
+    },
+    {
+      "url": "https://handasi.complot.co.il/magicscripts/mgrqispi.dll?appname=cixpa&prgname=GetTikFile&siteid=67&t=389000400&arguments=siteid,t",
+      "method": "GET",
+      "post_data": null,
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://ofaqim.complot.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36",
+        "accept": "*/*",
+        "sec-ch-ua": "\"HeadlessChrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "response_preview": "<style>\r\n\r\n.btn-header:after {\r\n\tfont-family: \"Glyphicons Halflings\";\r\n\tcontent: \"\\e114\";\r\n\tfloat: left;\r\n\tmargin-right: 15px;\r\n}\r\n\r\n.btn-header.collapsed:after {\r\n\tcontent: \"\\e079\";\r\n}\r\n\r\n.btn-header, .btn-header:hover, .btn-header:focus { \r\n\tborder-radius: 0;\r\n\tborder-top: 1px solid black;   \r\n\tfont-weight: bold;\r\n\tfont-size: 16px;\r\n\ttext-align: right;\r\n\twidth: 100%;\r\n}\r\n\r\n.spn {\r\n    padding-right:3px;\r\n}\r\n\r\n</style>\r\n\r\n<script>$.getScript(siteBaseURL + \"handasi2016/Scripts/Complot/Building/min/building-result.min.js\")</script>\r\n\r\n\r\n\t<div class=\"top-nav-bar\" id=\"top-navbar-id\">  \r\n\t  <h2 translatable-text>פרטי תיק בניין</h2>\r\n\t  <hr>\r\n\t  <section>\r\n\t\t<div class=\"row\" id=\"result-title-div-id\">\r\n\t\t\t<div class=\"col-sm-6\">\r\n\t\t\t\t<div class=\"result-title top-navbar-info-desc\" translatable-text>מספר תיק בניין:</div>\r\n\t\t\t\t<div class=\"top-navbar-info-desc\">389000400</div>\r\n\t\t\t</div>\r\n\t\t\t<div class=\"col-sm-6\">\r\n\t\t\t\t<div class=\"result-title top-navbar-info-desc\" translatable-text>כתובת:</div>\r\n\t\t\t\t<div class=\"top-navbar-info-desc\">לוטוס 4 אופקים</div>\r\n\t\t\t</div>     \t\t\t\r\n\t\t</div>\r\n\t  </section>\r\n\t  <hr>\r\n\t\r\n\t<div class=\"row hidden-xs\" id=\"btn-group-row-id\">\r\n\t\t<div class=\"btn-group\" style=\"width: 100%\" id=\"btn-group-id\" role=\"navigation\" aria-label=\"קישור לאיזור בדף\">\r\n\t\t  \t<input role=\"link\" type=\"button\" class=\"btn btn-primary btn-responsive\" onclick=\"scrollToElement('#info-main')\" value=\"מידע כללי\" translatable-value/>\r\n\t\t\t<input role=\"link\" type=\"button\" class=\"btn btn-primary btn-responsive\" onclick=\"scrollToElement('#baaley-inyan')\" value=\"בעלי עניין\" translatable-value/>\r\n\t\t\t\t\t\t<input role=\"link\" type=\"button\" class=\"btn btn-primary btn-responsive\" onclick=\"scrollToElement('#gush-helka')\" value=\"גושים וחלקות\" translatable-value/>\r\n\t\t\t\t\t\t<input role=\"link\" type=\"button\" class=\"btn btn-primary btn-responsive\" onclick=\"scrollToElement('#addresses')\" value=\"כתובות\" translatable-value/>\r\n\t\t\t<input role=\"link\" type=\"button\" class=\"btn btn-primary btn-responsive\" onclick=\"s",
+      "response_length": 13455
+    },
+    {
+      "url": "https://handasi.complot.co.il/handasi2016/Scripts/Complot/Building/min/building-result.min.js?_=1766494246616",
+      "method": "GET",
+      "post_data": null,
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://ofaqim.complot.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36",
+        "sec-ch-ua": "\"HeadlessChrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+        "sec-ch-ua-mobile": "?0"
+      },
+      "response_preview": "$(function(){function a(){$$jquery(\"#print-btn\").on(\"click\",function(){return $$jquery(MAIN_CONTAINER_SELECTOR).print(),!1})}var b=$(\"#sticky-nav-bar\"),c=$(\"#top-navbar-id\"),d=$(\"#back-to-top\");b.hide(),$(window).scroll(function(){var a=c.position().top,e=$(window).scrollTop();e>a?(d.fadeIn(),0==b.is(\":visible\")&&b.fadeIn()):(d.fadeOut(),1==b.is(\":visible\")&&b.fadeOut())}),setToolTips(),$(\"#vaada a, #info-main a\").click(function(a){a.stopPropagation()}),$(\".accordion-toggle\").on(\"click\",function(){setAccessability_AriaExpanded($(this))}).on(\"keyup\",function(a){a.keyCode==$$jquery.ui.keyCode.ENTER&&$(this).click()}),a()});",
+      "response_length": 629
+    },
+    {
+      "url": "https://www.google-analytics.com/g/collect?v=2&tid=G-6T16KN9CHB&gtm=45je5ca1v9124603855za20g&_p=1766494246569&gcd=13l3l3l3l2l1&npa=0&dma=0&ul=en-us&sr=1280x720&cid=281149595.1766494246&ir=1&uaa=arm&uab=64&uafvl=HeadlessChrome%3B143.0.7499.4%7CChromium%3B143.0.7499.4%7CNot%2520A(Brand%3B24.0.0.0&uamb=0&uam=&uap=macOS&uapv=26.2.0&uaw=0&are=1&frm=0&pscdl=noapi&_eu=EBAI&_s=1&tag_exp=103116026~103200004~104527907~104528501~104684208~104684211~105391252~115583767~115938466~115938468~116184927~116184929~116251938~116251940&dl=https%3A%2F%2Fofaqim.complot.co.il%2Fnewengine%2FPages%2Fbuildings2.aspx&dt=%D7%94%D7%95%D7%A2%D7%93%D7%94%20%D7%94%D7%9E%D7%A7%D7%95%D7%9E%D7%99%D7%AA%20%D7%9C%D7%AA%D7%9B%D7%A0%D7%95%D7%9F%20%D7%95%D7%91%D7%A0%D7%99%D7%94%20%D7%90%D7%95%D7%A4%D7%A7%D7%99%D7%9D-%20%D7%9E%D7%A8%D7%9B%D7%96%20%D7%9E%D7%99%D7%93%D7%A2%20-%20%D7%90%D7%99%D7%AA%D7%95%D7%A8%20%D7%AA%D7%99%D7%A7%20%D7%91%D7%A0%D7%99%D7%99%D7%9F&sid=1766494246&sct=1&seg=0&_tu=wAQ&en=page_view&_fv=1&_ss=1&_ee=1&tfd=2375",
+      "method": "POST",
+      "post_data": null,
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "referer": "https://ofaqim.complot.co.il/",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/143.0.7499.4 Safari/537.36",
+        "sec-ch-ua": "\"HeadlessChrome\";v=\"143\", \"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+        "sec-ch-ua-mobile": "?0"
+      }
+    }
+  ],
+  "visible_text_samples": [
+    "\n\t\t\t\n\t\t\t\t\n\t.x-tree-ec-icon{display:none}\nמידע כללימידע הנדסירישוי ובניהטפסים ונהליםנוהל ביצוע עבודות\n\t\t\t\n\t\t",
+    "מספר תיק בניין\t389000400\nשכונה\tרמת שקד",
+    "לא נמצאו נתונים",
+    "‏לוטוס 4 אופקים",
+    "\tמספר גוש\tמספר חלקה\tמספר מגרש\tמספר התוכנית\n\t39668\t65\t437\t128/03/23",
+    "\tמספר התוכנית\tשם התוכנית\tסטטוס התוכנית\tתאריך סטטוס התוכנית\tמסמכים\nלא אותרו תוכניות",
+    "\tמספר בקשה\tתאריך הגשה\tארוע אחרון להצגה\tשם המבקש\tהיתר\tתאריך היתר\tמסמכים\n\t20160126\t14/06/2016\tהוצאת היתר בניה\tשישפורטיש אילנית\t20160126\t10/08/2016\t",
+    "שם המסמך\tנושא\tתאריך\nלא נמצאו מסמכים לתיק בניין זה"
+  ]
+}
