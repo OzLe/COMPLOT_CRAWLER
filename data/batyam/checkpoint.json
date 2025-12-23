@@ -1,7 +1,7 @@
 {
   "city": "בת ים",
-  "checkpoint_at": "2025-12-23T17:10:55.709594",
-  "total_records": 564,
+  "checkpoint_at": "2025-12-23T17:21:39.043550",
+  "total_records": 685,
   "records": [
     {
       "tik_number": "1090",
@@ -5642,6 +5642,1216 @@
       "street_code": 125,
       "street_name": "ההסתדרות",
       "house_number": 12
+    },
+    {
+      "tik_number": "5166",
+      "address": "הגפן 2 בת ים",
+      "gush": "7151",
+      "helka": "312",
+      "migrash": "",
+      "street_code": 126,
+      "street_name": "הגפן",
+      "house_number": 2
+    },
+    {
+      "tik_number": "5136",
+      "address": "הגפן 10 בת ים",
+      "gush": "7151",
+      "helka": "305",
+      "migrash": "",
+      "street_code": 126,
+      "street_name": "הגפן",
+      "house_number": 10
+    },
+    {
+      "tik_number": "5164",
+      "address": "הזית 2 בת ים",
+      "gush": "7151",
+      "helka": "293",
+      "migrash": "",
+      "street_code": 128,
+      "street_name": "הזית",
+      "house_number": 2
+    },
+    {
+      "tik_number": "5155",
+      "address": "הזית 4 בת ים",
+      "gush": "7151",
+      "helka": "295",
+      "migrash": "",
+      "street_code": 128,
+      "street_name": "הזית",
+      "house_number": 4
+    },
+    {
+      "tik_number": "5173",
+      "address": "הזית 6 בת ים",
+      "gush": "7151",
+      "helka": "297",
+      "migrash": "",
+      "street_code": 128,
+      "street_name": "הזית",
+      "house_number": 6
+    },
+    {
+      "tik_number": "2413",
+      "address": "גנם מתתיהו 4 בת ים",
+      "gush": "7133",
+      "helka": "50",
+      "migrash": "",
+      "street_code": 131,
+      "street_name": "עיריית",
+      "house_number": 4
+    },
+    {
+      "tik_number": "2423",
+      "address": "עיריית בת ים",
+      "gush": "7133",
+      "helka": "44",
+      "migrash": "",
+      "street_code": 131,
+      "street_name": "עיריית",
+      "house_number": 10
+    },
+    {
+      "tik_number": "15",
+      "address": "חלמית 1 בת ים",
+      "gush": "6997",
+      "helka": "267",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 1
+    },
+    {
+      "tik_number": "16",
+      "address": "חלמית 5 בת ים",
+      "gush": "6997",
+      "helka": "268",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 5
+    },
+    {
+      "tik_number": "152",
+      "address": "חלמית 6 בת ים",
+      "gush": "6998",
+      "helka": "223",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 6
+    },
+    {
+      "tik_number": "17",
+      "address": "עיריית בת ים",
+      "gush": "6997",
+      "helka": "269",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 7
+    },
+    {
+      "tik_number": "153",
+      "address": "חלמית 8 בת ים",
+      "gush": "6998",
+      "helka": "224",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 8
+    },
+    {
+      "tik_number": "20",
+      "address": "חלמית 9 בת ים",
+      "gush": "6997",
+      "helka": "275",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 9
+    },
+    {
+      "tik_number": "154",
+      "address": "חלמית 10 בת ים",
+      "gush": "6998",
+      "helka": "225",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 10
+    },
+    {
+      "tik_number": "99999999",
+      "address": "חלמית 10 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 10
+    },
+    {
+      "tik_number": "8",
+      "address": "חלמית 11 בת ים",
+      "gush": "6997",
+      "helka": "270",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 11
+    },
+    {
+      "tik_number": "155",
+      "address": "חלמית 12 בת ים",
+      "gush": "6998",
+      "helka": "226",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 12
+    },
+    {
+      "tik_number": "156",
+      "address": "חלמית 14 בת ים",
+      "gush": "6998",
+      "helka": "227",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 14
+    },
+    {
+      "tik_number": "7",
+      "address": "חלמית 15 בת ים",
+      "gush": "6997",
+      "helka": "271",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 15
+    },
+    {
+      "tik_number": "22",
+      "address": "חלמית 16 בת ים",
+      "gush": "6997",
+      "helka": "266",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 16
+    },
+    {
+      "tik_number": "2",
+      "address": "חלמית 18 בת ים",
+      "gush": "6997",
+      "helka": "265",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 18
+    },
+    {
+      "tik_number": "3",
+      "address": "חלמית 22 בת ים",
+      "gush": "6997",
+      "helka": "264",
+      "migrash": "",
+      "street_code": 133,
+      "street_name": "חלמית",
+      "house_number": 22
+    },
+    {
+      "tik_number": "19504",
+      "address": "אביהו לוי מדינה 1 בת ים",
+      "gush": "5026",
+      "helka": "47",
+      "migrash": "",
+      "street_code": 134,
+      "street_name": "אביהו לוי מדינה",
+      "house_number": 1
+    },
+    {
+      "tik_number": "19505",
+      "address": "נורית הירש 2 בת ים",
+      "gush": "5026",
+      "helka": "48",
+      "migrash": "",
+      "street_code": 137,
+      "street_name": "נורית הירש",
+      "house_number": 2
+    },
+    {
+      "tik_number": "17001",
+      "address": "נורית הירש 9 בת ים",
+      "gush": "5027",
+      "helka": "113",
+      "migrash": "",
+      "street_code": 137,
+      "street_name": "נורית הירש",
+      "house_number": 9
+    },
+    {
+      "tik_number": "20242",
+      "address": "נורית הירש 9 בת ים",
+      "gush": "5027",
+      "helka": "114",
+      "migrash": "",
+      "street_code": 137,
+      "street_name": "נורית הירש",
+      "house_number": 9
+    },
+    {
+      "tik_number": "17020",
+      "address": "יפה ירקוני 1 בת ים",
+      "gush": "5027",
+      "helka": "88",
+      "migrash": "",
+      "street_code": 139,
+      "street_name": "יפה ירקוני",
+      "house_number": 1
+    },
+    {
+      "tik_number": "17004",
+      "address": "יפה ירקוני 3 בת ים",
+      "gush": "5027",
+      "helka": "87",
+      "migrash": "",
+      "street_code": 139,
+      "street_name": "יפה ירקוני",
+      "house_number": 3
+    },
+    {
+      "tik_number": "17008",
+      "address": "יפה ירקוני 7 בת ים",
+      "gush": "5027",
+      "helka": "84",
+      "migrash": "",
+      "street_code": 139,
+      "street_name": "יפה ירקוני",
+      "house_number": 7
+    },
+    {
+      "tik_number": "17017",
+      "address": "יפה ירקוני 10 בת ים",
+      "gush": "5027",
+      "helka": "179",
+      "migrash": "",
+      "street_code": 139,
+      "street_name": "יפה ירקוני",
+      "house_number": 10
+    },
+    {
+      "tik_number": "17028",
+      "address": "יפה ירקוני 20 בת ים",
+      "gush": "5027",
+      "helka": "78",
+      "migrash": "",
+      "street_code": 139,
+      "street_name": "יפה ירקוני",
+      "house_number": 20
+    },
+    {
+      "tik_number": "14026",
+      "address": "עיריית בת ים - מיוצג ע\"י",
+      "gush": "5026",
+      "helka": "51",
+      "migrash": "",
+      "street_code": 142,
+      "street_name": "עיריית  - מיוצג",
+      "house_number": 3
+    },
+    {
+      "tik_number": "19502",
+      "address": "יהורם גאון 6 בת ים",
+      "gush": "5026",
+      "helka": "44",
+      "migrash": "",
+      "street_code": 142,
+      "street_name": "עיריית  - מיוצג",
+      "house_number": 6
+    },
+    {
+      "tik_number": "17030",
+      "address": "עיריית בת ים - ח.פ. 50026",
+      "gush": "5027",
+      "helka": "103",
+      "migrash": "",
+      "street_code": 142,
+      "street_name": "עיריית  - מיוצג",
+      "house_number": 11
+    },
+    {
+      "tik_number": "3951",
+      "address": "שד העצמאות 1 בת ים",
+      "gush": "7143",
+      "helka": "70",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 1
+    },
+    {
+      "tik_number": "3765",
+      "address": "שד העצמאות 2 בת ים",
+      "gush": "7139",
+      "helka": "263",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 2
+    },
+    {
+      "tik_number": "3768",
+      "address": "שד העצמאות 4 בת ים",
+      "gush": "7142",
+      "helka": "196",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 4
+    },
+    {
+      "tik_number": "5410",
+      "address": "שד העצמאות 4 בת ים",
+      "gush": "7153",
+      "helka": "59",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 4
+    },
+    {
+      "tik_number": "3901",
+      "address": "שד העצמאות 5 בת ים",
+      "gush": "7143",
+      "helka": "72",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 5
+    },
+    {
+      "tik_number": "3760",
+      "address": "שד העצמאות 6 בת ים",
+      "gush": "7142",
+      "helka": "195",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 6
+    },
+    {
+      "tik_number": "3919",
+      "address": "שד העצמאות 7 בת ים",
+      "gush": "7143",
+      "helka": "31",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 7
+    },
+    {
+      "tik_number": "3753",
+      "address": "שד העצמאות 8 בת ים",
+      "gush": "7142",
+      "helka": "194",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 8
+    },
+    {
+      "tik_number": "3903",
+      "address": "שד העצמאות 9 בת ים",
+      "gush": "7143",
+      "helka": "32",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 9
+    },
+    {
+      "tik_number": "3766",
+      "address": "שד העצמאות 10 בת ים",
+      "gush": "7142",
+      "helka": "82",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 10
+    },
+    {
+      "tik_number": "3902",
+      "address": "שד העצמאות 11 בת ים",
+      "gush": "7143",
+      "helka": "33",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 11
+    },
+    {
+      "tik_number": "3771",
+      "address": "שד העצמאות 12 בת ים",
+      "gush": "7142",
+      "helka": "147",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 12
+    },
+    {
+      "tik_number": "3907",
+      "address": "שד העצמאות 13 בת ים",
+      "gush": "7143",
+      "helka": "34",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 13
+    },
+    {
+      "tik_number": "3608",
+      "address": "שד העצמאות 16 בת ים",
+      "gush": "7141",
+      "helka": "3",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 16
+    },
+    {
+      "tik_number": "3606",
+      "address": "שד העצמאות 18 בת ים",
+      "gush": "7141",
+      "helka": "93",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 18
+    },
+    {
+      "tik_number": "3666",
+      "address": "שד העצמאות 20 בת ים",
+      "gush": "7141",
+      "helka": "156",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 20
+    },
+    {
+      "tik_number": "4077",
+      "address": "שד העצמאות 21 בת ים",
+      "gush": "7141",
+      "helka": "3",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 21
+    },
+    {
+      "tik_number": "3634",
+      "address": "שד העצמאות 22 בת ים",
+      "gush": "7141",
+      "helka": "14",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 22
+    },
+    {
+      "tik_number": "4061",
+      "address": "שד העצמאות 23 בת ים",
+      "gush": "7144",
+      "helka": "33",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 23
+    },
+    {
+      "tik_number": "3604",
+      "address": "שד העצמאות 24 בת ים",
+      "gush": "7141",
+      "helka": "151",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 24
+    },
+    {
+      "tik_number": "4076",
+      "address": "שד העצמאות 25 בת ים",
+      "gush": "7144",
+      "helka": "36",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 25
+    },
+    {
+      "tik_number": "3686",
+      "address": "שד העצמאות 26 בת ים",
+      "gush": "7141",
+      "helka": "128",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 26
+    },
+    {
+      "tik_number": "4090",
+      "address": "שד העצמאות 27 בת ים",
+      "gush": "7144",
+      "helka": "80",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 27
+    },
+    {
+      "tik_number": "4105",
+      "address": "שד העצמאות 27 בת ים",
+      "gush": "7144",
+      "helka": "79",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 27
+    },
+    {
+      "tik_number": "3663",
+      "address": "שד העצמאות 28 בת ים",
+      "gush": "7136",
+      "helka": "215",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 28
+    },
+    {
+      "tik_number": "3629",
+      "address": "שד העצמאות 30 בת ים",
+      "gush": "7136",
+      "helka": "216",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 30
+    },
+    {
+      "tik_number": "4698",
+      "address": "שד העצמאות 31 בת ים",
+      "gush": "7148",
+      "helka": "167",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 31
+    },
+    {
+      "tik_number": "3637",
+      "address": "שד העצמאות 32 בת ים",
+      "gush": "7136",
+      "helka": "218",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 32
+    },
+    {
+      "tik_number": "4670",
+      "address": "שד העצמאות 33 בת ים",
+      "gush": "7148",
+      "helka": "175",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 33
+    },
+    {
+      "tik_number": "4750",
+      "address": "שד העצמאות 33 בת ים",
+      "gush": "7148",
+      "helka": "175",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 33
+    },
+    {
+      "tik_number": "4715",
+      "address": "שד העצמאות 34 בת ים",
+      "gush": "7136",
+      "helka": "198",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 34
+    },
+    {
+      "tik_number": "4701",
+      "address": "שד העצמאות 35 בת ים",
+      "gush": "7148",
+      "helka": "103",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 35
+    },
+    {
+      "tik_number": "4687",
+      "address": "שד העצמאות 37 בת ים",
+      "gush": "7148",
+      "helka": "72",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 37
+    },
+    {
+      "tik_number": "4709",
+      "address": "שד העצמאות 38 בת ים",
+      "gush": "7148",
+      "helka": "191",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 38
+    },
+    {
+      "tik_number": "4674",
+      "address": "שד העצמאות 39 בת ים",
+      "gush": "7148",
+      "helka": "127",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 39
+    },
+    {
+      "tik_number": "4739",
+      "address": "שד העצמאות 40 בת ים",
+      "gush": "7148",
+      "helka": "189",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 40
+    },
+    {
+      "tik_number": "4681",
+      "address": "שד העצמאות 41 בת ים",
+      "gush": "7148",
+      "helka": "69",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 41
+    },
+    {
+      "tik_number": "4656",
+      "address": "שד העצמאות 42 בת ים",
+      "gush": "7148",
+      "helka": "188",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 42
+    },
+    {
+      "tik_number": "4706",
+      "address": "שד העצמאות 43 בת ים",
+      "gush": "7148",
+      "helka": "151",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 43
+    },
+    {
+      "tik_number": "4738",
+      "address": "שד העצמאות 43 בת ים",
+      "gush": "7148",
+      "helka": "152",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 43
+    },
+    {
+      "tik_number": "4726",
+      "address": "שד העצמאות 44 בת ים",
+      "gush": "7148",
+      "helka": "184",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 44
+    },
+    {
+      "tik_number": "4658",
+      "address": "שד העצמאות 45 בת ים",
+      "gush": "7148",
+      "helka": "41",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 45
+    },
+    {
+      "tik_number": "4731",
+      "address": "שד העצמאות 46 בת ים",
+      "gush": "7148",
+      "helka": "183",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 46
+    },
+    {
+      "tik_number": "4655",
+      "address": "שד העצמאות 47 בת ים",
+      "gush": "7148",
+      "helka": "40",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 47
+    },
+    {
+      "tik_number": "4829",
+      "address": "שד העצמאות 48 בת ים",
+      "gush": "249",
+      "helka": "6",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 48
+    },
+    {
+      "tik_number": "4855",
+      "address": "שד העצמאות 48 בת ים",
+      "gush": "7149",
+      "helka": "122",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 48
+    },
+    {
+      "tik_number": "4724",
+      "address": "שד העצמאות 49 בת ים",
+      "gush": "7148",
+      "helka": "39",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 49
+    },
+    {
+      "tik_number": "4825",
+      "address": "שד העצמאות 50 בת ים",
+      "gush": "7149",
+      "helka": "121",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 50
+    },
+    {
+      "tik_number": "4665",
+      "address": "שד העצמאות 51 בת ים",
+      "gush": "7148",
+      "helka": "38",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 51
+    },
+    {
+      "tik_number": "4682",
+      "address": "שד העצמאות 51 בת ים",
+      "gush": "7148",
+      "helka": "37",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 51
+    },
+    {
+      "tik_number": "4846",
+      "address": "שד העצמאות 52 בת ים",
+      "gush": "7149",
+      "helka": "119",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 52
+    },
+    {
+      "tik_number": "4820",
+      "address": "שד העצמאות 52 בת ים",
+      "gush": "7149",
+      "helka": "120",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 52
+    },
+    {
+      "tik_number": "4865",
+      "address": "שד העצמאות 52 בת ים",
+      "gush": "7148",
+      "helka": "120",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 52
+    },
+    {
+      "tik_number": "4849",
+      "address": "שד העצמאות 54 בת ים",
+      "gush": "7149",
+      "helka": "117",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 54
+    },
+    {
+      "tik_number": "4873",
+      "address": "שד העצמאות 56 בת ים",
+      "gush": "7149",
+      "helka": "86",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 56
+    },
+    {
+      "tik_number": "4720",
+      "address": "שד העצמאות 57 בת ים",
+      "gush": "7148",
+      "helka": "19",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 57
+    },
+    {
+      "tik_number": "4844",
+      "address": "שד העצמאות 58 בת ים",
+      "gush": "7149",
+      "helka": "83",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 58
+    },
+    {
+      "tik_number": "4818",
+      "address": "שד העצמאות 58 בת ים",
+      "gush": "7149",
+      "helka": "82",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 58
+    },
+    {
+      "tik_number": "4721",
+      "address": "שד העצמאות 59 בת ים",
+      "gush": "7148",
+      "helka": "18",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 59
+    },
+    {
+      "tik_number": "4884",
+      "address": "שד העצמאות 60 בת ים",
+      "gush": "7149",
+      "helka": "180",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 60
+    },
+    {
+      "tik_number": "4734",
+      "address": "שד העצמאות 61 בת ים",
+      "gush": "7148",
+      "helka": "17",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 61
+    },
+    {
+      "tik_number": "5405",
+      "address": "שד העצמאות 64 בת ים",
+      "gush": "7153",
+      "helka": "141",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 64
+    },
+    {
+      "tik_number": "4514",
+      "address": "שד העצמאות 65 בת ים",
+      "gush": "7148",
+      "helka": "213",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 65
+    },
+    {
+      "tik_number": "5506",
+      "address": "שד העצמאות 66 בת ים",
+      "gush": "7153",
+      "helka": "252",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 66
+    },
+    {
+      "tik_number": "4526",
+      "address": "שד העצמאות 67 בת ים",
+      "gush": "7147",
+      "helka": "115",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 67
+    },
+    {
+      "tik_number": "4554",
+      "address": "שד העצמאות 68 בת ים",
+      "gush": "7153",
+      "helka": "238",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 68
+    },
+    {
+      "tik_number": "5511",
+      "address": "שד העצמאות 68 בת ים",
+      "gush": "7153",
+      "helka": "238",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 68
+    },
+    {
+      "tik_number": "4426",
+      "address": "שד העצמאות 71 בת ים",
+      "gush": "7146",
+      "helka": "154",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 71
+    },
+    {
+      "tik_number": "5414",
+      "address": "שד העצמאות 72 בת ים",
+      "gush": "7153",
+      "helka": "376",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 72
+    },
+    {
+      "tik_number": "20290",
+      "address": "שד העצמאות 72 בת ים",
+      "gush": "249",
+      "helka": "6",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 72
+    },
+    {
+      "tik_number": "5415",
+      "address": "שד העצמאות 74 בת ים",
+      "gush": "7153",
+      "helka": "375",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 74
+    },
+    {
+      "tik_number": "5403",
+      "address": "שד העצמאות 75 בת ים",
+      "gush": "7147",
+      "helka": "161",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 75
+    },
+    {
+      "tik_number": "5416",
+      "address": "שד העצמאות 76 בת ים",
+      "gush": "7153",
+      "helka": "374",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 76
+    },
+    {
+      "tik_number": "5422",
+      "address": "שד העצמאות 77 בת ים",
+      "gush": "7147",
+      "helka": "117",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 77
+    },
+    {
+      "tik_number": "5406",
+      "address": "שד העצמאות 79 בת ים",
+      "gush": "7147",
+      "helka": "118",
+      "migrash": "",
+      "street_code": 201,
+      "street_name": "שד העצמאות",
+      "house_number": 79
+    },
+    {
+      "tik_number": "304",
+      "address": "שמחה הולצברג (הגבול) 1 בת ים",
+      "gush": "7231",
+      "helka": "1",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 1
+    },
+    {
+      "tik_number": "4424",
+      "address": "שמחה הולצברג (הגבול) 3 בת ים",
+      "gush": "7146",
+      "helka": "190",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4428",
+      "address": "שמחה הולצברג (הגבול) 4 בת ים",
+      "gush": "7146",
+      "helka": "198",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 4
+    },
+    {
+      "tik_number": "4412",
+      "address": "שמחה הולצברג (הגבול) 6 בת ים",
+      "gush": "7146",
+      "helka": "199",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 6
+    },
+    {
+      "tik_number": "4429",
+      "address": "שמחה הולצברג (הגבול) 8 בת ים",
+      "gush": "7146",
+      "helka": "200",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 8
+    },
+    {
+      "tik_number": "4449",
+      "address": "שמחה הולצברג (הגבול) 10 בת ים",
+      "gush": "7146",
+      "helka": "201",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 10
+    },
+    {
+      "tik_number": "4442",
+      "address": "שמחה הולצברג (הגבול) 10 בת ים",
+      "gush": "7146",
+      "helka": "194",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 10
+    },
+    {
+      "tik_number": "5425",
+      "address": "שמחה הולצברג (הגבול) 20 בת ים",
+      "gush": "7147",
+      "helka": "152",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 20
+    },
+    {
+      "tik_number": "5503",
+      "address": "שמחה הולצברג (הגבול) 22 בת ים",
+      "gush": "7147",
+      "helka": "133",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 22
+    },
+    {
+      "tik_number": "4543",
+      "address": "עיריית בת ים",
+      "gush": "7147",
+      "helka": "123",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 28
+    },
+    {
+      "tik_number": "5504",
+      "address": "שמחה הולצברג (הגבול) 32 בת ים",
+      "gush": "7147",
+      "helka": "149",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 32
+    },
+    {
+      "tik_number": "5426",
+      "address": "שמחה הולצברג (הגבול) 36 בת ים",
+      "gush": "7147",
+      "helka": "121",
+      "migrash": "",
+      "street_code": 202,
+      "street_name": "שמחה הולצברג (הגבול)",
+      "house_number": 36
     }
   ]
 }

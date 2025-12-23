@@ -4,7 +4,7 @@ A unified crawler for Israeli municipality building permit systems powered by th
 
 ## Features
 
-- **Multi-city support** - Pre-configured for 15+ Israeli municipalities
+- **Multi-city support** - Pre-configured for 6 Israeli municipalities
 - **Smart street discovery** - Automatically finds all valid street codes
 - **Parallel fetching** - Async HTTP requests with rate limiting (~150 records/sec)
 - **Resume capability** - Checkpoint system to resume interrupted crawls
@@ -44,13 +44,13 @@ python main.py batyam
 python main.py ofaqim --streets-only
 
 # Skip detailed info fetch (faster, basic records only)
-python main.py netanya --skip-details
+python main.py ashkelon --skip-details
 
 # Force re-fetch even if data exists
 python main.py batyam --force
 
 # Specify custom output directory
-python main.py herzliya --output-dir ./my_data
+python main.py beersheva --output-dir ./my_data
 ```
 
 ### Using a URL
@@ -63,25 +63,16 @@ python main.py "https://batyam.complot.co.il/iturbakashot/#search/..."
 
 The crawler will auto-detect the city configuration from the URL.
 
-## Available Cities
+## Supported Cities
 
-| City | Hebrew | Site ID | City Code |
-|------|--------|---------|-----------|
-| ofaqim | אופקים | 67 | 31 |
-| batyam | בת ים | 81 | 6200 |
-| netanya | נתניה | 62 | 7400 |
-| ashdod | אשדוד | 65 | 70 |
-| ashkelon | אשקלון | 66 | 7100 |
-| beersheva | באר שבע | 68 | 9000 |
-| herzliya | הרצליה | 71 | 6400 |
-| raanana | רעננה | 78 | 8600 |
-| rishon | ראשון לציון | 79 | 8300 |
-| rehovot | רחובות | 80 | 8400 |
-| petahtikva | פתח תקווה | 77 | 7900 |
-| modiin | מודיעין | 75 | 1200 |
-| holon | חולון | 72 | 6600 |
-| ramatgan | רמת גן | 82 | 8600 |
-| givatayim | גבעתיים | 70 | 6300 |
+| City | Hebrew | Site ID | Complot URL |
+|------|--------|---------|-------------|
+| ofaqim | אופקים | 67 | ofaqim.complot.co.il |
+| batyam | בת ים | 81 | batyam.complot.co.il |
+| ashkelon | אשקלון | 66 | ashkelon.complot.co.il |
+| beersheva | באר שבע | 68 | br7.complot.co.il |
+| rehovot | רחובות | 80 | rechovot.complot.co.il |
+| modiin | מודיעין | 75 | modiin.complot.co.il |
 
 ## Project Structure
 
@@ -107,13 +98,9 @@ crawltest/
 │   └── ofaqim/
 │       └── ...
 │
-├── scripts/                # Utility & debug scripts
-│   ├── analyze_building_detail.py
-│   ├── analyze_city_api.py
-│   └── ...
-│
-└── resources/              # Screenshots, samples
-    ├── building_detail_screenshot.png
+└── scripts/                # Utility & debug scripts
+    ├── analyze_building_detail.py
+    ├── analyze_city_api.py
     └── ...
 ```
 

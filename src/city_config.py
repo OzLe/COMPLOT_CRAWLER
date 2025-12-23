@@ -42,24 +42,6 @@ CITIES = {
         street_range=(1, 2000),
         api_type="bakashot"  # Bat Yam uses requests/bakashot system
     ),
-    "netanya": CityConfig(
-        name="נתניה",
-        name_en="netanya",
-        site_id=62,
-        city_code=7400,
-        base_url="https://netanya.complot.co.il/",
-        street_range=(1, 2000),
-        api_type="tikim"
-    ),
-    "ashdod": CityConfig(
-        name="אשדוד",
-        name_en="ashdod",
-        site_id=65,
-        city_code=70,
-        base_url="https://ashdod.complot.co.il/",
-        street_range=(1, 2000),
-        api_type="tikim"
-    ),
     "ashkelon": CityConfig(
         name="אשקלון",
         name_en="ashkelon",
@@ -74,34 +56,7 @@ CITIES = {
         name_en="beersheva",
         site_id=68,
         city_code=9000,
-        base_url="https://beersheva.complot.co.il/",
-        street_range=(1, 3000),
-        api_type="tikim"
-    ),
-    "herzliya": CityConfig(
-        name="הרצליה",
-        name_en="herzliya",
-        site_id=71,
-        city_code=6400,
-        base_url="https://herzliya.complot.co.il/",
-        street_range=(1, 2000),
-        api_type="tikim"
-    ),
-    "raanana": CityConfig(
-        name="רעננה",
-        name_en="raanana",
-        site_id=78,
-        city_code=8600,
-        base_url="https://raanana.complot.co.il/",
-        street_range=(1, 1500),
-        api_type="tikim"
-    ),
-    "rishon": CityConfig(
-        name="ראשון לציון",
-        name_en="rishon",
-        site_id=79,
-        city_code=8300,
-        base_url="https://rishon.complot.co.il/",
+        base_url="https://br7.complot.co.il/",
         street_range=(1, 3000),
         api_type="tikim"
     ),
@@ -110,17 +65,8 @@ CITIES = {
         name_en="rehovot",
         site_id=80,
         city_code=8400,
-        base_url="https://rehovot.complot.co.il/",
+        base_url="https://rechovot.complot.co.il/",
         street_range=(1, 2000),
-        api_type="tikim"
-    ),
-    "petahtikva": CityConfig(
-        name="פתח תקווה",
-        name_en="petahtikva",
-        site_id=77,
-        city_code=7900,
-        base_url="https://petahtikva.complot.co.il/",
-        street_range=(1, 3000),
         api_type="tikim"
     ),
     "modiin": CityConfig(
@@ -130,33 +76,6 @@ CITIES = {
         city_code=1200,
         base_url="https://modiin.complot.co.il/",
         street_range=(1, 1000),
-        api_type="tikim"
-    ),
-    "holon": CityConfig(
-        name="חולון",
-        name_en="holon",
-        site_id=72,
-        city_code=6600,
-        base_url="https://holon.complot.co.il/",
-        street_range=(1, 2000),
-        api_type="tikim"
-    ),
-    "ramatgan": CityConfig(
-        name="רמת גן",
-        name_en="ramatgan",
-        site_id=82,
-        city_code=8600,
-        base_url="https://ramatgan.complot.co.il/",
-        street_range=(1, 2000),
-        api_type="tikim"
-    ),
-    "givatayim": CityConfig(
-        name="גבעתיים",
-        name_en="givatayim",
-        site_id=70,
-        city_code=6300,
-        base_url="https://givatayim.complot.co.il/",
-        street_range=(1, 500),
         api_type="tikim"
     ),
 }
