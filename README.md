@@ -5,8 +5,8 @@ A unified crawler for Israeli municipality building permit systems powered by th
 ## Features
 
 - **Multi-city support** - Pre-configured for 6 Israeli municipalities
-- **Smart street discovery** - Automatically finds all valid street codes
-- **Parallel fetching** - Async HTTP requests with rate limiting (~150 records/sec)
+- **Smart street discovery** - Automatically finds all valid street codes by brute-force testing
+- **Parallel fetching** - Async HTTP requests with configurable concurrency (20 concurrent requests)
 - **Resume capability** - Checkpoint system to resume interrupted crawls
 - **Multiple output formats** - JSON and CSV exports
 - **URL auto-detection** - Pass a Complot URL to auto-configure city settings
@@ -111,11 +111,14 @@ Discovered streets for the city:
 ```json
 {
   "city": "בת ים",
+  "city_en": "batyam",
+  "site_id": 81,
+  "city_code": 6200,
+  "discovered_at": "2025-12-23T16:47:28.018021",
   "total_streets": 196,
   "streets": [
     {"code": 100, "name": "אריק איינשטיין"},
-    {"code": 101, "name": "קרן קימת לישראל"},
-    ...
+    {"code": 101, "name": "קרן קימת לישראל"}
   ]
 }
 ```
@@ -124,6 +127,9 @@ Discovered streets for the city:
 Basic building file records:
 ```json
 {
+  "city": "אופקים",
+  "city_en": "ofaqim",
+  "crawled_at": "2025-12-23T14:47:00.000000",
   "total_records": 6576,
   "records": [
     {
@@ -131,10 +137,11 @@ Basic building file records:
       "address": "לוטוס 4 אופקים",
       "gush": "39668",
       "helka": "65",
+      "migrash": "",
       "street_code": 107,
-      "street_name": "שדרות הרצל"
-    },
-    ...
+      "street_name": "שדרות הרצל",
+      "house_number": 4
+    }
   ]
 }
 ```
@@ -143,14 +150,23 @@ Basic building file records:
 Detailed building information including permits:
 ```json
 {
+  "city": "אופקים",
+  "city_en": "ofaqim",
+  "fetched_at": "2025-12-23T14:53:58.022953",
   "total_records": 6173,
+  "success_count": 6173,
+  "error_count": 0,
   "records": [
     {
       "tik_number": "389000400",
       "address": "לוטוס 4 אופקים",
       "neighborhood": "רמת שקד",
+      "addresses": ["לוטוס 4 אופקים"],
       "gush_helka": [
         {"gush": "39668", "helka": "65", "migrash": "437", "plan_number": "128/03/23"}
+      ],
+      "plans": [
+        {"plan_number": "128/03/23", "plan_name": "תכנית מפורטת", "status": "בתוקף", "status_date": ""}
       ],
       "requests": [
         {
@@ -161,9 +177,13 @@ Detailed building information including permits:
           "permit_number": "20160126",
           "permit_date": "10/08/2016"
         }
-      ]
-    },
-    ...
+      ],
+      "stakeholders": [],
+      "documents": [],
+      "fetch_status": "success",
+      "fetch_error": "",
+      "fetched_at": "2025-12-23T14:53:18.244101"
+    }
   ]
 }
 ```
@@ -195,18 +215,15 @@ To find the site ID and city code:
 
 ## Performance
 
-Typical performance on a standard connection:
+The crawler uses async HTTP with 20 concurrent connections. Actual speed depends on network conditions and server response times.
 
-| Operation | Speed |
-|-----------|-------|
-| Street discovery | ~100 codes/sec |
-| Building records | ~50 records/sec |
-| Building details | ~150 records/sec |
+| Operation | Concurrency | Notes |
+|-----------|-------------|-------|
+| Street discovery | 20 | Tests codes in batches of 100 |
+| Building records | 5 | Lower concurrency for full street scans |
+| Building details | 20 | With retry logic (3 retries, exponential backoff) |
 
-A full crawl of a medium-sized city (~6,000 buildings) takes approximately:
-- Streets: 20-30 seconds
-- Records: 2-5 minutes
-- Details: 40-60 seconds
+Checkpoints are saved every 100 records (details) or 10 streets (records) to allow resuming interrupted crawls.
 
 ## API Reference
 
@@ -214,10 +231,11 @@ The crawler uses the Complot API at `handasi.complot.co.il`:
 
 | Endpoint | Description |
 |----------|-------------|
-| `GetTikimByAddress` | Search building files by address |
-| `GetBakashotByAddress` | Search permit requests by address |
+| `GetTikimByAddress` | Search building files by address (tikim API) |
+| `GetBakashotByAddress` | Search permit requests by address (bakashot API) |
 | `GetTikFile` | Get detailed building file info |
-| `GetRehovotByYeshuv` | Get streets list (not always available) |
+
+**Note:** Streets are discovered by brute-force testing street codes (1-2000) rather than using a streets API.
 
 ## License
 
