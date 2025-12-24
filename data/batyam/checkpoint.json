@@ -1,7 +1,7 @@
 {
   "city": "בת ים",
-  "checkpoint_at": "2025-12-23T17:32:24.683587",
-  "total_records": 944,
+  "checkpoint_at": "2025-12-23T18:08:24.154886",
+  "total_records": 1326,
   "records": [
     {
       "tik_number": "1090",
@@ -9442,6 +9442,3826 @@
       "street_code": 216,
       "street_name": "מסריק",
       "house_number": 31
+    },
+    {
+      "tik_number": "5409",
+      "address": "ברדיציב אבא 1 בת ים",
+      "gush": "7147",
+      "helka": "117",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 1
+    },
+    {
+      "tik_number": "5408",
+      "address": "ברדיציב אבא 3 בת ים",
+      "gush": "7147",
+      "helka": "120",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 3
+    },
+    {
+      "tik_number": "5428",
+      "address": "ברדיציב אבא 4 בת ים",
+      "gush": "7147",
+      "helka": "151",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 4
+    },
+    {
+      "tik_number": "5407",
+      "address": "ברדיציב אבא 5 בת ים",
+      "gush": "7147",
+      "helka": "119",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 5
+    },
+    {
+      "tik_number": "5418",
+      "address": "ברדיציב אבא 6 בת ים",
+      "gush": "7147",
+      "helka": "98",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 6
+    },
+    {
+      "tik_number": "5411",
+      "address": "ברדיציב אבא 8 בת ים",
+      "gush": "7147",
+      "helka": "99",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 8
+    },
+    {
+      "tik_number": "4540",
+      "address": "ברדיציב אבא 10 בת ים",
+      "gush": "7147",
+      "helka": "124",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 10
+    },
+    {
+      "tik_number": "4534",
+      "address": "ברדיציב אבא 11 בת ים",
+      "gush": "7147",
+      "helka": "114",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 11
+    },
+    {
+      "tik_number": "4542",
+      "address": "ברדיציב אבא 12 בת ים",
+      "gush": "7147",
+      "helka": "105",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 12
+    },
+    {
+      "tik_number": "4522",
+      "address": "ברדיציב אבא 16 בת ים",
+      "gush": "7147",
+      "helka": "102",
+      "migrash": "",
+      "street_code": 217,
+      "street_name": "ברדיציב אבא",
+      "house_number": 16
+    },
+    {
+      "tik_number": "3464",
+      "address": "ישראל בן ציון 2 בת ים",
+      "gush": "7140",
+      "helka": "105",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 2
+    },
+    {
+      "tik_number": "2179",
+      "address": "ישראל בן ציון 3 בת ים",
+      "gush": "7130",
+      "helka": "295",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 3
+    },
+    {
+      "tik_number": "3483",
+      "address": "ישראל בן ציון 4 בת ים",
+      "gush": "264",
+      "helka": "17",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 4
+    },
+    {
+      "tik_number": "2165",
+      "address": "ישראל בן ציון 5 בת ים",
+      "gush": "7130",
+      "helka": "289",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 5
+    },
+    {
+      "tik_number": "2166",
+      "address": "ישראל בן ציון 7 בת ים",
+      "gush": "7130",
+      "helka": "297",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 7
+    },
+    {
+      "tik_number": "3477",
+      "address": "ישראל בן ציון 8 בת ים",
+      "gush": "7140",
+      "helka": "155",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 8
+    },
+    {
+      "tik_number": "2191",
+      "address": "ישראל בן ציון 9 בת ים",
+      "gush": "7130",
+      "helka": "291",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 9
+    },
+    {
+      "tik_number": "2173",
+      "address": "ישראל בן ציון 11 בת ים",
+      "gush": "7130",
+      "helka": "293",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 11
+    },
+    {
+      "tik_number": "20200",
+      "address": "ישראל בן ציון 12 בת ים",
+      "gush": "7130",
+      "helka": "181",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 12
+    },
+    {
+      "tik_number": "2209",
+      "address": "ישראל בן ציון 15 בת ים",
+      "gush": "7130",
+      "helka": "175",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 15
+    },
+    {
+      "tik_number": "2177",
+      "address": "ישראל בן ציון 16 בת ים",
+      "gush": "7130",
+      "helka": "183",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 16
+    },
+    {
+      "tik_number": "2164",
+      "address": "ישראל בן ציון 17 בת ים",
+      "gush": "7130",
+      "helka": "176",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 17
+    },
+    {
+      "tik_number": "2142",
+      "address": "ישראל בן ציון 18 בת ים",
+      "gush": "7130",
+      "helka": "286",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 18
+    },
+    {
+      "tik_number": "2147",
+      "address": "ישראל בן ציון 19 בת ים",
+      "gush": "7130",
+      "helka": "177",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 19
+    },
+    {
+      "tik_number": "2155",
+      "address": "ישראל בן ציון 21 בת ים",
+      "gush": "7130",
+      "helka": "178",
+      "migrash": "",
+      "street_code": 218,
+      "street_name": "ישראל בן ציון",
+      "house_number": 21
+    },
+    {
+      "tik_number": "5420",
+      "address": "עיריית בת ים",
+      "gush": "249",
+      "helka": "6",
+      "migrash": "",
+      "street_code": 219,
+      "street_name": "עיריית",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4519",
+      "address": "העמדות 4 בת ים",
+      "gush": "7147",
+      "helka": "84",
+      "migrash": "",
+      "street_code": 219,
+      "street_name": "עיריית",
+      "house_number": 4
+    },
+    {
+      "tik_number": "4453",
+      "address": "העמדות 5 בת ים",
+      "gush": "7146",
+      "helka": "212",
+      "migrash": "",
+      "street_code": 219,
+      "street_name": "עיריית",
+      "house_number": 5
+    },
+    {
+      "tik_number": "4452",
+      "address": "העמדות 7 בת ים",
+      "gush": "264",
+      "helka": "17",
+      "migrash": "",
+      "street_code": 219,
+      "street_name": "עיריית",
+      "house_number": 7
+    },
+    {
+      "tik_number": "4457",
+      "address": "העמדות 9 בת ים",
+      "gush": "7146",
+      "helka": "207",
+      "migrash": "",
+      "street_code": 219,
+      "street_name": "עיריית",
+      "house_number": 9
+    },
+    {
+      "tik_number": "4246",
+      "address": "רוטשילד 1 בת ים",
+      "gush": "7145",
+      "helka": "34",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 1
+    },
+    {
+      "tik_number": "4289",
+      "address": "רוטשילד 2 בת ים",
+      "gush": "7145",
+      "helka": "141",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 2
+    },
+    {
+      "tik_number": "4294",
+      "address": "רוטשילד 3 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4278",
+      "address": "רוטשילד 4 בת ים",
+      "gush": "7145",
+      "helka": "101",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 4
+    },
+    {
+      "tik_number": "4237",
+      "address": "רוטשילד 5 בת ים",
+      "gush": "7145",
+      "helka": "129",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 5
+    },
+    {
+      "tik_number": "4303",
+      "address": "רוטשילד 6 בת ים",
+      "gush": "7145",
+      "helka": "100",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 6
+    },
+    {
+      "tik_number": "4209",
+      "address": "חב' בוני בת ים בע\"מ",
+      "gush": "7145",
+      "helka": "31",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 7
+    },
+    {
+      "tik_number": "4252",
+      "address": "רוטשילד 8 בת ים",
+      "gush": "7145",
+      "helka": "29",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 8
+    },
+    {
+      "tik_number": "4204",
+      "address": "רוטשילד 10 בת ים",
+      "gush": "7145",
+      "helka": "63",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 10
+    },
+    {
+      "tik_number": "4299",
+      "address": "רוטשילד 12 בת ים",
+      "gush": "7145",
+      "helka": "76",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 12
+    },
+    {
+      "tik_number": "4282",
+      "address": "רוטשילד 13 בת ים",
+      "gush": "7145",
+      "helka": "47",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 13
+    },
+    {
+      "tik_number": "4225",
+      "address": "רוטשילד 14 בת ים",
+      "gush": "7145",
+      "helka": "77",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 14
+    },
+    {
+      "tik_number": "4218",
+      "address": "רוטשילד 15 בת ים",
+      "gush": "7145",
+      "helka": "48",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 15
+    },
+    {
+      "tik_number": "4271",
+      "address": "רוטשילד 16 בת ים",
+      "gush": "7145",
+      "helka": "78",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 16
+    },
+    {
+      "tik_number": "4295",
+      "address": "רוטשילד 18 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 18
+    },
+    {
+      "tik_number": "4672",
+      "address": "רוטשילד 20 בת ים",
+      "gush": "7148",
+      "helka": "29",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 20
+    },
+    {
+      "tik_number": "4653",
+      "address": "רוטשילד 22 בת ים",
+      "gush": "7148",
+      "helka": "177",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 22
+    },
+    {
+      "tik_number": "4753",
+      "address": "רוטשילד 22 בת ים",
+      "gush": "7148",
+      "helka": "178",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 22
+    },
+    {
+      "tik_number": "4772",
+      "address": "רוטשילד 23 בת ים",
+      "gush": "7148",
+      "helka": "211",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 23
+    },
+    {
+      "tik_number": "4695",
+      "address": "רוטשילד 24 בת ים",
+      "gush": "7148",
+      "helka": "27",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 24
+    },
+    {
+      "tik_number": "4751",
+      "address": "רוטשילד 25 בת ים",
+      "gush": "7148",
+      "helka": "13",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 25
+    },
+    {
+      "tik_number": "4694",
+      "address": "רוטשילד 26 בת ים",
+      "gush": "7148",
+      "helka": "157",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 26
+    },
+    {
+      "tik_number": "4766",
+      "address": "רוטשילד 27 בת ים",
+      "gush": "7148",
+      "helka": "222",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 27
+    },
+    {
+      "tik_number": "4660",
+      "address": "רוטשילד 27 בת ים",
+      "gush": "7148",
+      "helka": "223",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 27
+    },
+    {
+      "tik_number": "4744",
+      "address": "רוטשילד 28 בת ים",
+      "gush": "7148",
+      "helka": "154",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 28
+    },
+    {
+      "tik_number": "4722",
+      "address": "רוטשילד 29 בת ים",
+      "gush": "7147",
+      "helka": "164",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 29
+    },
+    {
+      "tik_number": "4732",
+      "address": "רוטשילד 30 בת ים",
+      "gush": "7148",
+      "helka": "22",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 30
+    },
+    {
+      "tik_number": "4689",
+      "address": "רוטשילד 31 בת ים",
+      "gush": "7147",
+      "helka": "111",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 31
+    },
+    {
+      "tik_number": "4708",
+      "address": "רוטשילד 32 בת ים",
+      "gush": "7148",
+      "helka": "21",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 32
+    },
+    {
+      "tik_number": "4742",
+      "address": "רוטשילד 33 בת ים",
+      "gush": "7147",
+      "helka": "112",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 33
+    },
+    {
+      "tik_number": "4677",
+      "address": "רוטשילד 34 בת ים",
+      "gush": "7148",
+      "helka": "16",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 34
+    },
+    {
+      "tik_number": "4740",
+      "address": "רוטשילד 35 בת ים",
+      "gush": "7147",
+      "helka": "113",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 35
+    },
+    {
+      "tik_number": "4830",
+      "address": "רוטשילד 40 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 40
+    },
+    {
+      "tik_number": "4839",
+      "address": "רוטשילד 40 בת ים",
+      "gush": "7149",
+      "helka": "187",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 40
+    },
+    {
+      "tik_number": "4885",
+      "address": "רוטשילד 42 בת ים",
+      "gush": "7149",
+      "helka": "223",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 42
+    },
+    {
+      "tik_number": "4833",
+      "address": "מועצה מקומית בת ים",
+      "gush": "7149",
+      "helka": "192",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 44
+    },
+    {
+      "tik_number": "5486",
+      "address": "רוטשילד 45 בת ים",
+      "gush": "7153",
+      "helka": "303",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 45
+    },
+    {
+      "tik_number": "4835",
+      "address": "רוטשילד 46 בת ים",
+      "gush": "7149",
+      "helka": "196",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 46
+    },
+    {
+      "tik_number": "4836",
+      "address": "רוטשילד 48 בת ים",
+      "gush": "7149",
+      "helka": "202",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 48
+    },
+    {
+      "tik_number": "4845",
+      "address": "רוטשילד 48 בת ים",
+      "gush": "7149",
+      "helka": "202",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 48
+    },
+    {
+      "tik_number": "4806",
+      "address": "רוטשילד 48 בת ים",
+      "gush": "7149",
+      "helka": "202",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 48
+    },
+    {
+      "tik_number": "4812",
+      "address": "רוטשילד 50 בת ים",
+      "gush": "7149",
+      "helka": "203",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 50
+    },
+    {
+      "tik_number": "4878",
+      "address": "רוטשילד 52 בת ים",
+      "gush": "7149",
+      "helka": "205",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 52
+    },
+    {
+      "tik_number": "4859",
+      "address": "רוטשילד 54 בת ים",
+      "gush": "7149",
+      "helka": "206",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 54
+    },
+    {
+      "tik_number": "4886",
+      "address": "רוטשילד 56 בת ים",
+      "gush": "7149",
+      "helka": "207",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 56
+    },
+    {
+      "tik_number": "4879",
+      "address": "רוטשילד 56 בת ים",
+      "gush": "7149",
+      "helka": "207",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 56
+    },
+    {
+      "tik_number": "4883",
+      "address": "רוטשילד 58 בת ים",
+      "gush": "7149",
+      "helka": "208",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 58
+    },
+    {
+      "tik_number": "4877",
+      "address": "רוטשילד 59 בת ים",
+      "gush": "7152",
+      "helka": "66",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 59
+    },
+    {
+      "tik_number": "4882",
+      "address": "רוטשילד 59 בת ים",
+      "gush": "7152",
+      "helka": "67",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 59
+    },
+    {
+      "tik_number": "4838",
+      "address": "רוטשילד 60 בת ים",
+      "gush": "7149",
+      "helka": "215",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 60
+    },
+    {
+      "tik_number": "4868",
+      "address": "רוטשילד 60 בת ים",
+      "gush": "7149",
+      "helka": "216",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 60
+    },
+    {
+      "tik_number": "4866",
+      "address": "רוטשילד 61 בת ים",
+      "gush": "7152",
+      "helka": "91",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 61
+    },
+    {
+      "tik_number": "5198",
+      "address": "רוטשילד 62 בת ים",
+      "gush": "7149",
+      "helka": "217",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 62
+    },
+    {
+      "tik_number": "4871",
+      "address": "רוטשילד 63 בת ים",
+      "gush": "7152",
+      "helka": "55",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 63
+    },
+    {
+      "tik_number": "4881",
+      "address": "רוטשילד 66 בת ים",
+      "gush": "7152",
+      "helka": "92",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 66
+    },
+    {
+      "tik_number": "4880",
+      "address": "רוטשילד 68 בת ים",
+      "gush": "7152",
+      "helka": "49",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 68
+    },
+    {
+      "tik_number": "4870",
+      "address": "רוטשילד 70 בת ים",
+      "gush": "7152",
+      "helka": "88",
+      "migrash": "",
+      "street_code": 220,
+      "street_name": "רוטשילד",
+      "house_number": 70
+    },
+    {
+      "tik_number": "4414",
+      "address": "בלפור 2 בת ים",
+      "gush": "7146",
+      "helka": "256",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 2
+    },
+    {
+      "tik_number": "4406",
+      "address": "בלפור 3 בת ים",
+      "gush": "7146",
+      "helka": "192",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4517",
+      "address": "בלפור 3 בת ים",
+      "gush": "7146",
+      "helka": "191",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4431",
+      "address": "בלפור 5 בת ים",
+      "gush": "7146",
+      "helka": "193",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 5
+    },
+    {
+      "tik_number": "4359",
+      "address": "בלפור 6 בת ים",
+      "gush": "7146",
+      "helka": "198",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 6
+    },
+    {
+      "tik_number": "4366",
+      "address": "בלפור 7 בת ים",
+      "gush": "7146",
+      "helka": "194",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 7
+    },
+    {
+      "tik_number": "4387",
+      "address": "בלפור 8 בת ים",
+      "gush": "7146",
+      "helka": "300",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 8
+    },
+    {
+      "tik_number": "4380",
+      "address": "בלפור 9 בת ים",
+      "gush": "7146",
+      "helka": "195",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 9
+    },
+    {
+      "tik_number": "4448",
+      "address": "בלפור 11 בת ים",
+      "gush": "7146",
+      "helka": "196",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 11
+    },
+    {
+      "tik_number": "4379",
+      "address": "בלפור 15 בת ים",
+      "gush": "7146",
+      "helka": "208",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 15
+    },
+    {
+      "tik_number": "4361",
+      "address": "בלפור 17 בת ים",
+      "gush": "7146",
+      "helka": "95",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 17
+    },
+    {
+      "tik_number": "4435",
+      "address": "בלפור 18 בת ים",
+      "gush": "7146",
+      "helka": "170",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 18
+    },
+    {
+      "tik_number": "4353",
+      "address": "בלפור 18 בת ים",
+      "gush": "7146",
+      "helka": "171",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 18
+    },
+    {
+      "tik_number": "4358",
+      "address": "בלפור 19 בת ים",
+      "gush": "7146",
+      "helka": "96",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 19
+    },
+    {
+      "tik_number": "4419",
+      "address": "בלפור 20 בת ים",
+      "gush": "7146",
+      "helka": "89",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 20
+    },
+    {
+      "tik_number": "4432",
+      "address": "בלפור 21 בת ים",
+      "gush": "7146",
+      "helka": "97",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 21
+    },
+    {
+      "tik_number": "4378",
+      "address": "בלפור 22 בת ים",
+      "gush": "7146",
+      "helka": "89",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 22
+    },
+    {
+      "tik_number": "4400",
+      "address": "בלפור 23 בת ים",
+      "gush": "7146",
+      "helka": "98",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 23
+    },
+    {
+      "tik_number": "4401",
+      "address": "בלפור 25 בת ים",
+      "gush": "7146",
+      "helka": "99",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 25
+    },
+    {
+      "tik_number": "4223",
+      "address": "בלפור 30 בת ים",
+      "gush": "7145",
+      "helka": "92",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 30
+    },
+    {
+      "tik_number": "4266",
+      "address": "בלפור 32 בת ים",
+      "gush": "7145",
+      "helka": "56",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 32
+    },
+    {
+      "tik_number": "4207",
+      "address": "בלפור 34 בת ים",
+      "gush": "7145",
+      "helka": "116",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 34
+    },
+    {
+      "tik_number": "4667",
+      "address": "בלפור 35 בת ים",
+      "gush": "7148",
+      "helka": "106",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 35
+    },
+    {
+      "tik_number": "4761",
+      "address": "בלפור 37 בת ים",
+      "gush": "7148",
+      "helka": "9",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 37
+    },
+    {
+      "tik_number": "4693",
+      "address": "בלפור 39 בת ים",
+      "gush": "7148",
+      "helka": "12",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 39
+    },
+    {
+      "tik_number": "4231",
+      "address": "בלפור 40 בת ים",
+      "gush": "7145",
+      "helka": "80",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 40
+    },
+    {
+      "tik_number": "4692",
+      "address": "בלפור 41 בת ים",
+      "gush": "7148",
+      "helka": "13",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 41
+    },
+    {
+      "tik_number": "4281",
+      "address": "בלפור 42 בת ים",
+      "gush": "7145",
+      "helka": "83",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 42
+    },
+    {
+      "tik_number": "4205",
+      "address": "בלפור 44 בת ים",
+      "gush": "7145",
+      "helka": "84",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 44
+    },
+    {
+      "tik_number": "4663",
+      "address": "בלפור 45 בת ים",
+      "gush": "7148",
+      "helka": "30",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 45
+    },
+    {
+      "tik_number": "4213",
+      "address": "בלפור 46 בת ים",
+      "gush": "7145",
+      "helka": "88",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 46
+    },
+    {
+      "tik_number": "4673",
+      "address": "בלפור 47 בת ים",
+      "gush": "7148",
+      "helka": "31",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 47
+    },
+    {
+      "tik_number": "4086",
+      "address": "בלפור 50 בת ים",
+      "gush": "7144",
+      "helka": "50",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 50
+    },
+    {
+      "tik_number": "4085",
+      "address": "בלפור 52 בת ים",
+      "gush": "7144",
+      "helka": "50",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 52
+    },
+    {
+      "tik_number": "4651",
+      "address": "בלפור 53 בת ים",
+      "gush": "7148",
+      "helka": "56",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 53
+    },
+    {
+      "tik_number": "4087",
+      "address": "בלפור 54 בת ים",
+      "gush": "7144",
+      "helka": "57",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 54
+    },
+    {
+      "tik_number": "4690",
+      "address": "בלפור 55 בת ים",
+      "gush": "7148",
+      "helka": "59",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 55
+    },
+    {
+      "tik_number": "4096",
+      "address": "החברה הקבלנית לבנין בת ים",
+      "gush": "7144",
+      "helka": "58",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 56
+    },
+    {
+      "tik_number": "4675",
+      "address": "בלפור 57 בת ים",
+      "gush": "7148",
+      "helka": "60",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 57
+    },
+    {
+      "tik_number": "4089",
+      "address": "בלפור 58 בת ים",
+      "gush": "7144",
+      "helka": "64",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 58
+    },
+    {
+      "tik_number": "4657",
+      "address": "בלפור 59 בת ים",
+      "gush": "7148",
+      "helka": "63",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 59
+    },
+    {
+      "tik_number": "4057",
+      "address": "בלפור 60 בת ים",
+      "gush": "7144",
+      "helka": "104",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 60
+    },
+    {
+      "tik_number": "4716",
+      "address": "בלפור 61 בת ים",
+      "gush": "7148",
+      "helka": "128",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 61
+    },
+    {
+      "tik_number": "4702",
+      "address": "בלפור 61 בת ים",
+      "gush": "7148",
+      "helka": "128",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 61
+    },
+    {
+      "tik_number": "4069",
+      "address": "בלפור 62 בת ים",
+      "gush": "7144",
+      "helka": "41",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 62
+    },
+    {
+      "tik_number": "4110",
+      "address": "בלפור 62 בת ים",
+      "gush": "7144",
+      "helka": "93",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 62
+    },
+    {
+      "tik_number": "4691",
+      "address": "בלפור 63 בת ים",
+      "gush": "7148",
+      "helka": "129",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 63
+    },
+    {
+      "tik_number": "3649",
+      "address": "בלפור 64 בת ים",
+      "gush": "7141",
+      "helka": "129",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 64
+    },
+    {
+      "tik_number": "4697",
+      "address": "בלפור 65 בת ים",
+      "gush": "7148",
+      "helka": "219",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 65
+    },
+    {
+      "tik_number": "3650",
+      "address": "בלפור 66 בת ים",
+      "gush": "7141",
+      "helka": "170",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 66
+    },
+    {
+      "tik_number": "4684",
+      "address": "בלפור 67 בת ים",
+      "gush": "7148",
+      "helka": "119",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 67
+    },
+    {
+      "tik_number": "3601",
+      "address": "בלפור 68 בת ים",
+      "gush": "7141",
+      "helka": "183",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 68
+    },
+    {
+      "tik_number": "4683",
+      "address": "בלפור 69 בת ים",
+      "gush": "7148",
+      "helka": "120",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 69
+    },
+    {
+      "tik_number": "4748",
+      "address": "בלפור 71 בת ים",
+      "gush": "7148",
+      "helka": "78",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 71
+    },
+    {
+      "tik_number": "3677",
+      "address": "בלפור 72 בת ים",
+      "gush": "7141",
+      "helka": "48",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 72
+    },
+    {
+      "tik_number": "4763",
+      "address": "בלפור 73 בת ים",
+      "gush": "7148",
+      "helka": "110",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 73
+    },
+    {
+      "tik_number": "4764",
+      "address": "בלפור 73 בת ים",
+      "gush": "7148",
+      "helka": "79",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 73
+    },
+    {
+      "tik_number": "3670",
+      "address": "בלפור 74 בת ים",
+      "gush": "7141",
+      "helka": "112",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 74
+    },
+    {
+      "tik_number": "3669",
+      "address": "בלפור 74 בת ים",
+      "gush": "7141",
+      "helka": "113",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 74
+    },
+    {
+      "tik_number": "4735",
+      "address": "בלפור 75 בת ים",
+      "gush": "7148",
+      "helka": "108",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 75
+    },
+    {
+      "tik_number": "3615",
+      "address": "בלפור 76 בת ים",
+      "gush": "7141",
+      "helka": "46",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 76
+    },
+    {
+      "tik_number": "20179",
+      "address": "בלפור 77 בת ים",
+      "gush": "7136",
+      "helka": "466",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 77
+    },
+    {
+      "tik_number": "3626",
+      "address": "בלפור 78 בת ים",
+      "gush": "7141",
+      "helka": "45",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 78
+    },
+    {
+      "tik_number": "3672",
+      "address": "בלפור 79 בת ים",
+      "gush": "7136",
+      "helka": "465",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 79
+    },
+    {
+      "tik_number": "3660",
+      "address": "בלפור 80 בת ים",
+      "gush": "7141",
+      "helka": "147",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 80
+    },
+    {
+      "tik_number": "3694",
+      "address": "בלפור 80 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 80
+    },
+    {
+      "tik_number": "3635",
+      "address": "בלפור 81 בת ים",
+      "gush": "7136",
+      "helka": "245",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 81
+    },
+    {
+      "tik_number": "3620",
+      "address": "בלפור 82 בת ים",
+      "gush": "7141",
+      "helka": "43",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 82
+    },
+    {
+      "tik_number": "3695",
+      "address": "בלפור 83 בת ים",
+      "gush": "7136",
+      "helka": "246",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 83
+    },
+    {
+      "tik_number": "3662",
+      "address": "בלפור 85 בת ים",
+      "gush": "7136",
+      "helka": "279",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 85
+    },
+    {
+      "tik_number": "3468",
+      "address": "בלפור 86 בת ים",
+      "gush": "7140",
+      "helka": "290",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 86
+    },
+    {
+      "tik_number": "3639",
+      "address": "בלפור 87 בת ים",
+      "gush": "7136",
+      "helka": "280",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 87
+    },
+    {
+      "tik_number": "3488",
+      "address": "בלפור 88 בת ים",
+      "gush": "7140",
+      "helka": "289",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 88
+    },
+    {
+      "tik_number": "3698",
+      "address": "בלפור 89 בת ים",
+      "gush": "7136",
+      "helka": "281",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 89
+    },
+    {
+      "tik_number": "3706",
+      "address": "בלפור 89 בת ים",
+      "gush": "7136",
+      "helka": "278",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 89
+    },
+    {
+      "tik_number": "3455",
+      "address": "בלפור 90 בת ים",
+      "gush": "7140",
+      "helka": "288",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 90
+    },
+    {
+      "tik_number": "3522",
+      "address": "בלפור 90 בת ים",
+      "gush": "7140",
+      "helka": "286",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 90
+    },
+    {
+      "tik_number": "3613",
+      "address": "בלפור 91 בת ים",
+      "gush": "7136",
+      "helka": "477",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 91
+    },
+    {
+      "tik_number": "3484",
+      "address": "בלפור 92 בת ים",
+      "gush": "7140",
+      "helka": "287",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 92
+    },
+    {
+      "tik_number": "3658",
+      "address": "בלפור 95 בת ים",
+      "gush": "7136",
+      "helka": "284",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 95
+    },
+    {
+      "tik_number": "3502",
+      "address": "בלפור 96 בת ים",
+      "gush": "7140",
+      "helka": "191",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 96
+    },
+    {
+      "tik_number": "3460",
+      "address": "בלפור 97 בת ים",
+      "gush": "7136",
+      "helka": "380",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 97
+    },
+    {
+      "tik_number": "3476",
+      "address": "בלפור 97 בת ים",
+      "gush": "7136",
+      "helka": "377",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 97
+    },
+    {
+      "tik_number": "3500",
+      "address": "בלפור 98 בת ים",
+      "gush": "7140",
+      "helka": "192",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 98
+    },
+    {
+      "tik_number": "3461",
+      "address": "בלפור 99 בת ים",
+      "gush": "7130",
+      "helka": "237",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 99
+    },
+    {
+      "tik_number": "3505",
+      "address": "בלפור 100 בת ים",
+      "gush": "7140",
+      "helka": "235",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 100
+    },
+    {
+      "tik_number": "3462",
+      "address": "בלפור 101 בת ים",
+      "gush": "7130",
+      "helka": "238",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 101
+    },
+    {
+      "tik_number": "3503",
+      "address": "בלפור 102 בת ים",
+      "gush": "7140",
+      "helka": "234",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 102
+    },
+    {
+      "tik_number": "3475",
+      "address": "בלפור 103 בת ים",
+      "gush": "7130",
+      "helka": "239",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 103
+    },
+    {
+      "tik_number": "2995",
+      "address": "בלפור 104 בת ים",
+      "gush": "7140",
+      "helka": "268",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 104
+    },
+    {
+      "tik_number": "2996",
+      "address": "בלפור 104 בת ים",
+      "gush": "7140",
+      "helka": "269",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 104
+    },
+    {
+      "tik_number": "2766",
+      "address": "בלפור 105 בת ים",
+      "gush": "7130",
+      "helka": "240",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 105
+    },
+    {
+      "tik_number": "3463",
+      "address": "בלפור 107 בת ים",
+      "gush": "7130",
+      "helka": "220",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 107
+    },
+    {
+      "tik_number": "3501",
+      "address": "בלפור 108 בת ים",
+      "gush": "7140",
+      "helka": "231",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 108
+    },
+    {
+      "tik_number": "3471",
+      "address": "בלפור 111 בת ים",
+      "gush": "7140",
+      "helka": "107",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 111
+    },
+    {
+      "tik_number": "3156",
+      "address": "בלפור 112 בת ים",
+      "gush": "7140",
+      "helka": "229",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 112
+    },
+    {
+      "tik_number": "3467",
+      "address": "בלפור 113 בת ים",
+      "gush": "7140",
+      "helka": "272",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 113
+    },
+    {
+      "tik_number": "3549",
+      "address": "בלפור 114 בת ים",
+      "gush": "7140",
+      "helka": "228",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 114
+    },
+    {
+      "tik_number": "3490",
+      "address": "בלפור 115 בת ים",
+      "gush": "7140",
+      "helka": "110",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 115
+    },
+    {
+      "tik_number": "3552",
+      "address": "בלפור 116 בת ים",
+      "gush": "7140",
+      "helka": "227",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 116
+    },
+    {
+      "tik_number": "3496",
+      "address": "בלפור 117 בת ים",
+      "gush": "7140",
+      "helka": "270",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 117
+    },
+    {
+      "tik_number": "3543",
+      "address": "בלפור 118 בת ים",
+      "gush": "7140",
+      "helka": "226",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 118
+    },
+    {
+      "tik_number": "20124",
+      "address": "בלפור 121 בת ים",
+      "gush": "7140",
+      "helka": "170",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 121
+    },
+    {
+      "tik_number": "3244",
+      "address": "בלפור 122 בת ים",
+      "gush": "7138",
+      "helka": "307",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 122
+    },
+    {
+      "tik_number": "3491",
+      "address": "בלפור 123 בת ים",
+      "gush": "7140",
+      "helka": "115",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 123
+    },
+    {
+      "tik_number": "3001",
+      "address": "בלפור 124 בת ים",
+      "gush": "7138",
+      "helka": "308",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 124
+    },
+    {
+      "tik_number": "3264",
+      "address": "בלפור 126 בת ים",
+      "gush": "7138",
+      "helka": "309",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 126
+    },
+    {
+      "tik_number": "3558",
+      "address": "בלפור 127 בת ים",
+      "gush": "7140",
+      "helka": "116",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 127
+    },
+    {
+      "tik_number": "3031",
+      "address": "בלפור 128 בת ים",
+      "gush": "7138",
+      "helka": "310",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 128
+    },
+    {
+      "tik_number": "3051",
+      "address": "בלפור 129 בת ים",
+      "gush": "7137",
+      "helka": "117",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 129
+    },
+    {
+      "tik_number": "3155",
+      "address": "בלפור 130 בת ים",
+      "gush": "7138",
+      "helka": "311",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 130
+    },
+    {
+      "tik_number": "3034",
+      "address": "בלפור 131 בת ים",
+      "gush": "7137",
+      "helka": "118",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 131
+    },
+    {
+      "tik_number": "3015",
+      "address": "בלפור 134 בת ים",
+      "gush": "7138",
+      "helka": "312",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 134
+    },
+    {
+      "tik_number": "3020",
+      "address": "בלפור 135 בת ים",
+      "gush": "7137",
+      "helka": "120",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 135
+    },
+    {
+      "tik_number": "3002",
+      "address": "בלפור 136 בת ים",
+      "gush": "7138",
+      "helka": "288",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 136
+    },
+    {
+      "tik_number": "3028",
+      "address": "בלפור 137 בת ים",
+      "gush": "7137",
+      "helka": "121",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 137
+    },
+    {
+      "tik_number": "3003",
+      "address": "בלפור 138 בת ים",
+      "gush": "7138",
+      "helka": "287",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 138
+    },
+    {
+      "tik_number": "3025",
+      "address": "בלפור 139 בת ים",
+      "gush": "7137",
+      "helka": "126",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 139
+    },
+    {
+      "tik_number": "3159",
+      "address": "בלפור 140 בת ים",
+      "gush": "7138",
+      "helka": "286",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 140
+    },
+    {
+      "tik_number": "3286",
+      "address": "בלפור 142 בת ים",
+      "gush": "7138",
+      "helka": "285",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 142
+    },
+    {
+      "tik_number": "3270",
+      "address": "בלפור 144 בת ים",
+      "gush": "7138",
+      "helka": "284",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 144
+    },
+    {
+      "tik_number": "3014",
+      "address": "בלפור 145 בת ים",
+      "gush": "7137",
+      "helka": "127",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 145
+    },
+    {
+      "tik_number": "3027",
+      "address": "בלפור 147 בת ים",
+      "gush": "7137",
+      "helka": "128",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 147
+    },
+    {
+      "tik_number": "3187",
+      "address": "בלפור 148 בת ים",
+      "gush": "7138",
+      "helka": "282",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 148
+    },
+    {
+      "tik_number": "3019",
+      "address": "בלפור 149 בת ים",
+      "gush": "7137",
+      "helka": "129",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 149
+    },
+    {
+      "tik_number": "3259",
+      "address": "בלפור 150 בת ים",
+      "gush": "7138",
+      "helka": "281",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 150
+    },
+    {
+      "tik_number": "3037",
+      "address": "בלפור 151 בת ים",
+      "gush": "7137",
+      "helka": "132",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 151
+    },
+    {
+      "tik_number": "762",
+      "address": "בלפור 152 בת ים",
+      "gush": "7138",
+      "helka": "271",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 152
+    },
+    {
+      "tik_number": "3038",
+      "address": "בלפור 153 בת ים",
+      "gush": "7137",
+      "helka": "133",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 153
+    },
+    {
+      "tik_number": "3023",
+      "address": "בלפור 155 בת ים",
+      "gush": "7137",
+      "helka": "133",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 155
+    },
+    {
+      "tik_number": "3042",
+      "address": "בלפור 157 בת ים",
+      "gush": "7137",
+      "helka": "137",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 157
+    },
+    {
+      "tik_number": "3054",
+      "address": "בלפור 159 בת ים",
+      "gush": "7137",
+      "helka": "138",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 159
+    },
+    {
+      "tik_number": "757",
+      "address": "בלפור 161 בת ים",
+      "gush": "7137",
+      "helka": "139",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 161
+    },
+    {
+      "tik_number": "758",
+      "address": "בלפור 163 בת ים",
+      "gush": "7137",
+      "helka": "144",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 163
+    },
+    {
+      "tik_number": "902",
+      "address": "בלפור 165 בת ים",
+      "gush": "7137",
+      "helka": "165",
+      "migrash": "",
+      "street_code": 221,
+      "street_name": "בלפור",
+      "house_number": 165
+    },
+    {
+      "tik_number": "4754",
+      "address": "מעבר ישי 3 בת ים",
+      "gush": "7148",
+      "helka": "156",
+      "migrash": "",
+      "street_code": 223,
+      "street_name": "מעבר ישי",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4450",
+      "address": "הים 2 בת ים",
+      "gush": "7146",
+      "helka": "312",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 2
+    },
+    {
+      "tik_number": "4418",
+      "address": "הים 3 בת ים",
+      "gush": "7146",
+      "helka": "280",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4410",
+      "address": "הים 3 בת ים",
+      "gush": "7146",
+      "helka": "33",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4411",
+      "address": "הים 4 בת ים",
+      "gush": "7146",
+      "helka": "22",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 4
+    },
+    {
+      "tik_number": "4417",
+      "address": "הים 5 בת ים",
+      "gush": "7146",
+      "helka": "32",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 5
+    },
+    {
+      "tik_number": "4160",
+      "address": "הים 6 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 6
+    },
+    {
+      "tik_number": "4420",
+      "address": "הים 6 בת ים",
+      "gush": "7146",
+      "helka": "25",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 6
+    },
+    {
+      "tik_number": "4421",
+      "address": "הים 8 בת ים",
+      "gush": "7146",
+      "helka": "26",
+      "migrash": "",
+      "street_code": 228,
+      "street_name": "הים",
+      "house_number": 8
+    },
+    {
+      "tik_number": "4533",
+      "address": "הראשונים 1 בת ים",
+      "gush": "7147",
+      "helka": "86",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 1
+    },
+    {
+      "tik_number": "4550",
+      "address": "הראשונים 1 בת ים",
+      "gush": "7147",
+      "helka": "89",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 1
+    },
+    {
+      "tik_number": "4510",
+      "address": "הראשונים 2 בת ים",
+      "gush": "7147",
+      "helka": "159",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 2
+    },
+    {
+      "tik_number": "4547",
+      "address": "הראשונים 3 בת ים",
+      "gush": "7147",
+      "helka": "85",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 3
+    },
+    {
+      "tik_number": "4530",
+      "address": "הראשונים 4 בת ים",
+      "gush": "7147",
+      "helka": "83",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 4
+    },
+    {
+      "tik_number": "4539",
+      "address": "הראשונים 4 בת ים",
+      "gush": "7147",
+      "helka": "159",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 4
+    },
+    {
+      "tik_number": "4525",
+      "address": "הראשונים 6 בת ים",
+      "gush": "7147",
+      "helka": "82",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 6
+    },
+    {
+      "tik_number": "4529",
+      "address": "הראשונים 6 בת ים",
+      "gush": "7147",
+      "helka": "88",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 6
+    },
+    {
+      "tik_number": "5427",
+      "address": "הראשונים 7 בת ים",
+      "gush": "7147",
+      "helka": "152",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 7
+    },
+    {
+      "tik_number": "4527",
+      "address": "הראשונים 8 בת ים",
+      "gush": "7147",
+      "helka": "81",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 8
+    },
+    {
+      "tik_number": "5501",
+      "address": "הראשונים 9 בת ים",
+      "gush": "7147",
+      "helka": "154",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 9
+    },
+    {
+      "tik_number": "4536",
+      "address": "הראשונים 10 בת ים",
+      "gush": "7147",
+      "helka": "79",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 10
+    },
+    {
+      "tik_number": "4548",
+      "address": "הראשונים 11 בת ים",
+      "gush": "7147",
+      "helka": "123",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 11
+    },
+    {
+      "tik_number": "5500",
+      "address": "הראשונים 13 בת ים",
+      "gush": "7147",
+      "helka": "123",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 13
+    },
+    {
+      "tik_number": "5419",
+      "address": "הראשונים 16 בת ים",
+      "gush": "7147",
+      "helka": "96",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 16
+    },
+    {
+      "tik_number": "5417",
+      "address": "הראשונים 18 בת ים",
+      "gush": "7147",
+      "helka": "98",
+      "migrash": "",
+      "street_code": 231,
+      "street_name": "הראשונים",
+      "house_number": 18
+    },
+    {
+      "tik_number": "4743",
+      "address": "בר שאול 6 בת ים",
+      "gush": "7147",
+      "helka": "108",
+      "migrash": "",
+      "street_code": 237,
+      "street_name": "בר שאול",
+      "house_number": 6
+    },
+    {
+      "tik_number": "3806",
+      "address": "עירית בת ים",
+      "gush": "7142",
+      "helka": "172",
+      "migrash": "",
+      "street_code": 239,
+      "street_name": "עירית",
+      "house_number": 1
+    },
+    {
+      "tik_number": "3816",
+      "address": "נויקלן 2 בת ים",
+      "gush": "7142",
+      "helka": "203",
+      "migrash": "",
+      "street_code": 239,
+      "street_name": "עירית",
+      "house_number": 2
+    },
+    {
+      "tik_number": "3611",
+      "address": "הרב קוקיס 1 בת ים",
+      "gush": "7141",
+      "helka": "110",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 1
+    },
+    {
+      "tik_number": "3612",
+      "address": "הרב קוקיס 3 בת ים",
+      "gush": "7141",
+      "helka": "5",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 3
+    },
+    {
+      "tik_number": "3671",
+      "address": "הרב קוקיס 5 בת ים",
+      "gush": "7141",
+      "helka": "99",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 5
+    },
+    {
+      "tik_number": "3609",
+      "address": "הרב קוקיס 9 בת ים",
+      "gush": "7141",
+      "helka": "79",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 9
+    },
+    {
+      "tik_number": "3778",
+      "address": "הרב קוקיס 10 בת ים",
+      "gush": "7112",
+      "helka": "88",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 10
+    },
+    {
+      "tik_number": "3800",
+      "address": "הרב קוקיס 12 בת ים",
+      "gush": "7142",
+      "helka": "100",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 12
+    },
+    {
+      "tik_number": "3625",
+      "address": "הרב קוקיס 13 בת ים",
+      "gush": "7141",
+      "helka": "81",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 13
+    },
+    {
+      "tik_number": "3789",
+      "address": "הרב קוקיס 14 בת ים",
+      "gush": "7142",
+      "helka": "101",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 14
+    },
+    {
+      "tik_number": "3633",
+      "address": "הרב קוקיס 15 בת ים",
+      "gush": "7141",
+      "helka": "82",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 15
+    },
+    {
+      "tik_number": "3779",
+      "address": "הרב קוקיס 16 בת ים",
+      "gush": "7142",
+      "helka": "102",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 16
+    },
+    {
+      "tik_number": "3716",
+      "address": "הרב קוקיס 17 בת ים",
+      "gush": "7141",
+      "helka": "83",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 17
+    },
+    {
+      "tik_number": "3785",
+      "address": "הרב קוקיס 18 בת ים",
+      "gush": "7142",
+      "helka": "103",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 18
+    },
+    {
+      "tik_number": "3680",
+      "address": "הרב קוקיס 19 בת ים",
+      "gush": "7141",
+      "helka": "84",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 19
+    },
+    {
+      "tik_number": "3675",
+      "address": "הרב קוקיס 21 בת ים",
+      "gush": "7141",
+      "helka": "85",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 21
+    },
+    {
+      "tik_number": "3683",
+      "address": "הרב קוקיס 23 בת ים",
+      "gush": "7141",
+      "helka": "201",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 23
+    },
+    {
+      "tik_number": "3783",
+      "address": "הרב קוקיס 24 בת ים",
+      "gush": "7142",
+      "helka": "164",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 24
+    },
+    {
+      "tik_number": "3643",
+      "address": "הרב קוקיס 25 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 25
+    },
+    {
+      "tik_number": "3707",
+      "address": "הרב קוקיס 27 בת ים",
+      "gush": "7141",
+      "helka": "203",
+      "migrash": "",
+      "street_code": 240,
+      "street_name": "הרב קוקיס",
+      "house_number": 27
+    },
+    {
+      "tik_number": "2993",
+      "address": "עיריית בת ים",
+      "gush": "7136",
+      "helka": "387",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 3
+    },
+    {
+      "tik_number": "3474",
+      "address": "דנין יחזקאל 3 בת ים",
+      "gush": "7136",
+      "helka": "381",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 3
+    },
+    {
+      "tik_number": "3470",
+      "address": "דנין יחזקאל 4 בת ים",
+      "gush": "7130",
+      "helka": "241",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 4
+    },
+    {
+      "tik_number": "2928",
+      "address": "דנין יחזקאל 5 בת ים",
+      "gush": "7136",
+      "helka": "385",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 5
+    },
+    {
+      "tik_number": "2987",
+      "address": "דנין יחזקאל 6 בת ים",
+      "gush": "249",
+      "helka": "6",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 6
+    },
+    {
+      "tik_number": "2982",
+      "address": "דנין יחזקאל 7 בת ים",
+      "gush": "7136",
+      "helka": "386",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 7
+    },
+    {
+      "tik_number": "2178",
+      "address": "דנין יחזקאל 8 בת ים",
+      "gush": "7130",
+      "helka": "246",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 8
+    },
+    {
+      "tik_number": "2896",
+      "address": "דנין יחזקאל 9 בת ים",
+      "gush": "7136",
+      "helka": "396",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 9
+    },
+    {
+      "tik_number": "2175",
+      "address": "דנין יחזקאל 10 בת ים",
+      "gush": "7130",
+      "helka": "247",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 10
+    },
+    {
+      "tik_number": "2986",
+      "address": "דנין יחזקאל 11 בת ים",
+      "gush": "7136",
+      "helka": "412",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 11
+    },
+    {
+      "tik_number": "2170",
+      "address": "דנין יחזקאל 12 בת ים",
+      "gush": "7130",
+      "helka": "248",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 12
+    },
+    {
+      "tik_number": "2980",
+      "address": "דנין יחזקאל 13 בת ים",
+      "gush": "7136",
+      "helka": "398",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 13
+    },
+    {
+      "tik_number": "2979",
+      "address": "דנין יחזקאל 14 בת ים",
+      "gush": "7130",
+      "helka": "249",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 14
+    },
+    {
+      "tik_number": "2212",
+      "address": "דנין יחזקאל 16 בת ים",
+      "gush": "7130",
+      "helka": "258",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 16
+    },
+    {
+      "tik_number": "2970",
+      "address": "דנין יחזקאל 17 בת ים",
+      "gush": "7136",
+      "helka": "401",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 17
+    },
+    {
+      "tik_number": "2151",
+      "address": "דנין יחזקאל 18 בת ים",
+      "gush": "7130",
+      "helka": "264",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 18
+    },
+    {
+      "tik_number": "2926",
+      "address": "דנין יחזקאל 19 בת ים",
+      "gush": "7136",
+      "helka": "402",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 19
+    },
+    {
+      "tik_number": "2186",
+      "address": "דנין יחזקאל 20 בת ים",
+      "gush": "7130",
+      "helka": "268",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 20
+    },
+    {
+      "tik_number": "2925",
+      "address": "דנין יחזקאל 21 בת ים",
+      "gush": "7136",
+      "helka": "402",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 21
+    },
+    {
+      "tik_number": "2932",
+      "address": "דנין יחזקאל 23 בת ים",
+      "gush": "7136",
+      "helka": "404",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 23
+    },
+    {
+      "tik_number": "2972",
+      "address": "דנין יחזקאל 25 בת ים",
+      "gush": "7136",
+      "helka": "405",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 25
+    },
+    {
+      "tik_number": "2947",
+      "address": "דנין יחזקאל 27 בת ים",
+      "gush": "7136",
+      "helka": "410",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 27
+    },
+    {
+      "tik_number": "2946",
+      "address": "דנין יחזקאל 29 בת ים",
+      "gush": "7136",
+      "helka": "409",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 29
+    },
+    {
+      "tik_number": "2978",
+      "address": "דנין יחזקאל 31 בת ים",
+      "gush": "7136",
+      "helka": "408",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 31
+    },
+    {
+      "tik_number": "2897",
+      "address": "דנין יחזקאל 31 בת ים",
+      "gush": "7136",
+      "helka": "408",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 31
+    },
+    {
+      "tik_number": "2984",
+      "address": "דנין יחזקאל 35 בת ים",
+      "gush": "7136",
+      "helka": "468",
+      "migrash": "",
+      "street_code": 301,
+      "street_name": "דנין יחזקאל",
+      "house_number": 35
+    },
+    {
+      "tik_number": "3815",
+      "address": "ז'בוטינסקי 1 בת ים",
+      "gush": "7142",
+      "helka": "198",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 1
+    },
+    {
+      "tik_number": "3758",
+      "address": "ז'בוטינסקי 4 בת ים",
+      "gush": "7142",
+      "helka": "12",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 4
+    },
+    {
+      "tik_number": "3817",
+      "address": "ז'בוטינסקי 5 בת ים",
+      "gush": "7142",
+      "helka": "199",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 5
+    },
+    {
+      "tik_number": "3790",
+      "address": "\"מרחבי בת ים\" בע\"מ ע\"י ה\"",
+      "gush": "7142",
+      "helka": "96",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 6
+    },
+    {
+      "tik_number": "3770",
+      "address": "ז'בוטינסקי 9 בת ים",
+      "gush": "7142",
+      "helka": "85",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 9
+    },
+    {
+      "tik_number": "3774",
+      "address": "ז'בוטינסקי 11 בת ים",
+      "gush": "7142",
+      "helka": "86",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 11
+    },
+    {
+      "tik_number": "3793",
+      "address": "ז'בוטינסקי 12 בת ים",
+      "gush": "7142",
+      "helka": "98",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 12
+    },
+    {
+      "tik_number": "3773",
+      "address": "ז'בוטינסקי 13 בת ים",
+      "gush": "7142",
+      "helka": "87",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 13
+    },
+    {
+      "tik_number": "3705",
+      "address": "ז'בוטינסקי 15 בת ים",
+      "gush": "7141",
+      "helka": "100",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 15
+    },
+    {
+      "tik_number": "3712",
+      "address": "ז'בוטינסקי 17 בת ים",
+      "gush": "7141",
+      "helka": "191",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 17
+    },
+    {
+      "tik_number": "3632",
+      "address": "ז'בוטינסקי 20 בת ים",
+      "gush": "7141",
+      "helka": "63",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 20
+    },
+    {
+      "tik_number": "3602",
+      "address": "ז'בוטינסקי 21 בת ים",
+      "gush": "7141",
+      "helka": "119",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 21
+    },
+    {
+      "tik_number": "3636",
+      "address": "ז'בוטינסקי 24 בת ים",
+      "gush": "7141",
+      "helka": "123",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 24
+    },
+    {
+      "tik_number": "3651",
+      "address": "ז'בוטינסקי 27 בת ים",
+      "gush": "7141",
+      "helka": "162",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 27
+    },
+    {
+      "tik_number": "3665",
+      "address": "ז'בוטינסקי 30 בת ים",
+      "gush": "7141",
+      "helka": "164",
+      "migrash": "",
+      "street_code": 302,
+      "street_name": "ז'בוטינסקי",
+      "house_number": 30
+    },
+    {
+      "tik_number": "5600",
+      "address": "הנביאים 1 בת ים",
+      "gush": "7154",
+      "helka": "364",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 1
+    },
+    {
+      "tik_number": "5628",
+      "address": "הנביאים 2 בת ים",
+      "gush": "7154",
+      "helka": "214",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 2
+    },
+    {
+      "tik_number": "5601",
+      "address": "הנביאים 3 בת ים",
+      "gush": "7154",
+      "helka": "365",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 3
+    },
+    {
+      "tik_number": "5599",
+      "address": "גני בת ים בע\"מ ע\"י הופמן",
+      "gush": "7154",
+      "helka": "363",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 3
+    },
+    {
+      "tik_number": "5689",
+      "address": "הנביאים 5 בת ים",
+      "gush": "7154",
+      "helka": "253",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 5
+    },
+    {
+      "tik_number": "5580",
+      "address": "הנביאים 5 בת ים",
+      "gush": "7154",
+      "helka": "252",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 5
+    },
+    {
+      "tik_number": "5565",
+      "address": "הנביאים 6 בת ים",
+      "gush": "7154",
+      "helka": "219",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 6
+    },
+    {
+      "tik_number": "5634",
+      "address": "הנביאים 7 בת ים",
+      "gush": "7154",
+      "helka": "254",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 7
+    },
+    {
+      "tik_number": "5594",
+      "address": "הנביאים 8 בת ים",
+      "gush": "7154",
+      "helka": "220",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 8
+    },
+    {
+      "tik_number": "5633",
+      "address": "הנביאים 9 בת ים",
+      "gush": "7154",
+      "helka": "255",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 9
+    },
+    {
+      "tik_number": "5658",
+      "address": "הנביאים 10 בת ים",
+      "gush": "7154",
+      "helka": "221",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 10
+    },
+    {
+      "tik_number": "5586",
+      "address": "הנביאים 11 בת ים",
+      "gush": "7154",
+      "helka": "256",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 11
+    },
+    {
+      "tik_number": "2149",
+      "address": "הנביאים 12 בת ים",
+      "gush": "7154",
+      "helka": "233",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 12
+    },
+    {
+      "tik_number": "5551",
+      "address": "הנביאים 12 בת ים",
+      "gush": "7154",
+      "helka": "233",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 12
+    },
+    {
+      "tik_number": "5559",
+      "address": "הנביאים 13 בת ים",
+      "gush": "7154",
+      "helka": "257",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 13
+    },
+    {
+      "tik_number": "951",
+      "address": "עיריית בת ים ע\"י יוסי דוד",
+      "gush": "7120",
+      "helka": "162",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 14
+    },
+    {
+      "tik_number": "5679",
+      "address": "הנביאים 15 בת ים",
+      "gush": "7154",
+      "helka": "258",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 15
+    },
+    {
+      "tik_number": "2148",
+      "address": "הנביאים 16 בת ים",
+      "gush": "7154",
+      "helka": "235",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 16
+    },
+    {
+      "tik_number": "5611",
+      "address": "הנביאים 17 בת ים",
+      "gush": "7154",
+      "helka": "259",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 17
+    },
+    {
+      "tik_number": "5595",
+      "address": "הנביאים 18 בת ים",
+      "gush": "7154",
+      "helka": "236",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 18
+    },
+    {
+      "tik_number": "5588",
+      "address": "הנביאים 19 בת ים",
+      "gush": "7154",
+      "helka": "260",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 19
+    },
+    {
+      "tik_number": "5644",
+      "address": "הנביאים 20 בת ים",
+      "gush": "7154",
+      "helka": "237",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 20
+    },
+    {
+      "tik_number": "5615",
+      "address": "הנביאים 21 בת ים",
+      "gush": "7154",
+      "helka": "261",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 21
+    },
+    {
+      "tik_number": "5631",
+      "address": "הנביאים 22 בת ים",
+      "gush": "7154",
+      "helka": "238",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 22
+    },
+    {
+      "tik_number": "5603",
+      "address": "הנביאים 23 בת ים",
+      "gush": "7154",
+      "helka": "262",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 23
+    },
+    {
+      "tik_number": "5659",
+      "address": "הנביאים 24 בת ים",
+      "gush": "7154",
+      "helka": "239",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 24
+    },
+    {
+      "tik_number": "5587",
+      "address": "הנביאים 25 בת ים",
+      "gush": "7154",
+      "helka": "263",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 25
+    },
+    {
+      "tik_number": "5569",
+      "address": "הנביאים 26 בת ים",
+      "gush": "7154",
+      "helka": "240",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 26
+    },
+    {
+      "tik_number": "5575",
+      "address": "ורד בת ים בע\"מ",
+      "gush": "7154",
+      "helka": "241",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 28
+    },
+    {
+      "tik_number": "5577",
+      "address": "הנביאים 29 בת ים",
+      "gush": "7154",
+      "helka": "380",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 29
+    },
+    {
+      "tik_number": "5590",
+      "address": "הנביאים 30 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 30
+    },
+    {
+      "tik_number": "5696",
+      "address": "הנביאים 31 בת ים",
+      "gush": "7154",
+      "helka": "379",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 31
+    },
+    {
+      "tik_number": "5553",
+      "address": "הנביאים 31 בת ים",
+      "gush": "7154",
+      "helka": "379",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 31
+    },
+    {
+      "tik_number": "5620",
+      "address": "הנביאים 32 בת ים",
+      "gush": "7154",
+      "helka": "232",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 32
+    },
+    {
+      "tik_number": "5667",
+      "address": "הנביאים 33 בת ים",
+      "gush": "7154",
+      "helka": "303",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 33
+    },
+    {
+      "tik_number": "5639",
+      "address": "הנביאים 34 בת ים",
+      "gush": "7154",
+      "helka": "284",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 34
+    },
+    {
+      "tik_number": "5646",
+      "address": "הנביאים 35 בת ים",
+      "gush": "7154",
+      "helka": "304",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 35
+    },
+    {
+      "tik_number": "5657",
+      "address": "הנביאים 36 בת ים",
+      "gush": "7154",
+      "helka": "285",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 36
+    },
+    {
+      "tik_number": "5627",
+      "address": "הנביאים 37 בת ים",
+      "gush": "7154",
+      "helka": "305",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 37
+    },
+    {
+      "tik_number": "5640",
+      "address": "הנביאים 38 בת ים",
+      "gush": "7154",
+      "helka": "286",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 38
+    },
+    {
+      "tik_number": "5617",
+      "address": "הנביאים 39 בת ים",
+      "gush": "7154",
+      "helka": "307",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 39
+    },
+    {
+      "tik_number": "5647",
+      "address": "הנביאים 39 בת ים",
+      "gush": "7154",
+      "helka": "306",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 39
+    },
+    {
+      "tik_number": "5650",
+      "address": "הנביאים 40 בת ים",
+      "gush": "7154",
+      "helka": "287",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 40
+    },
+    {
+      "tik_number": "5691",
+      "address": "הנביאים 41 בת ים",
+      "gush": "7154",
+      "helka": "308",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 41
+    },
+    {
+      "tik_number": "5649",
+      "address": "הנביאים 42 בת ים",
+      "gush": "7154",
+      "helka": "288",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 42
+    },
+    {
+      "tik_number": "1400",
+      "address": "הנביאים 43 בת ים",
+      "gush": "7120",
+      "helka": "54",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 43
+    },
+    {
+      "tik_number": "1401",
+      "address": "הנביאים 45 בת ים",
+      "gush": "7120",
+      "helka": "57",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 45
+    },
+    {
+      "tik_number": "5573",
+      "address": "הנביאים 46 בת ים",
+      "gush": "",
+      "helka": "",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 46
+    },
+    {
+      "tik_number": "1410",
+      "address": "הנביאים 47 בת ים",
+      "gush": "7120",
+      "helka": "66",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 47
+    },
+    {
+      "tik_number": "5613",
+      "address": "הנביאים 48 בת ים",
+      "gush": "7154",
+      "helka": "291",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 48
+    },
+    {
+      "tik_number": "923",
+      "address": "הנביאים 49 בת ים",
+      "gush": "7120",
+      "helka": "66",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 49
+    },
+    {
+      "tik_number": "5604",
+      "address": "הנביאים 50 בת ים",
+      "gush": "7154",
+      "helka": "292",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 50
+    },
+    {
+      "tik_number": "977",
+      "address": "הנביאים 51 בת ים",
+      "gush": "7120",
+      "helka": "71",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 51
+    },
+    {
+      "tik_number": "5624",
+      "address": "עירית בת ים",
+      "gush": "7154",
+      "helka": "293",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 52
+    },
+    {
+      "tik_number": "928",
+      "address": "הנביאים 53 בת ים",
+      "gush": "7120",
+      "helka": "60",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 53
+    },
+    {
+      "tik_number": "958",
+      "address": "הנביאים 54 בת ים",
+      "gush": "7120",
+      "helka": "154",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 54
+    },
+    {
+      "tik_number": "915",
+      "address": "הנביאים 55 בת ים",
+      "gush": "7120",
+      "helka": "75",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 55
+    },
+    {
+      "tik_number": "953",
+      "address": "הנביאים 56 בת ים",
+      "gush": "7120",
+      "helka": "158",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 56
+    },
+    {
+      "tik_number": "1408",
+      "address": "הנביאים 57 בת ים",
+      "gush": "7120",
+      "helka": "84",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 57
+    },
+    {
+      "tik_number": "960",
+      "address": "הנביאים 58 בת ים",
+      "gush": "7120",
+      "helka": "155",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 58
+    },
+    {
+      "tik_number": "920",
+      "address": "הנביאים 59 בת ים",
+      "gush": "7120",
+      "helka": "83",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 59
+    },
+    {
+      "tik_number": "966",
+      "address": "הנביאים 60 בת ים",
+      "gush": "7120",
+      "helka": "155",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 60
+    },
+    {
+      "tik_number": "970",
+      "address": "הנביאים 60 בת ים",
+      "gush": "7120",
+      "helka": "159",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 60
+    },
+    {
+      "tik_number": "933",
+      "address": "הנביאים 61 בת ים",
+      "gush": "7120",
+      "helka": "82",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 61
+    },
+    {
+      "tik_number": "971",
+      "address": "הנביאים 62 בת ים",
+      "gush": "7120",
+      "helka": "155",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 62
+    },
+    {
+      "tik_number": "955",
+      "address": "עירית בת ים",
+      "gush": "7120",
+      "helka": "159",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 62
+    },
+    {
+      "tik_number": "980",
+      "address": "הנביאים 62 בת ים",
+      "gush": "7120",
+      "helka": "159",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 62
+    },
+    {
+      "tik_number": "932",
+      "address": "הנביאים 63 בת ים",
+      "gush": "7120",
+      "helka": "81",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 63
+    },
+    {
+      "tik_number": "931",
+      "address": "הנביאים 65 בת ים",
+      "gush": "7120",
+      "helka": "130",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 65
+    },
+    {
+      "tik_number": "9261",
+      "address": "הנביאים 67 בת ים",
+      "gush": "7120",
+      "helka": "126",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 67
+    },
+    {
+      "tik_number": "949",
+      "address": "הנביאים 71 בת ים",
+      "gush": "7120",
+      "helka": "127",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 71
+    },
+    {
+      "tik_number": "938",
+      "address": "הנביאים 73 בת ים",
+      "gush": "7120",
+      "helka": "102",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 73
+    },
+    {
+      "tik_number": "944",
+      "address": "הנביאים 75 בת ים",
+      "gush": "7120",
+      "helka": "103",
+      "migrash": "",
+      "street_code": 304,
+      "street_name": "הנביאים",
+      "house_number": 75
     }
   ]
 }

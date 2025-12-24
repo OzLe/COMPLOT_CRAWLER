@@ -5,9 +5,12 @@ A unified crawler for Israeli municipality building permit systems powered by th
 ## Features
 
 - **Multi-city support** - Pre-configured for 6 Israeli municipalities
+- **Two API types** - Supports both "tikim" (building files) and "bakashot" (requests) systems
+- **ID authentication** - Optional Israeli ID authentication for bakashot systems
 - **Smart street discovery** - Automatically finds all valid street codes by brute-force testing
 - **Parallel fetching** - Async HTTP requests with configurable concurrency (20 concurrent requests)
 - **Resume capability** - Checkpoint system to resume interrupted crawls
+- **Logging** - Timestamped console and file logging with verbose mode
 - **Multiple output formats** - JSON and CSV exports
 - **URL auto-detection** - Pass a Complot URL to auto-configure city settings
 
@@ -51,7 +54,37 @@ python main.py batyam --force
 
 # Specify custom output directory
 python main.py beersheva --output-dir ./my_data
+
+# Enable verbose logging (debug level)
+python main.py batyam -v
 ```
+
+### Command Line Options
+
+| Option | Description |
+|--------|-------------|
+| `city` | City name or Complot URL to crawl |
+| `--list-cities` | List all available cities and exit |
+| `--streets-only` | Only discover streets, skip building records |
+| `--skip-details` | Skip detailed info fetch (faster, basic records only) |
+| `--force` | Force re-fetch even if cached data exists |
+| `--output-dir DIR` | Output directory (default: `data/`) |
+| `-v, --verbose` | Enable verbose logging (debug level) |
+| `--id ID` | Israeli ID number for bakashot authentication |
+
+### Authenticated Fetching (Bakashot Systems)
+
+Some cities (like Bat Yam) use the "bakashot" (requests) system which requires Israeli ID authentication to fetch permit details. Use the `--id` option:
+
+```bash
+# Fetch permits with ID authentication
+python main.py batyam --id 123456789
+
+# With verbose logging to see authentication status
+python main.py batyam --id 123456789 -v
+```
+
+**Note:** Without `--id`, bakashot cities will only return basic building data (addresses, gush/helka) without detailed permit information.
 
 ### Using a URL
 
@@ -65,14 +98,21 @@ The crawler will auto-detect the city configuration from the URL.
 
 ## Supported Cities
 
-| City | Hebrew | Site ID | Complot URL |
-|------|--------|---------|-------------|
-| ofaqim | אופקים | 67 | ofaqim.complot.co.il |
-| batyam | בת ים | 81 | batyam.complot.co.il |
-| ashkelon | אשקלון | 66 | ashkelon.complot.co.il |
-| beersheva | באר שבע | 68 | br7.complot.co.il |
-| rehovot | רחובות | 80 | rechovot.complot.co.il |
-| modiin | מודיעין | 75 | modiin.complot.co.il |
+| City | Hebrew | Site ID | Complot URL | API Type |
+|------|--------|---------|-------------|----------|
+| ofaqim | אופקים | 67 | ofaqim.complot.co.il | tikim |
+| batyam | בת ים | 81 | batyam.complot.co.il | bakashot* |
+| ashkelon | אשקלון | 66 | ashkelon.complot.co.il | tikim |
+| beersheva | באר שבע | 68 | br7.complot.co.il | tikim |
+| rehovot | רחובות | 80 | rechovot.complot.co.il | tikim |
+| modiin | מודיעין | 75 | modiin.complot.co.il | tikim |
+
+*\*bakashot cities require `--id` for full permit details*
+
+### API Types Explained
+
+- **tikim** (תיקים) - Building files system. Permit details are publicly accessible via `GetTikFile` API.
+- **bakashot** (בקשות) - Requests system. Permit details require Israeli ID authentication via `GetBakashaFile` API.
 
 ## Project Structure
 
@@ -84,9 +124,8 @@ crawltest/
 │
 ├── src/                    # Main source code
 │   ├── __init__.py
-│   ├── city_config.py      # City configurations
-│   ├── complot_crawler.py  # Main crawler logic
-│   └── fetch_building_details.py
+│   ├── city_config.py      # City configurations and URL parsing
+│   └── complot_crawler.py  # Main crawler logic
 │
 ├── data/                   # Output data (by city)
 │   ├── batyam/
@@ -94,17 +133,24 @@ crawltest/
 │   │   ├── building_records.json
 │   │   ├── building_details.json
 │   │   ├── buildings.csv
-│   │   └── permits.csv
+│   │   ├── permits.csv
+│   │   └── crawler.log
 │   └── ofaqim/
 │       └── ...
 │
 └── scripts/                # Utility & debug scripts
     ├── analyze_building_detail.py
     ├── analyze_city_api.py
-    └── ...
+    ├── analyze_page.py
+    ├── api_crawler.py
+    ├── crawler.py
+    ├── debug_crawl.py
+    ├── debug_street.py
+    ├── discover_streets.py
+    └── full_city_crawler.py
 ```
 
-## Output Format
+## Output Files
 
 ### streets.json
 Discovered streets for the city:
@@ -189,8 +235,20 @@ Detailed building information including permits:
 ```
 
 ### CSV Files
-- `buildings.csv` - Summary of all buildings
-- `permits.csv` - All permit requests with details
+- `buildings.csv` - Summary of all buildings (tik_number, address, neighborhood, num_requests, num_plans)
+- `permits.csv` - All permit requests with details (tik_number, address, request_number, dates, applicant, permit info)
+
+### crawler.log
+Timestamped log file with all crawler activity:
+```
+2025-12-24 10:12:00 | INFO     | Logging initialized. Log file: data/batyam/crawler.log
+2025-12-24 10:12:00 | INFO     | ############################################################
+2025-12-24 10:12:00 | INFO     | COMPLOT CRAWLER - בת ים (batyam)
+2025-12-24 10:12:00 | INFO     | ############################################################
+2025-12-24 10:12:00 | INFO     | Site ID: 81
+2025-12-24 10:12:00 | INFO     | City Code: 6200
+2025-12-24 10:12:00 | INFO     | API Type: bakashot
+```
 
 ## Adding New Cities
 
@@ -229,13 +287,26 @@ Checkpoints are saved every 100 records (details) or 10 streets (records) to all
 
 The crawler uses the Complot API at `handasi.complot.co.il`:
 
-| Endpoint | Description |
-|----------|-------------|
-| `GetTikimByAddress` | Search building files by address (tikim API) |
-| `GetBakashotByAddress` | Search permit requests by address (bakashot API) |
-| `GetTikFile` | Get detailed building file info |
+| Endpoint | Description | Auth Required |
+|----------|-------------|---------------|
+| `GetTikimByAddress` | Search building files by address (tikim API) | No |
+| `GetBakashotByAddress` | Search permit requests by address (bakashot API) | No |
+| `GetTikFile` | Get detailed building file info | No |
+| `GetBakashaFile` | Get detailed request info | Yes (Israeli ID) |
 
 **Note:** Streets are discovered by brute-force testing street codes (1-2000) rather than using a streets API.
+
+## Logging
+
+The crawler automatically creates logs in the city's output directory:
+
+- **Console**: INFO level by default, DEBUG with `-v` flag
+- **File**: Always DEBUG level, saved to `data/<city>/crawler.log`
+
+Log format:
+```
+YYYY-MM-DD HH:MM:SS | LEVEL    | Message
+```
 
 ## License
 

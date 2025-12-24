@@ -16,6 +16,7 @@ import argparse
 import asyncio
 import csv
 import json
+import logging
 import re
 import sys
 import time
@@ -36,6 +37,39 @@ REQUEST_TIMEOUT = 30
 MAX_RETRIES = 3
 RETRY_DELAY = 2
 SAVE_INTERVAL = 100
+
+# Logger setup
+logger = logging.getLogger("complot_crawler")
+
+
+def setup_logging(output_dir: Path, verbose: bool = False):
+    """Configure logging with console and file handlers"""
+    log_level = logging.DEBUG if verbose else logging.INFO
+
+    # Create formatter with timestamp
+    formatter = logging.Formatter(
+        '%(asctime)s | %(levelname)-8s | %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+
+    # Console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(log_level)
+    console_handler.setFormatter(formatter)
+
+    # File handler
+    log_file = output_dir / "crawler.log"
+    file_handler = logging.FileHandler(log_file, encoding='utf-8')
+    file_handler.setLevel(logging.DEBUG)  # Always log debug to file
+    file_handler.setFormatter(formatter)
+
+    # Configure logger
+    logger.setLevel(logging.DEBUG)
+    logger.handlers.clear()  # Remove existing handlers
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+
+    logger.info(f"Logging initialized. Log file: {log_file}")
 
 
 @dataclass
@@ -71,8 +105,9 @@ class BuildingDetail:
 class ComplotCrawler:
     """Unified crawler for Complot building permit systems"""
 
-    def __init__(self, config: CityConfig, output_dir: str = "data"):
+    def __init__(self, config: CityConfig, output_dir: str = "data", israeli_id: Optional[str] = None):
         self.config = config
+        self.israeli_id = israeli_id
         # Create city-specific subdirectory
         self.output_dir = Path(output_dir) / config.name_en
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -164,22 +199,22 @@ class ComplotCrawler:
     async def discover_streets(self, force: bool = False) -> list[dict]:
         """Discover all valid street codes for the city"""
         if self.streets_file.exists() and not force:
-            print(f"Loading cached streets from {self.streets_file}")
+            logger.info(f"Loading cached streets from {self.streets_file}")
             with open(self.streets_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 return data.get('streets', [])
 
-        print(f"\n{'='*60}")
-        print(f"DISCOVERING STREETS FOR {self.config.name} ({self.config.name_en})")
-        print(f"{'='*60}")
-        print(f"Site ID: {self.config.site_id}")
-        print(f"City Code: {self.config.city_code}")
-        print(f"Street range: {self.config.street_range[0]} - {self.config.street_range[1]}")
-        print(f"{'='*60}\n")
+        logger.info("=" * 60)
+        logger.info(f"DISCOVERING STREETS FOR {self.config.name} ({self.config.name_en})")
+        logger.info("=" * 60)
+        logger.info(f"Site ID: {self.config.site_id}")
+        logger.info(f"City Code: {self.config.city_code}")
+        logger.info(f"Street range: {self.config.street_range[0]} - {self.config.street_range[1]}")
 
         semaphore = asyncio.Semaphore(MAX_CONCURRENT)
         streets = []
         start, end = self.config.street_range
+        start_time = time.time()
 
         connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
         async with aiohttp.ClientSession(connector=connector) as session:
@@ -196,10 +231,12 @@ class ComplotCrawler:
                 for result in results:
                     if isinstance(result, dict) and result:
                         streets.append(result)
-                        print(f"  Found street {result['code']}: {result['name']}")
+                        logger.debug(f"Found street {result['code']}: {result['name']}")
 
                 progress = min(i + batch_size, len(tasks))
-                print(f"Progress: {progress}/{len(tasks)} codes tested ({len(streets)} streets found)")
+                elapsed = time.time() - start_time
+                rate = progress / elapsed if elapsed > 0 else 0
+                logger.info(f"Streets: {progress}/{len(tasks)} tested ({len(streets)} found) | Rate: {rate:.1f}/sec")
 
         # Save streets
         output = {
@@ -215,7 +252,7 @@ class ComplotCrawler:
         with open(self.streets_file, 'w', encoding='utf-8') as f:
             json.dump(output, f, ensure_ascii=False, indent=2)
 
-        print(f"\nDiscovered {len(streets)} streets. Saved to {self.streets_file}")
+        logger.info(f"Discovered {len(streets)} streets. Saved to {self.streets_file}")
         return streets
 
     async def _fetch_records_for_street(
@@ -345,16 +382,15 @@ class ComplotCrawler:
     async def fetch_building_records(self, streets: list[dict], force: bool = False) -> list[BuildingRecord]:
         """Fetch all building records for all streets"""
         if self.records_file.exists() and not force:
-            print(f"Loading cached records from {self.records_file}")
+            logger.info(f"Loading cached records from {self.records_file}")
             with open(self.records_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 return [BuildingRecord(**r) for r in data.get('records', [])]
 
-        print(f"\n{'='*60}")
-        print(f"FETCHING BUILDING RECORDS FOR {self.config.name}")
-        print(f"{'='*60}")
-        print(f"Total streets: {len(streets)}")
-        print(f"{'='*60}\n")
+        logger.info("=" * 60)
+        logger.info(f"FETCHING BUILDING RECORDS FOR {self.config.name}")
+        logger.info("=" * 60)
+        logger.info(f"Total streets: {len(streets)}")
 
         all_records = []
         seen_tiks = set()
@@ -367,16 +403,20 @@ class ComplotCrawler:
                 records = await self._fetch_records_for_street(session, semaphore, street)
 
                 # Deduplicate
+                new_records = 0
                 for r in records:
                     if r.tik_number not in seen_tiks:
                         seen_tiks.add(r.tik_number)
                         all_records.append(r)
+                        new_records += 1
 
                 elapsed = time.time() - start_time
-                print(f"Street {i+1}/{len(streets)}: {street['name']} - {len(records)} records ({len(all_records)} total)")
+                rate = len(all_records) / elapsed if elapsed > 0 else 0
+                logger.info(f"Street {i+1}/{len(streets)}: {street['name']} | +{new_records} new | Total: {len(all_records)} | Rate: {rate:.1f}/sec")
 
                 # Save checkpoint every 10 streets
                 if (i + 1) % 10 == 0:
+                    logger.debug(f"Saving checkpoint at street {i+1}")
                     self._save_records_checkpoint(all_records)
 
         # Save final records
@@ -391,7 +431,7 @@ class ComplotCrawler:
         with open(self.records_file, 'w', encoding='utf-8') as f:
             json.dump(output, f, ensure_ascii=False, indent=2)
 
-        print(f"\nFetched {len(all_records)} unique building records. Saved to {self.records_file}")
+        logger.info(f"Fetched {len(all_records)} unique building records. Saved to {self.records_file}")
         return all_records
 
     def _save_records_checkpoint(self, records: list[BuildingRecord]):
@@ -410,6 +450,13 @@ class ComplotCrawler:
         soup = BeautifulSoup(html, 'html.parser')
         detail = BuildingDetail(tik_number=tik_number)
         detail.fetched_at = datetime.now().isoformat()
+
+        # Check for error responses
+        text = soup.get_text()
+        if 'לא ניתן להציג את המידע המבוקש' in text or 'לא אותרו תוצאות' in text:
+            detail.fetch_status = "error"
+            detail.fetch_error = "No data available"
+            return detail
 
         # Extract address from header
         header_divs = soup.select('#result-title-div-id .top-navbar-info-desc')
@@ -487,6 +534,170 @@ class ComplotCrawler:
         detail.fetch_status = "success"
         return detail
 
+    def _parse_bakasha_detail(self, html: str, tik_number: str) -> BuildingDetail:
+        """Parse bakasha (request) detail HTML response"""
+        soup = BeautifulSoup(html, 'html.parser')
+        detail = BuildingDetail(tik_number=tik_number)
+        detail.fetched_at = datetime.now().isoformat()
+
+        # Check for error responses
+        text = soup.get_text()
+        if 'לא ניתן להציג את המידע המבוקש' in text or 'לא אותרו תוצאות' in text:
+            detail.fetch_status = "error"
+            detail.fetch_error = "No data available"
+            return detail
+
+        if 'מספר תעודת הזהות' in text or 'אנא הזינו' in text:
+            detail.fetch_status = "error"
+            detail.fetch_error = "Authentication required"
+            return detail
+
+        # Extract address from header (similar structure to tikim)
+        header_divs = soup.select('#result-title-div-id .top-navbar-info-desc')
+        for i, div in enumerate(header_divs):
+            if 'כתובת' in div.get_text():
+                if i + 1 < len(header_divs):
+                    detail.address = header_divs[i + 1].get_text(strip=True)
+
+        # Try alternate address location
+        if not detail.address:
+            addr_elem = soup.select_one('.address-value, .bakasha-address')
+            if addr_elem:
+                detail.address = addr_elem.get_text(strip=True)
+
+        # Extract from info tables
+        info_tables = soup.select('table')
+        for table in info_tables:
+            for row in table.select('tr'):
+                cells = row.select('td, th')
+                if len(cells) >= 2:
+                    label = cells[0].get_text(strip=True)
+                    value = cells[1].get_text(strip=True)
+
+                    if 'כתובת' in label and not detail.address:
+                        detail.address = value
+                    elif 'שכונה' in label:
+                        detail.neighborhood = value
+
+        # Extract request/permit info
+        # Look for request details table
+        requests_table = soup.select_one('#table-requests, .requests-table, #bakashot-table')
+        if requests_table:
+            for row in requests_table.select('tbody tr'):
+                cells = row.select('td')
+                if len(cells) >= 6:
+                    request_info = {
+                        'request_number': cells[0].get_text(strip=True) if len(cells) > 0 else '',
+                        'submission_date': cells[1].get_text(strip=True) if len(cells) > 1 else '',
+                        'last_event': cells[2].get_text(strip=True) if len(cells) > 2 else '',
+                        'applicant_name': cells[3].get_text(strip=True) if len(cells) > 3 else '',
+                        'permit_number': cells[4].get_text(strip=True) if len(cells) > 4 else '',
+                        'permit_date': cells[5].get_text(strip=True) if len(cells) > 5 else ''
+                    }
+                    if request_info['request_number']:
+                        detail.requests.append(request_info)
+
+        # If no table found, try to extract single request info from the page
+        if not detail.requests:
+            # Look for individual fields
+            request_info = {}
+            for table in info_tables:
+                for row in table.select('tr'):
+                    cells = row.select('td')
+                    if len(cells) >= 2:
+                        label = cells[0].get_text(strip=True)
+                        value = cells[1].get_text(strip=True)
+
+                        if 'מספר בקשה' in label or 'מס בקשה' in label:
+                            request_info['request_number'] = value
+                        elif 'תאריך הגשה' in label:
+                            request_info['submission_date'] = value
+                        elif 'סטטוס' in label or 'אירוע אחרון' in label:
+                            request_info['last_event'] = value
+                        elif 'מבקש' in label or 'שם מגיש' in label:
+                            request_info['applicant_name'] = value
+                        elif 'מספר היתר' in label:
+                            request_info['permit_number'] = value
+                        elif 'תאריך היתר' in label:
+                            request_info['permit_date'] = value
+
+            if request_info.get('request_number'):
+                detail.requests.append({
+                    'request_number': request_info.get('request_number', ''),
+                    'submission_date': request_info.get('submission_date', ''),
+                    'last_event': request_info.get('last_event', ''),
+                    'applicant_name': request_info.get('applicant_name', ''),
+                    'permit_number': request_info.get('permit_number', ''),
+                    'permit_date': request_info.get('permit_date', '')
+                })
+
+        # Extract gush/helka if available
+        gush_table = soup.select_one('#table-gushim-helkot, .gush-table')
+        if gush_table:
+            for row in gush_table.select('tbody tr'):
+                cells = row.select('td')
+                if len(cells) >= 3:
+                    gush_info = {
+                        'gush': cells[0].get_text(strip=True) if len(cells) > 0 else '',
+                        'helka': cells[1].get_text(strip=True) if len(cells) > 1 else '',
+                        'migrash': cells[2].get_text(strip=True) if len(cells) > 2 else '',
+                        'plan_number': cells[3].get_text(strip=True) if len(cells) > 3 else ''
+                    }
+                    if gush_info['gush']:
+                        detail.gush_helka.append(gush_info)
+
+        detail.fetch_status = "success"
+        return detail
+
+    async def _fetch_single_bakasha_detail(
+        self,
+        session: aiohttp.ClientSession,
+        semaphore: asyncio.Semaphore,
+        request_number: str,
+        israeli_id: str,
+        retry: int = 0
+    ) -> BuildingDetail:
+        """Fetch details for a single bakasha (request) with ID authentication"""
+        async with semaphore:
+            url = self._build_url(
+                "GetBakashaFile",
+                siteid=self.config.site_id,
+                ession=request_number,
+                ession2=israeli_id,
+                arguments="siteid,ession,ession2"
+            )
+
+            headers = {
+                "Referer": self.config.base_url,
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+            }
+
+            try:
+                async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
+                    if resp.status == 200:
+                        html = await resp.text()
+                        return self._parse_bakasha_detail(html, request_number)
+                    else:
+                        detail = BuildingDetail(tik_number=request_number)
+                        detail.fetch_status = "error"
+                        detail.fetch_error = f"HTTP {resp.status}"
+                        return detail
+
+            except asyncio.TimeoutError:
+                if retry < MAX_RETRIES:
+                    await asyncio.sleep(RETRY_DELAY * (2 ** retry))
+                    return await self._fetch_single_bakasha_detail(session, semaphore, request_number, israeli_id, retry + 1)
+                detail = BuildingDetail(tik_number=request_number)
+                detail.fetch_status = "error"
+                detail.fetch_error = "Timeout"
+                return detail
+
+            except Exception as e:
+                detail = BuildingDetail(tik_number=request_number)
+                detail.fetch_status = "error"
+                detail.fetch_error = str(e)
+                return detail
+
     async def _fetch_single_detail(
         self,
         session: aiohttp.ClientSession,
@@ -503,8 +714,14 @@ class ComplotCrawler:
                 arguments="siteid,t"
             )
 
+            # Add referer header for the request
+            headers = {
+                "Referer": self.config.base_url,
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
+            }
+
             try:
-                async with session.get(url, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
+                async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
                     if resp.status == 200:
                         html = await resp.text()
                         return self._parse_building_detail(html, tik_number)
@@ -531,6 +748,35 @@ class ComplotCrawler:
 
     async def fetch_building_details(self, records: list[BuildingRecord], resume: bool = True) -> list[BuildingDetail]:
         """Fetch detailed information for all building records"""
+
+        # For bakashot systems, detailed info requires authentication
+        if self.config.api_type == "bakashot":
+            if not self.israeli_id:
+                logger.warning("Bakashot API requires ID authentication for permit details")
+                logger.warning("Use --id <israeli_id> to fetch full permit information")
+                logger.info("Using building records data for basic details")
+                details = []
+                for r in records:
+                    detail = BuildingDetail(
+                        tik_number=r.tik_number,
+                        address=r.address,
+                        addresses=[r.address] if r.address else [],
+                        gush_helka=[{
+                            'gush': r.gush,
+                            'helka': r.helka,
+                            'migrash': r.migrash,
+                            'plan_number': ''
+                        }] if r.gush else [],
+                        fetch_status="from_records",
+                        fetched_at=datetime.now().isoformat()
+                    )
+                    details.append(detail)
+                return details
+            else:
+                # Use authenticated bakasha API
+                logger.info("Using authenticated bakashot API with provided ID")
+                return await self._fetch_bakasha_details_authenticated(records, resume)
+
         tik_numbers = list(set(r.tik_number for r in records))
 
         # Load checkpoint if resuming
@@ -541,25 +787,27 @@ class ComplotCrawler:
                     data = json.load(f)
                     if 'details' in data:
                         completed = {d['tik_number']: BuildingDetail(**d) for d in data['details']}
-            except Exception:
-                pass
+                        logger.info(f"Loaded {len(completed)} records from checkpoint")
+            except Exception as e:
+                logger.warning(f"Failed to load checkpoint: {e}")
 
         remaining = [t for t in tik_numbers if t not in completed]
 
-        print(f"\n{'='*60}")
-        print(f"FETCHING BUILDING DETAILS FOR {self.config.name}")
-        print(f"{'='*60}")
-        print(f"Total tiks: {len(tik_numbers)}")
-        print(f"Already completed: {len(completed)}")
-        print(f"Remaining: {len(remaining)}")
-        print(f"{'='*60}\n")
+        logger.info("=" * 60)
+        logger.info(f"FETCHING BUILDING DETAILS FOR {self.config.name}")
+        logger.info("=" * 60)
+        logger.info(f"Total tiks: {len(tik_numbers)}")
+        logger.info(f"Already completed: {len(completed)}")
+        logger.info(f"Remaining: {len(remaining)}")
 
         if not remaining:
-            print("All details already fetched!")
+            logger.info("All details already fetched!")
             return list(completed.values())
 
         semaphore = asyncio.Semaphore(MAX_CONCURRENT)
         start_time = time.time()
+        total_success = 0
+        total_errors = 0
 
         connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
         async with aiohttp.ClientSession(connector=connector) as session:
@@ -567,6 +815,8 @@ class ComplotCrawler:
 
             for batch_idx in range(0, len(remaining), batch_size):
                 batch = remaining[batch_idx:batch_idx + batch_size]
+                batch_start = time.time()
+
                 tasks = [self._fetch_single_detail(session, semaphore, tik) for tik in batch]
                 results = await asyncio.gather(*tasks)
 
@@ -575,16 +825,29 @@ class ComplotCrawler:
 
                 processed = batch_idx + len(batch)
                 elapsed = time.time() - start_time
+                batch_elapsed = time.time() - batch_start
                 rate = processed / elapsed if elapsed > 0 else 0
+                batch_rate = len(batch) / batch_elapsed if batch_elapsed > 0 else 0
                 eta = (len(remaining) - processed) / rate if rate > 0 else 0
 
                 success = sum(1 for r in results if r.fetch_status == 'success')
                 errors = sum(1 for r in results if r.fetch_status == 'error')
+                total_success += success
+                total_errors += errors
 
-                print(f"Progress: {processed}/{len(remaining)} ({100*processed/len(remaining):.1f}%) | "
-                      f"Rate: {rate:.1f}/sec | ETA: {eta/60:.1f} min | Batch: {success} ok, {errors} errors")
+                # Log any errors in this batch
+                for r in results:
+                    if r.fetch_status == 'error':
+                        logger.debug(f"Error fetching tik {r.tik_number}: {r.fetch_error}")
+
+                logger.info(
+                    f"Details: {processed}/{len(remaining)} ({100*processed/len(remaining):.1f}%) | "
+                    f"Rate: {rate:.1f}/sec (batch: {batch_rate:.1f}/sec) | "
+                    f"ETA: {eta/60:.1f}min | Batch: {success} ok, {errors} err"
+                )
 
                 # Save checkpoint
+                logger.debug(f"Saving checkpoint with {len(completed)} records")
                 self._save_details_checkpoint(list(completed.values()))
 
         # Save final results
@@ -602,7 +865,103 @@ class ComplotCrawler:
         with open(self.details_file, 'w', encoding='utf-8') as f:
             json.dump(output, f, ensure_ascii=False, indent=2)
 
-        print(f"\nFetched {len(all_details)} building details. Saved to {self.details_file}")
+        logger.info(f"Fetched {len(all_details)} building details ({total_success} ok, {total_errors} errors). Saved to {self.details_file}")
+        return all_details
+
+    async def _fetch_bakasha_details_authenticated(self, records: list[BuildingRecord], resume: bool = True) -> list[BuildingDetail]:
+        """Fetch bakasha details using authenticated API"""
+        tik_numbers = list(set(r.tik_number for r in records))
+
+        # Load checkpoint if resuming
+        completed = {}
+        if resume and self.checkpoint_file.exists():
+            try:
+                with open(self.checkpoint_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    if 'details' in data:
+                        completed = {d['tik_number']: BuildingDetail(**d) for d in data['details']}
+                        logger.info(f"Loaded {len(completed)} records from checkpoint")
+            except Exception as e:
+                logger.warning(f"Failed to load checkpoint: {e}")
+
+        remaining = [t for t in tik_numbers if t not in completed]
+
+        logger.info("=" * 60)
+        logger.info(f"FETCHING BAKASHA DETAILS FOR {self.config.name} (Authenticated)")
+        logger.info("=" * 60)
+        logger.info(f"Total requests: {len(tik_numbers)}")
+        logger.info(f"Already completed: {len(completed)}")
+        logger.info(f"Remaining: {len(remaining)}")
+
+        if not remaining:
+            logger.info("All details already fetched!")
+            return list(completed.values())
+
+        semaphore = asyncio.Semaphore(MAX_CONCURRENT)
+        start_time = time.time()
+        total_success = 0
+        total_errors = 0
+
+        connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
+        async with aiohttp.ClientSession(connector=connector) as session:
+            batch_size = SAVE_INTERVAL
+
+            for batch_idx in range(0, len(remaining), batch_size):
+                batch = remaining[batch_idx:batch_idx + batch_size]
+                batch_start = time.time()
+
+                tasks = [
+                    self._fetch_single_bakasha_detail(session, semaphore, tik, self.israeli_id)
+                    for tik in batch
+                ]
+                results = await asyncio.gather(*tasks)
+
+                for result in results:
+                    completed[result.tik_number] = result
+
+                processed = batch_idx + len(batch)
+                elapsed = time.time() - start_time
+                batch_elapsed = time.time() - batch_start
+                rate = processed / elapsed if elapsed > 0 else 0
+                batch_rate = len(batch) / batch_elapsed if batch_elapsed > 0 else 0
+                eta = (len(remaining) - processed) / rate if rate > 0 else 0
+
+                success = sum(1 for r in results if r.fetch_status == 'success')
+                errors = sum(1 for r in results if r.fetch_status == 'error')
+                total_success += success
+                total_errors += errors
+
+                # Log any errors in this batch
+                for r in results:
+                    if r.fetch_status == 'error':
+                        logger.debug(f"Error fetching request {r.tik_number}: {r.fetch_error}")
+
+                logger.info(
+                    f"Details: {processed}/{len(remaining)} ({100*processed/len(remaining):.1f}%) | "
+                    f"Rate: {rate:.1f}/sec (batch: {batch_rate:.1f}/sec) | "
+                    f"ETA: {eta/60:.1f}min | Batch: {success} ok, {errors} err"
+                )
+
+                # Save checkpoint
+                logger.debug(f"Saving checkpoint with {len(completed)} records")
+                self._save_details_checkpoint(list(completed.values()))
+
+        # Save final results
+        all_details = list(completed.values())
+        output = {
+            "city": self.config.name,
+            "city_en": self.config.name_en,
+            "fetched_at": datetime.now().isoformat(),
+            "total_records": len(all_details),
+            "success_count": sum(1 for d in all_details if d.fetch_status == 'success'),
+            "error_count": sum(1 for d in all_details if d.fetch_status == 'error'),
+            "records": [asdict(d) for d in all_details]
+        }
+
+        with open(self.details_file, 'w', encoding='utf-8') as f:
+            json.dump(output, f, ensure_ascii=False, indent=2)
+
+        logger.info(f"Fetched {len(all_details)} bakasha details ({total_success} ok, {total_errors} errors). Saved to {self.details_file}")
         return all_details
 
     def _save_details_checkpoint(self, details: list[BuildingDetail]):
@@ -642,31 +1001,33 @@ class ComplotCrawler:
                         req['permit_number'], req['permit_date']
                     ])
 
-        print(f"Exported CSV files: {csv_file}, {permits_file}")
+        logger.info(f"Exported CSV files: {csv_file}, {permits_file}")
 
-    async def run_full_crawl(self, streets_only: bool = False, skip_details: bool = False, force: bool = False):
+    async def run_full_crawl(self, streets_only: bool = False, skip_details: bool = False, force: bool = False, verbose: bool = False):
         """Run the complete crawl process"""
-        print(f"\n{'#'*60}")
-        print(f"# COMPLOT CRAWLER - {self.config.name} ({self.config.name_en})")
-        print(f"{'#'*60}")
-        print(f"# Site ID: {self.config.site_id}")
-        print(f"# City Code: {self.config.city_code}")
-        print(f"# API Type: {self.config.api_type}")
-        print(f"# Output Directory: {self.output_dir}")
-        print(f"{'#'*60}\n")
+        # Initialize logging
+        setup_logging(self.output_dir, verbose=verbose)
+
+        logger.info("#" * 60)
+        logger.info(f"COMPLOT CRAWLER - {self.config.name} ({self.config.name_en})")
+        logger.info("#" * 60)
+        logger.info(f"Site ID: {self.config.site_id}")
+        logger.info(f"City Code: {self.config.city_code}")
+        logger.info(f"API Type: {self.config.api_type}")
+        logger.info(f"Output Directory: {self.output_dir}")
 
         # Step 1: Discover streets
         streets = await self.discover_streets(force=force)
 
         if streets_only:
-            print("\nStreets-only mode. Stopping here.")
+            logger.info("Streets-only mode. Stopping here.")
             return
 
         # Step 2: Fetch building records
         records = await self.fetch_building_records(streets, force=force)
 
         if skip_details:
-            print("\nSkipping details fetch.")
+            logger.info("Skipping details fetch.")
             return
 
         # Step 3: Fetch building details
@@ -675,14 +1036,14 @@ class ComplotCrawler:
         # Step 4: Export CSV
         self.export_csv(details)
 
-        print(f"\n{'#'*60}")
-        print(f"# CRAWL COMPLETE")
-        print(f"{'#'*60}")
-        print(f"# City: {self.config.name}")
-        print(f"# Streets: {len(streets)}")
-        print(f"# Building Records: {len(records)}")
-        print(f"# Building Details: {len(details)}")
-        print(f"{'#'*60}\n")
+        logger.info("#" * 60)
+        logger.info("CRAWL COMPLETE")
+        logger.info("#" * 60)
+        logger.info(f"City: {self.config.name}")
+        logger.info(f"Streets: {len(streets)}")
+        logger.info(f"Building Records: {len(records)}")
+        logger.info(f"Building Details: {len(details)}")
+        logger.info("#" * 60)
 
 
 def main():
@@ -704,6 +1065,8 @@ Examples:
     parser.add_argument("--skip-details", action="store_true", help="Skip detailed info fetch")
     parser.add_argument("--force", action="store_true", help="Force re-fetch even if cached")
     parser.add_argument("--output-dir", default="data", help="Output directory (default: data/)")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging (debug level)")
+    parser.add_argument("--id", dest="israeli_id", help="Israeli ID number for bakashot authentication (required for permit details in some cities)")
 
     args = parser.parse_args()
 
@@ -729,11 +1092,12 @@ Examples:
         print("\nUse --list-cities to see available cities")
         return
 
-    crawler = ComplotCrawler(config, args.output_dir)
+    crawler = ComplotCrawler(config, args.output_dir, israeli_id=args.israeli_id)
     asyncio.run(crawler.run_full_crawl(
         streets_only=args.streets_only,
         skip_details=args.skip_details,
-        force=args.force
+        force=args.force,
+        verbose=args.verbose
     ))
 
 
