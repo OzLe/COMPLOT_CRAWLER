@@ -70,12 +70,12 @@ CITIES = {
         api_type="tikim"
     ),
     "modiin": CityConfig(
-        name="מודיעין",
+        name="מודיעין-מכבים-רעות",
         name_en="modiin",
-        site_id=75,
+        site_id=82,
         city_code=1200,
         base_url="https://modiin.complot.co.il/",
-        street_range=(1, 1000),
+        street_range=(1, 2000),
         api_type="tikim"
     ),
 }
