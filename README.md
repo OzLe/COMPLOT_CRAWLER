@@ -6,9 +6,11 @@ A unified crawler for Israeli municipality building permit systems powered by th
 
 - **Multi-city support** - Pre-configured for 6 Israeli municipalities
 - **Two API types** - Supports both "tikim" (building files) and "bakashot" (requests) systems
+- **Multi-process parallelization** - Use `--workers N` to run N parallel processes for faster crawling
+- **Batch crawling** - `crawl_all.py` script to crawl all cities with parallel execution
 - **ID authentication** - Optional Israeli ID authentication for bakashot systems
 - **Smart street discovery** - Automatically finds all valid street codes by brute-force testing
-- **Parallel fetching** - Async HTTP requests with configurable concurrency (20 concurrent requests)
+- **Async HTTP** - Concurrent requests with configurable concurrency (20 concurrent per process)
 - **Resume capability** - Checkpoint system to resume interrupted crawls
 - **Logging** - Timestamped console and file logging with verbose mode
 - **Multiple output formats** - JSON and CSV exports
@@ -43,6 +45,9 @@ python main.py --list-cities
 # Crawl a city (full crawl: streets -> records -> details)
 python main.py batyam
 
+# Use 4 worker processes for faster crawling
+python main.py modiin --workers 4
+
 # Only discover streets
 python main.py ofaqim --streets-only
 
@@ -65,6 +70,7 @@ python main.py batyam -v
 |--------|-------------|
 | `city` | City name or Complot URL to crawl |
 | `--list-cities` | List all available cities and exit |
+| `--workers N` | Number of worker processes for parallel crawling (default: 1) |
 | `--streets-only` | Only discover streets, skip building records |
 | `--skip-details` | Skip detailed info fetch (faster, basic records only) |
 | `--force` | Force re-fetch even if cached data exists |
@@ -96,6 +102,51 @@ python main.py "https://batyam.complot.co.il/iturbakashot/#search/..."
 
 The crawler will auto-detect the city configuration from the URL.
 
+### Crawling All Cities
+
+Use `crawl_all.py` to crawl multiple cities in one command:
+
+```bash
+# List available cities
+python crawl_all.py --list
+
+# Preview what would be crawled (dry run)
+python crawl_all.py --dry-run
+
+# Crawl all cities sequentially with 4 workers per city
+python crawl_all.py --workers 4
+
+# Crawl 2 cities in parallel, 4 workers each
+python crawl_all.py --workers 4 --parallel 2
+
+# Only crawl specific cities
+python crawl_all.py --cities modiin,ofaqim --workers 4
+
+# Exclude specific cities (e.g., batyam needs auth)
+python crawl_all.py --exclude batyam --workers 4
+
+# Fast mode - skip building details
+python crawl_all.py --skip-details --workers 4
+
+# Force re-crawl everything
+python crawl_all.py --force --workers 4 --parallel 2
+```
+
+#### crawl_all.py Options
+
+| Option | Description |
+|--------|-------------|
+| `--workers N` | Workers per city (default: 1) |
+| `--parallel N` | Cities to crawl simultaneously (default: 1) |
+| `--cities a,b,c` | Only crawl specific cities |
+| `--exclude a,b` | Exclude specific cities |
+| `--force` | Force re-crawl (ignore cache) |
+| `--skip-details` | Skip Phase 3 (faster) |
+| `--dry-run` | Preview without running |
+| `--list` | List available cities |
+
+Results are saved to `data/crawl_summary.json`.
+
 ## Supported Cities
 
 | City | Hebrew | Site ID | Complot URL | API Type |
@@ -105,7 +156,7 @@ The crawler will auto-detect the city configuration from the URL.
 | ashkelon | אשקלון | 66 | ashkelon.complot.co.il | tikim |
 | beersheva | באר שבע | 68 | br7.complot.co.il | tikim |
 | rehovot | רחובות | 80 | rechovot.complot.co.il | tikim |
-| modiin | מודיעין | 75 | modiin.complot.co.il | tikim |
+| modiin | מודיעין-מכבים-רעות | 82 | modiin.complot.co.il | tikim |
 
 *\*bakashot cities require `--id` for full permit details*
 
@@ -118,16 +169,18 @@ The crawler will auto-detect the city configuration from the URL.
 
 ```
 crawltest/
-├── main.py                 # Entry point
+├── main.py                 # Single-city entry point
+├── crawl_all.py            # Multi-city batch crawler
 ├── requirements.txt        # Python dependencies
 ├── README.md
 │
 ├── src/                    # Main source code
 │   ├── __init__.py
 │   ├── city_config.py      # City configurations and URL parsing
-│   └── complot_crawler.py  # Main crawler logic
+│   └── complot_crawler.py  # Main crawler logic (with multiprocessing)
 │
 ├── data/                   # Output data (by city)
+│   ├── crawl_summary.json  # Summary from crawl_all.py
 │   ├── batyam/
 │   │   ├── streets.json
 │   │   ├── building_records.json
@@ -273,13 +326,35 @@ To find the site ID and city code:
 
 ## Performance
 
-The crawler uses async HTTP with 20 concurrent connections. Actual speed depends on network conditions and server response times.
+The crawler uses async HTTP with 20 concurrent connections per process. Use `--workers N` to run multiple processes in parallel for faster crawling.
+
+### Single Process (default)
 
 | Operation | Concurrency | Notes |
 |-----------|-------------|-------|
 | Street discovery | 20 | Tests codes in batches of 100 |
 | Building records | 5 | Lower concurrency for full street scans |
 | Building details | 20 | With retry logic (3 retries, exponential backoff) |
+
+### Multi-Process (`--workers N`)
+
+Each worker runs its own async event loop with 20 concurrent connections:
+
+| Workers | Effective Concurrency | Speedup |
+|---------|----------------------|---------|
+| 1 | 20 connections | Baseline |
+| 2 | 40 connections | ~1.8x |
+| 4 | 80 connections | ~3x |
+| 8 | 160 connections | ~4-5x |
+
+**Example:**
+```bash
+# Single process: ~100 seconds for 2000 streets
+python main.py modiin --workers 1 --streets-only
+
+# 4 workers: ~30 seconds for 2000 streets
+python main.py modiin --workers 4 --streets-only
+```
 
 Checkpoints are saved every 100 records (details) or 10 streets (records) to allow resuming interrupted crawls.
 
