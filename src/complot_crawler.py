@@ -644,32 +644,66 @@ class ComplotCrawler:
         logger.info(f"City Code: {self.config.city_code}")
         logger.info(f"Street range: {self.config.street_range[0]} - {self.config.street_range[1]}")
 
-        semaphore = asyncio.Semaphore(MAX_CONCURRENT)
-        streets = []
         start, end = self.config.street_range
         start_time = time.time()
+        streets = []
 
-        connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
-        async with aiohttp.ClientSession(connector=connector) as session:
-            tasks = [
-                self._test_street(session, semaphore, s)
-                for s in range(start, end + 1)
-            ]
+        if self.workers > 1:
+            # Multi-process mode: split range across workers
+            logger.info(f"Using {self.workers} workers for parallel street discovery")
+            total_range = end - start + 1
+            chunk_size = max(1, total_range // self.workers)
 
-            batch_size = 100
-            for i in range(0, len(tasks), batch_size):
-                batch = tasks[i:i + batch_size]
-                results = await asyncio.gather(*batch, return_exceptions=True)
+            # Create ranges for each worker
+            ranges = []
+            for i in range(self.workers):
+                chunk_start = start + i * chunk_size
+                chunk_end = start + (i + 1) * chunk_size - 1 if i < self.workers - 1 else end
+                if chunk_start <= end:
+                    ranges.append((chunk_start, chunk_end))
 
-                for result in results:
-                    if isinstance(result, dict) and result:
-                        streets.append(result)
-                        logger.debug(f"Found street {result['code']}: {result['name']}")
+            # Prepare config dict for workers (must be picklable)
+            config_dict = asdict(self.config)
 
-                progress = min(i + batch_size, len(tasks))
-                elapsed = time.time() - start_time
-                rate = progress / elapsed if elapsed > 0 else 0
-                logger.info(f"Streets: {progress}/{len(tasks)} tested ({len(streets)} found) | Rate: {rate:.1f}/sec")
+            # Prepare worker arguments
+            worker_args = [(config_dict, r[0], r[1], i) for i, r in enumerate(ranges)]
+
+            # Run workers in parallel
+            with multiprocessing.Pool(self.workers) as pool:
+                results = pool.map(_worker_discover_streets, worker_args)
+
+            # Merge results from all workers
+            for result in results:
+                streets.extend(result)
+
+            elapsed = time.time() - start_time
+            logger.info(f"All workers completed in {elapsed:.1f}s. Total streets found: {len(streets)}")
+
+        else:
+            # Single-process mode: original async implementation
+            semaphore = asyncio.Semaphore(MAX_CONCURRENT)
+
+            connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
+            async with aiohttp.ClientSession(connector=connector) as session:
+                tasks = [
+                    self._test_street(session, semaphore, s)
+                    for s in range(start, end + 1)
+                ]
+
+                batch_size = 100
+                for i in range(0, len(tasks), batch_size):
+                    batch = tasks[i:i + batch_size]
+                    results = await asyncio.gather(*batch, return_exceptions=True)
+
+                    for result in results:
+                        if isinstance(result, dict) and result:
+                            streets.append(result)
+                            logger.debug(f"Found street {result['code']}: {result['name']}")
+
+                    progress = min(i + batch_size, len(tasks))
+                    elapsed = time.time() - start_time
+                    rate = progress / elapsed if elapsed > 0 else 0
+                    logger.info(f"Streets: {progress}/{len(tasks)} tested ({len(streets)} found) | Rate: {rate:.1f}/sec")
 
         # Save streets
         output = {
@@ -827,30 +861,65 @@ class ComplotCrawler:
 
         all_records = []
         seen_tiks = set()
-        semaphore = asyncio.Semaphore(5)  # Lower concurrency for full street scans
         start_time = time.time()
 
-        connector = aiohttp.TCPConnector(limit=20)
-        async with aiohttp.ClientSession(connector=connector) as session:
-            for i, street in enumerate(streets):
-                records = await self._fetch_records_for_street(session, semaphore, street)
+        if self.workers > 1 and len(streets) > 1:
+            # Multi-process mode: split streets across workers
+            logger.info(f"Using {self.workers} workers for parallel records fetching")
 
-                # Deduplicate
-                new_records = 0
-                for r in records:
-                    if r.tik_number not in seen_tiks:
-                        seen_tiks.add(r.tik_number)
-                        all_records.append(r)
-                        new_records += 1
+            # Split streets into chunks for each worker
+            chunk_size = max(1, len(streets) // self.workers)
+            street_chunks = []
+            for i in range(0, len(streets), chunk_size):
+                chunk = streets[i:i + chunk_size]
+                if chunk:
+                    street_chunks.append(chunk)
 
-                elapsed = time.time() - start_time
-                rate = len(all_records) / elapsed if elapsed > 0 else 0
-                logger.info(f"Street {i+1}/{len(streets)}: {street['name']} | +{new_records} new | Total: {len(all_records)} | Rate: {rate:.1f}/sec")
+            # Prepare config dict for workers
+            config_dict = asdict(self.config)
 
-                # Save checkpoint every 10 streets
-                if (i + 1) % 10 == 0:
-                    logger.debug(f"Saving checkpoint at street {i+1}")
-                    self._save_records_checkpoint(all_records)
+            # Prepare worker arguments
+            worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(street_chunks)]
+
+            # Run workers in parallel
+            with multiprocessing.Pool(self.workers) as pool:
+                results = pool.map(_worker_fetch_records, worker_args)
+
+            # Merge and deduplicate results from all workers
+            for result in results:
+                for r in result:
+                    if r['tik_number'] not in seen_tiks:
+                        seen_tiks.add(r['tik_number'])
+                        all_records.append(BuildingRecord(**r))
+
+            elapsed = time.time() - start_time
+            logger.info(f"All workers completed in {elapsed:.1f}s. Total records found: {len(all_records)}")
+
+        else:
+            # Single-process mode: original async implementation
+            semaphore = asyncio.Semaphore(5)  # Lower concurrency for full street scans
+
+            connector = aiohttp.TCPConnector(limit=20)
+            async with aiohttp.ClientSession(connector=connector) as session:
+                for i, street in enumerate(streets):
+                    records = await self._fetch_records_for_street(session, semaphore, street)
+
+                    # Deduplicate
+                    new_records = 0
+                    for r in records:
+                        if r.tik_number not in seen_tiks:
+                            seen_tiks.add(r.tik_number)
+                            all_records.append(r)
+                            new_records += 1
+
+                    elapsed = time.time() - start_time
+                    rate = len(all_records) / elapsed if elapsed > 0 else 0
+                    logger.info(f"Street {i+1}/{len(streets)}: {street['name']} | +{new_records} new | Total: {len(all_records)} | Rate: {rate:.1f}/sec")
+
+                    # Save checkpoint every 10 streets
+                    if (i + 1) % 10 == 0:
+                        logger.debug(f"Saving checkpoint at street {i+1}")
+                        self._save_records_checkpoint(all_records)
 
         # Save final records
         output = {
@@ -1237,51 +1306,89 @@ class ComplotCrawler:
             logger.info("All details already fetched!")
             return list(completed.values())
 
-        semaphore = asyncio.Semaphore(MAX_CONCURRENT)
         start_time = time.time()
         total_success = 0
         total_errors = 0
 
-        connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
-        async with aiohttp.ClientSession(connector=connector) as session:
-            batch_size = SAVE_INTERVAL
+        if self.workers > 1 and len(remaining) > 1:
+            # Multi-process mode: split tik numbers across workers
+            logger.info(f"Using {self.workers} workers for parallel details fetching")
 
-            for batch_idx in range(0, len(remaining), batch_size):
-                batch = remaining[batch_idx:batch_idx + batch_size]
-                batch_start = time.time()
+            # Split tik numbers into chunks for each worker
+            chunk_size = max(1, len(remaining) // self.workers)
+            tik_chunks = []
+            for i in range(0, len(remaining), chunk_size):
+                chunk = remaining[i:i + chunk_size]
+                if chunk:
+                    tik_chunks.append(chunk)
 
-                tasks = [self._fetch_single_detail(session, semaphore, tik) for tik in batch]
-                results = await asyncio.gather(*tasks)
+            # Prepare config dict for workers
+            config_dict = asdict(self.config)
 
-                for result in results:
-                    completed[result.tik_number] = result
+            # Prepare worker arguments
+            worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(tik_chunks)]
 
-                processed = batch_idx + len(batch)
-                elapsed = time.time() - start_time
-                batch_elapsed = time.time() - batch_start
-                rate = processed / elapsed if elapsed > 0 else 0
-                batch_rate = len(batch) / batch_elapsed if batch_elapsed > 0 else 0
-                eta = (len(remaining) - processed) / rate if rate > 0 else 0
+            # Run workers in parallel
+            with multiprocessing.Pool(self.workers) as pool:
+                results = pool.map(_worker_fetch_details, worker_args)
 
-                success = sum(1 for r in results if r.fetch_status == 'success')
-                errors = sum(1 for r in results if r.fetch_status == 'error')
-                total_success += success
-                total_errors += errors
+            # Merge results from all workers
+            for result in results:
+                for d in result:
+                    detail = BuildingDetail(**d)
+                    completed[d['tik_number']] = detail
+                    if d['fetch_status'] == 'success':
+                        total_success += 1
+                    else:
+                        total_errors += 1
 
-                # Log any errors in this batch
-                for r in results:
-                    if r.fetch_status == 'error':
-                        logger.debug(f"Error fetching tik {r.tik_number}: {r.fetch_error}")
+            elapsed = time.time() - start_time
+            logger.info(f"All workers completed in {elapsed:.1f}s. Total details fetched: {len(remaining)}")
 
-                logger.info(
-                    f"Details: {processed}/{len(remaining)} ({100*processed/len(remaining):.1f}%) | "
-                    f"Rate: {rate:.1f}/sec (batch: {batch_rate:.1f}/sec) | "
-                    f"ETA: {eta/60:.1f}min | Batch: {success} ok, {errors} err"
-                )
+        else:
+            # Single-process mode: original async implementation
+            semaphore = asyncio.Semaphore(MAX_CONCURRENT)
 
-                # Save checkpoint
-                logger.debug(f"Saving checkpoint with {len(completed)} records")
-                self._save_details_checkpoint(list(completed.values()))
+            connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
+            async with aiohttp.ClientSession(connector=connector) as session:
+                batch_size = SAVE_INTERVAL
+
+                for batch_idx in range(0, len(remaining), batch_size):
+                    batch = remaining[batch_idx:batch_idx + batch_size]
+                    batch_start = time.time()
+
+                    tasks = [self._fetch_single_detail(session, semaphore, tik) for tik in batch]
+                    results = await asyncio.gather(*tasks)
+
+                    for result in results:
+                        completed[result.tik_number] = result
+
+                    processed = batch_idx + len(batch)
+                    elapsed = time.time() - start_time
+                    batch_elapsed = time.time() - batch_start
+                    rate = processed / elapsed if elapsed > 0 else 0
+                    batch_rate = len(batch) / batch_elapsed if batch_elapsed > 0 else 0
+                    eta = (len(remaining) - processed) / rate if rate > 0 else 0
+
+                    success = sum(1 for r in results if r.fetch_status == 'success')
+                    errors = sum(1 for r in results if r.fetch_status == 'error')
+                    total_success += success
+                    total_errors += errors
+
+                    # Log any errors in this batch
+                    for r in results:
+                        if r.fetch_status == 'error':
+                            logger.debug(f"Error fetching tik {r.tik_number}: {r.fetch_error}")
+
+                    logger.info(
+                        f"Details: {processed}/{len(remaining)} ({100*processed/len(remaining):.1f}%) | "
+                        f"Rate: {rate:.1f}/sec (batch: {batch_rate:.1f}/sec) | "
+                        f"ETA: {eta/60:.1f}min | Batch: {success} ok, {errors} err"
+                    )
+
+                    # Save checkpoint
+                    logger.debug(f"Saving checkpoint with {len(completed)} records")
+                    self._save_details_checkpoint(list(completed.values()))
 
         # Save final results
         all_details = list(completed.values())

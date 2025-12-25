@@ -1,6 +1,5 @@
 *.csv
 */*network_log.json
-/resources/*
 resources*
 *.log
-/data/*
+data*
