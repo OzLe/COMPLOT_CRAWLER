@@ -78,6 +78,34 @@ CITIES = {
         street_range=(1, 2000),
         api_type="tikim"
     ),
+    # New cities validated from Complot infrastructure scan (Dec 2025)
+    "haifa": CityConfig(
+        name="חיפה",
+        name_en="haifa",
+        site_id=16,
+        city_code=4000,
+        base_url="https://haifa.complot.co.il/",
+        street_range=(1, 2000),
+        api_type="tikim"
+    ),
+    "yavne": CityConfig(
+        name="יבנה",
+        name_en="yavne",
+        site_id=87,
+        city_code=2660,
+        base_url="https://yavne.complot.co.il/",
+        street_range=(1, 1000),
+        api_type="tikim"
+    ),
+    "ramathasharon": CityConfig(
+        name="רמת השרון",
+        name_en="ramathasharon",
+        site_id=118,
+        city_code=2650,
+        base_url="https://ramathasharon.complot.co.il/",
+        street_range=(1, 1000),
+        api_type="tikim"
+    ),
 }
 
 

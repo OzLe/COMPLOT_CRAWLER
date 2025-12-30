@@ -4,7 +4,7 @@ A unified crawler for Israeli municipality building permit systems powered by th
 
 ## Features
 
-- **Multi-city support** - Pre-configured for 6 Israeli municipalities
+- **Multi-city support** - Pre-configured for 9 Israeli municipalities
 - **Two API types** - Supports both "tikim" (building files) and "bakashot" (requests) systems
 - **Multi-process parallelization** - Use `--workers N` to run N parallel processes for faster crawling
 - **Batch crawling** - `crawl_all.py` script to crawl all cities with parallel execution
@@ -157,6 +157,9 @@ Results are saved to `data/crawl_summary.json`.
 | beersheva | באר שבע | 68 | br7.complot.co.il | tikim |
 | rehovot | רחובות | 80 | rechovot.complot.co.il | tikim |
 | modiin | מודיעין-מכבים-רעות | 82 | modiin.complot.co.il | tikim |
+| haifa | חיפה | 16 | haifa.complot.co.il | tikim |
+| yavne | יבנה | 87 | yavne.complot.co.il | tikim |
+| ramathasharon | רמת השרון | 118 | ramathasharon.complot.co.il | tikim |
 
 *\*bakashot cities require `--id` for full permit details*
 
