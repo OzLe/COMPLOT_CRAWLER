@@ -90,9 +90,14 @@ Edit `src/config/cities.py`:
     city_code=XXXX,             # From DevTools: c param
     base_url="https://newcity.complot.co.il/",
     street_range=(1, 2000),
-    api_type="tikim"            # or "bakashot"
+    api_type="tikim",           # or "bakashot"
+    details_blocked=False       # True if GetTikFile is blocked
 )
 ```
+
+**Config Options:**
+- `api_type`: "tikim" (building files) or "bakashot" (permit requests)
+- `details_blocked`: Set to `True` if the municipality blocks public access to building details (GetTikFile returns error for all records). Crawler auto-skips Phases 3-4.
 
 ## Data Output
 
@@ -116,9 +121,13 @@ See `docs/COMPLOT_API.md` for full API documentation.
 
 ## Working Cities
 
-ofaqim, batyam*, ashkelon, beersheva, rehovot, modiin, haifa, yavne, ramathasharon
+ofaqim, batyam*, beersheva, rehovot, modiin, yavne, ramathasharon
 
-*batyam uses bakashot API requiring `--id` for full permit details
+**All cities have `details_blocked=True`** - The Complot API has blocked public access to GetTikFile for all municipalities. Only basic building records (address, gush, helka) are available. Phases 3-4 are automatically skipped.
+
+*batyam uses bakashot API requiring `--id` for searches
+
+**Non-functional:** ashkelon, haifa (API returns no data)
 
 ## Code Search with Knowledge Graph
 

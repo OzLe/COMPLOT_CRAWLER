@@ -19,6 +19,7 @@ class CityConfig:
     base_url: str                # City's portal URL
     street_range: tuple = (1, 2000)  # Range of street codes to scan
     api_type: str = "tikim"      # "tikim" (building files) or "bakashot" (requests)
+    details_blocked: bool = False  # True if GetTikFile/GetBakashaFile is blocked by municipality
     extra_params: dict = field(default_factory=dict)
 
 
@@ -31,7 +32,8 @@ CITIES = {
         city_code=31,
         base_url="https://ofaqim.complot.co.il/newengine/Pages/buildings2.aspx",
         street_range=(1, 1000),
-        api_type="tikim"
+        api_type="tikim",
+        details_blocked=True  # GetTikFile blocked for all cities
     ),
     "batyam": CityConfig(
         name="בת ים",
@@ -40,34 +42,33 @@ CITIES = {
         city_code=6200,
         base_url="https://batyam.complot.co.il/iturbakashot/",
         street_range=(1, 2000),
-        api_type="bakashot"  # Bat Yam uses requests/bakashot system
+        api_type="bakashot",  # Bat Yam uses requests/bakashot system
+        details_blocked=True  # GetTikFile blocked for all cities
     ),
-    "ashkelon": CityConfig(
-        name="אשקלון",
-        name_en="ashkelon",
-        site_id=66,
-        city_code=7100,
-        base_url="https://ashkelon.complot.co.il/",
-        street_range=(1, 2000),
-        api_type="tikim"
-    ),
+    # NOTE: ashkelon API returns no data - removed from active config
+    # "ashkelon": CityConfig(
+    #     name="אשקלון", name_en="ashkelon", site_id=66, city_code=7100,
+    #     base_url="https://ashkelon.complot.co.il/", api_type="tikim"
+    # ),
     "beersheva": CityConfig(
         name="באר שבע",
         name_en="beersheva",
-        site_id=68,
+        site_id=105,  # Corrected from 68
         city_code=9000,
         base_url="https://br7.complot.co.il/",
         street_range=(1, 3000),
-        api_type="tikim"
+        api_type="tikim",
+        details_blocked=True  # GetTikFile blocked for all cities
     ),
     "rehovot": CityConfig(
         name="רחובות",
         name_en="rehovot",
-        site_id=80,
+        site_id=22,  # Corrected from 80
         city_code=8400,
         base_url="https://rechovot.complot.co.il/",
         street_range=(1, 2000),
-        api_type="tikim"
+        api_type="tikim",
+        details_blocked=True  # GetTikFile blocked for all cities
     ),
     "modiin": CityConfig(
         name="מודיעין-מכבים-רעות",
@@ -76,18 +77,14 @@ CITIES = {
         city_code=1200,
         base_url="https://modiin.complot.co.il/",
         street_range=(1, 2000),
-        api_type="tikim"
+        api_type="tikim",
+        details_blocked=True  # GetTikFile blocked for all cities
     ),
-    # New cities validated from Complot infrastructure scan (Dec 2025)
-    "haifa": CityConfig(
-        name="חיפה",
-        name_en="haifa",
-        site_id=16,
-        city_code=4000,
-        base_url="https://haifa.complot.co.il/",
-        street_range=(1, 2000),
-        api_type="tikim"
-    ),
+    # NOTE: haifa API returns no data - removed from active config
+    # "haifa": CityConfig(
+    #     name="חיפה", name_en="haifa", site_id=16, city_code=4000,
+    #     base_url="https://haifa.complot.co.il/", api_type="tikim"
+    # ),
     "yavne": CityConfig(
         name="יבנה",
         name_en="yavne",
@@ -95,7 +92,8 @@ CITIES = {
         city_code=2660,
         base_url="https://yavne.complot.co.il/",
         street_range=(1, 1000),
-        api_type="tikim"
+        api_type="tikim",
+        details_blocked=True  # GetTikFile blocked for all cities
     ),
     "ramathasharon": CityConfig(
         name="רמת השרון",
@@ -104,7 +102,8 @@ CITIES = {
         city_code=2650,
         base_url="https://ramathasharon.complot.co.il/",
         street_range=(1, 1000),
-        api_type="tikim"
+        api_type="tikim",
+        details_blocked=True  # Municipality blocks GetTikFile access
     ),
 }
 
@@ -209,7 +208,9 @@ def list_cities() -> list[dict]:
             "name": config.name,
             "name_en": config.name_en,
             "site_id": config.site_id,
-            "city_code": config.city_code
+            "city_code": config.city_code,
+            "api_type": config.api_type,
+            "details_blocked": config.details_blocked
         }
         for key, config in CITIES.items()
     ]
@@ -217,6 +218,7 @@ def list_cities() -> list[dict]:
 
 if __name__ == "__main__":
     print("Available cities:")
-    print("-" * 60)
+    print("-" * 80)
     for city in list_cities():
-        print(f"  {city['key']:15} | {city['name']:12} | site_id={city['site_id']:3} | city_code={city['city_code']}")
+        blocked = " [BLOCKED]" if city['details_blocked'] else ""
+        print(f"  {city['key']:15} | {city['name']:15} | site_id={city['site_id']:3} | {city['api_type']:8}{blocked}")

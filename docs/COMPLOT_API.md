@@ -234,19 +234,27 @@ GET /mgrqispi.dll?appname=cixpa&prgname=GetRequestArchiveFile&siteid=118&Request
 
 ## City Configuration
 
-### Working Cities
+### Important: API Status (December 2025)
 
-| City | Hebrew | Site ID | City Code | API Type |
-|------|--------|---------|-----------|----------|
-| ofaqim | אופקים | 67 | 31 | tikim |
-| batyam | בת ים | 81 | 6200 | bakashot |
-| ashkelon | אשקלון | 79 | 70 | tikim |
-| beersheva | באר שבע | 9 | 9000 | tikim |
-| rehovot | רחובות | 92 | 8400 | tikim |
-| modiin | מודיעין | 82 | 1200 | tikim |
-| haifa | חיפה | 16 | 4000 | tikim |
-| yavne | יבנה | 87 | 2660 | tikim |
-| ramathasharon | רמת השרון | 118 | 2650 | tikim |
+**All cities now have GetTikFile blocked.** The Complot API has restricted public access to building file details across all municipalities. Only basic building records from address searches are available.
+
+### Working Cities (Records Only)
+
+| City | Hebrew | Site ID | City Code | API Type | Status |
+|------|--------|---------|-----------|----------|--------|
+| ofaqim | אופקים | 67 | 31 | tikim | Search OK, Details Blocked |
+| batyam | בת ים | 81 | 6200 | bakashot | Search OK, Details Blocked |
+| beersheva | באר שבע | 105 | 9000 | tikim | Search OK, Details Blocked |
+| rehovot | רחובות | 22 | 8400 | tikim | Search OK, Details Blocked |
+| modiin | מודיעין | 82 | 1200 | tikim | Search OK, Details Blocked |
+| yavne | יבנה | 87 | 2660 | tikim | Search OK, Details Blocked |
+| ramathasharon | רמת השרון | 118 | 2650 | tikim | Search OK, Details Blocked |
+
+**Available Data for All Cities:**
+- Tik number, address, gush, helka from GetTikimByAddress
+- No permit details, stakeholders, events, or documents (GetTikFile blocked)
+
+The crawler automatically skips Phases 3-4 when `details_blocked=True`.
 
 ### Non-Functional Cities
 
@@ -254,6 +262,8 @@ These cities have Complot portals but the API returns no data:
 
 | City | Site ID | Notes |
 |------|---------|-------|
+| ashkelon | 66 | Portal accessible, search API returns no data |
+| haifa | 16 | Portal accessible, search API returns no data |
 | ksaba (Kfar Saba) | 13 | Portal accessible, API returns no data |
 | hodhasharon | 33 | Portal accessible, API returns no data |
 | ashdod | N/A | Redirects to municipal portal |

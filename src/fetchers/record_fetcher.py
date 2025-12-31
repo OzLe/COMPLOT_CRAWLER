@@ -217,6 +217,8 @@ async def async_fetch_records_for_street(
     street_code = street['code']
     street_name = street['name']
     city_name = config_dict['name']
+    consecutive_empty = 0
+    max_consecutive_empty = 30  # Stop after 30 consecutive empty results
 
     for house_num in range(1, 500):
         if config_dict['api_type'] == "tikim":
@@ -254,13 +256,28 @@ async def async_fetch_records_for_street(
                 soup = BeautifulSoup(html, 'html.parser')
 
                 if "לא אותרו" in soup.get_text() or "לא ניתן" in soup.get_text():
+                    consecutive_empty += 1
+                    if consecutive_empty >= max_consecutive_empty:
+                        break  # Early exit - no more results expected
                     continue
 
                 table = soup.find("table", {"id": "results-table"})
                 if not table:
+                    consecutive_empty += 1
+                    if consecutive_empty >= max_consecutive_empty:
+                        break
                     continue
 
-                for row in table.select("tbody tr"):
+                rows = table.select("tbody tr")
+                if not rows:
+                    consecutive_empty += 1
+                    if consecutive_empty >= max_consecutive_empty:
+                        break
+                    continue
+
+                # Found results - reset counter
+                consecutive_empty = 0
+                for row in rows:
                     cells = row.find_all("td")
                     if len(cells) < 3:
                         continue

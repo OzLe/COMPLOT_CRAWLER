@@ -387,6 +387,8 @@ class ComplotCrawler:
         records = []
         street_code = street['code']
         street_name = street['name']
+        consecutive_empty = 0
+        max_consecutive_empty = 30  # Stop after 30 consecutive empty results
 
         async with semaphore:
             for house_num in range(1, 500):  # Try house numbers 1-499
@@ -422,14 +424,28 @@ class ComplotCrawler:
 
                         # Check for no results
                         if "לא אותרו" in soup.get_text() or "לא ניתן" in soup.get_text():
+                            consecutive_empty += 1
+                            if consecutive_empty >= max_consecutive_empty:
+                                break  # Early exit - no more results expected
                             continue
 
                         # Parse results table
                         table = soup.find("table", {"id": "results-table"})
                         if not table:
+                            consecutive_empty += 1
+                            if consecutive_empty >= max_consecutive_empty:
+                                break
                             continue
 
                         rows = table.select("tbody tr")
+                        if not rows:
+                            consecutive_empty += 1
+                            if consecutive_empty >= max_consecutive_empty:
+                                break
+                            continue
+
+                        # Found results - reset counter
+                        consecutive_empty = 0
                         for row in rows:
                             cells = row.find_all("td")
                             if len(cells) < 3:
@@ -1328,6 +1344,7 @@ class ComplotCrawler:
         logger.info(f"Site ID: {self.config.site_id}")
         logger.info(f"City Code: {self.config.city_code}")
         logger.info(f"API Type: {self.config.api_type}")
+        logger.info(f"Details Blocked: {self.config.details_blocked}")
         logger.info(f"Output Directory: {self.output_dir}")
         logger.info(f"Workers: {self.workers}")
 
@@ -1403,6 +1420,16 @@ class ComplotCrawler:
 
         if skip_details:
             logger.info("Skipping details fetch.")
+            return
+
+        # Check if municipality blocks detail access
+        if self.config.details_blocked:
+            logger.warning("=" * 60)
+            logger.warning(f"DETAILS BLOCKED: {self.config.name} blocks public access to building details")
+            logger.warning("Only basic building records are available for this municipality")
+            logger.warning("Skipping Phase 3 (Building Details) and Phase 4 (Request Details)")
+            logger.warning("=" * 60)
+            console.print("[yellow]Municipality blocks GetTikFile access - skipping details phases[/yellow]")
             return
 
         # Step 3: Fetch building details
