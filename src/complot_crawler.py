@@ -25,12 +25,26 @@ from typing import Optional
 
 import aiohttp
 from bs4 import BeautifulSoup
-from tqdm.rich import tqdm
-from tqdm.asyncio import tqdm_asyncio
 from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn, TimeRemainingColumn, MofNCompleteColumn
 
 # Rich console for phase headers
 console = Console()
+
+def create_progress() -> Progress:
+    """Create a Rich progress bar with consistent styling"""
+    return Progress(
+        SpinnerColumn(),
+        TextColumn("[bold blue]{task.description}"),
+        BarColumn(bar_width=40),
+        MofNCompleteColumn(),
+        TextColumn("•"),
+        TimeElapsedColumn(),
+        TextColumn("<"),
+        TimeRemainingColumn(),
+        console=console,
+        transient=False,
+    )
 
 from src.config import CityConfig, get_city_config, list_cities
 from src.config import DEFAULT_SETTINGS
@@ -68,9 +82,7 @@ async def _async_discover_range(config_dict: dict, start: int, end: int) -> list
 def _worker_discover_streets(args: tuple) -> list[dict]:
     """Worker function for street discovery - runs in separate process"""
     config_dict, start, end, worker_id = args
-    print(f"[Worker {worker_id}] Discovering streets {start}-{end}")
     result = asyncio.run(_async_discover_range(config_dict, start, end))
-    print(f"[Worker {worker_id}] Found {len(result)} streets")
     return result
 
 
@@ -100,9 +112,7 @@ async def _async_fetch_records_batch(config_dict: dict, streets: list[dict]) -> 
 def _worker_fetch_records(args: tuple) -> list[dict]:
     """Worker function for building records - runs in separate process"""
     config_dict, streets, worker_id = args
-    print(f"[Worker {worker_id}] Fetching records for {len(streets)} streets")
     result = asyncio.run(_async_fetch_records_batch(config_dict, streets))
-    print(f"[Worker {worker_id}] Found {len(result)} records")
     return result
 
 
@@ -124,9 +134,7 @@ async def _async_fetch_requests_batch(config_dict: dict, request_items: list[tup
 def _worker_fetch_requests(args: tuple) -> list[dict]:
     """Worker function for request details - runs in separate process"""
     config_dict, request_items, worker_id = args
-    print(f"[Worker {worker_id}] Fetching details for {len(request_items)} requests")
     result = asyncio.run(_async_fetch_requests_batch(config_dict, request_items))
-    print(f"[Worker {worker_id}] Fetched {len(result)} request details")
     return result
 
 
@@ -138,9 +146,7 @@ async def _async_fetch_details_batch(config_dict: dict, tik_numbers: list[str]) 
 def _worker_fetch_details(args: tuple) -> list[dict]:
     """Worker function for building details - runs in separate process"""
     config_dict, tik_numbers, worker_id = args
-    print(f"[Worker {worker_id}] Fetching details for {len(tik_numbers)} buildings")
     result = asyncio.run(_async_fetch_details_batch(config_dict, tik_numbers))
-    print(f"[Worker {worker_id}] Fetched {len(result)} details")
     return result
 
 
@@ -284,12 +290,12 @@ class ComplotCrawler:
 
             # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
-                with tqdm(total=total_range, desc="Discovering streets", unit="codes") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[cyan]Discovering streets", total=total_range)
                     for i, result in enumerate(pool.imap(_worker_discover_streets, worker_args)):
                         streets.extend(result)
                         # Update by actual range size (handles uneven chunks)
-                        pbar.update(range_sizes[i])
-                        pbar.set_postfix(found=len(streets))
+                        progress.update(task, advance=range_sizes[i], description=f"[cyan]Discovering streets [found={len(streets)}]")
 
             elapsed = time.time() - start_time
             logger.info(f"All workers completed in {elapsed:.1f}s. Total streets found: {len(streets)}")
@@ -307,7 +313,8 @@ class ComplotCrawler:
 
                 batch_size = 100
 
-                with tqdm(total=len(tasks), desc="Discovering streets", unit="codes") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[cyan]Discovering streets", total=len(tasks))
                     for i in range(0, len(tasks), batch_size):
                         batch = tasks[i:i + batch_size]
                         results = await asyncio.gather(*batch, return_exceptions=True)
@@ -317,8 +324,7 @@ class ComplotCrawler:
                                 streets.append(result)
                                 logger.debug(f"Found street {result['code']}: {result['name']}")
 
-                        pbar.update(len(batch))
-                        pbar.set_postfix(found=len(streets))
+                        progress.update(task, advance=len(batch), description=f"[cyan]Discovering streets [found={len(streets)}]")
 
         return streets
 
@@ -533,7 +539,8 @@ class ComplotCrawler:
 
             # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
-                with tqdm(total=len(streets), desc="Fetching records", unit="streets") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[green]Fetching records", total=len(streets))
                     for i, result in enumerate(pool.imap(_worker_fetch_records, worker_args)):
                         # Merge and deduplicate results
                         for r in result:
@@ -542,8 +549,7 @@ class ComplotCrawler:
                                 all_records.append(BuildingRecord(**r))
                         # Update by actual chunk size (handles uneven last chunk)
                         actual_chunk_size = len(street_chunks[i])
-                        pbar.update(actual_chunk_size)
-                        pbar.set_postfix(records=len(all_records))
+                        progress.update(task, advance=actual_chunk_size, description=f"[green]Fetching records [records={len(all_records)}]")
 
             elapsed = time.time() - start_time
             logger.info(f"All workers completed in {elapsed:.1f}s. Total records found: {len(all_records)}")
@@ -554,8 +560,9 @@ class ComplotCrawler:
 
             connector = aiohttp.TCPConnector(limit=20)
             async with aiohttp.ClientSession(connector=connector) as session:
-                with tqdm(streets, desc="Fetching records", unit="streets") as pbar:
-                    for i, street in enumerate(pbar):
+                with create_progress() as progress:
+                    task = progress.add_task("[green]Fetching records", total=len(streets))
+                    for i, street in enumerate(streets):
                         records = await self._fetch_records_for_street(session, semaphore, street)
 
                         # Deduplicate
@@ -566,7 +573,7 @@ class ComplotCrawler:
                                 all_records.append(r)
                                 new_records += 1
 
-                        pbar.set_postfix(records=len(all_records), street=street['name'][:12])
+                        progress.update(task, advance=1, description=f"[green]Fetching records [records={len(all_records)}]")
 
                         # Save checkpoint every 10 streets
                         if (i + 1) % 10 == 0:
@@ -957,7 +964,8 @@ class ComplotCrawler:
 
             # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
-                with tqdm(total=len(remaining), desc="Fetching details", unit="buildings") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[yellow]Fetching details", total=len(remaining))
                     for i, result in enumerate(pool.imap(_worker_fetch_details, worker_args)):
                         # Merge results
                         for d in result:
@@ -968,8 +976,7 @@ class ComplotCrawler:
                             else:
                                 total_errors += 1
                         # Update by actual chunk size
-                        pbar.update(len(tik_chunks[i]))
-                        pbar.set_postfix(ok=total_success, err=total_errors)
+                        progress.update(task, advance=len(tik_chunks[i]), description=f"[yellow]Fetching details [ok={total_success}, err={total_errors}]")
 
             elapsed = time.time() - start_time
             logger.info(f"All workers completed in {elapsed:.1f}s. Total details fetched: {len(remaining)}")
@@ -982,10 +989,10 @@ class ComplotCrawler:
             async with aiohttp.ClientSession(connector=connector) as session:
                 batch_size = SAVE_INTERVAL
 
-                with tqdm(total=len(remaining), desc="Fetching details", unit="buildings") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[yellow]Fetching details", total=len(remaining))
                     for batch_idx in range(0, len(remaining), batch_size):
                         batch = remaining[batch_idx:batch_idx + batch_size]
-                        batch_start = time.time()
 
                         tasks = [self._fetch_single_detail(session, semaphore, tik) for tik in batch]
                         results = await asyncio.gather(*tasks)
@@ -1003,8 +1010,7 @@ class ComplotCrawler:
                             if r.fetch_status == 'error':
                                 logger.debug(f"Error fetching tik {r.tik_number}: {r.fetch_error}")
 
-                        pbar.update(len(batch))
-                        pbar.set_postfix(ok=total_success, err=total_errors)
+                        progress.update(task, advance=len(batch), description=f"[yellow]Fetching details [ok={total_success}, err={total_errors}]")
 
                         # Save checkpoint
                         logger.debug(f"Saving checkpoint with {len(completed)} records")
@@ -1059,7 +1065,8 @@ class ComplotCrawler:
             worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(tik_chunks)]
 
             with multiprocessing.Pool(self.workers) as pool:
-                with tqdm(total=len(failed_tiks), desc="Retrying failed", unit="buildings") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[yellow]Retrying failed", total=len(failed_tiks))
                     for i, result in enumerate(pool.imap(_worker_fetch_details, worker_args)):
                         for d in result:
                             detail = BuildingDetail(**d)
@@ -1069,8 +1076,7 @@ class ComplotCrawler:
                             else:
                                 total_errors += 1
                         # Update by actual chunk size
-                        pbar.update(len(tik_chunks[i]))
-                        pbar.set_postfix(ok=total_success, err=total_errors)
+                        progress.update(task, advance=len(tik_chunks[i]), description=f"[yellow]Retrying failed [ok={total_success}, err={total_errors}]")
 
         else:
             # Single-process mode
@@ -1080,7 +1086,8 @@ class ComplotCrawler:
             async with aiohttp.ClientSession(connector=connector) as session:
                 batch_size = SAVE_INTERVAL
 
-                with tqdm(total=len(failed_tiks), desc="Retrying failed", unit="buildings") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[yellow]Retrying failed", total=len(failed_tiks))
                     for batch_idx in range(0, len(failed_tiks), batch_size):
                         batch = failed_tiks[batch_idx:batch_idx + batch_size]
 
@@ -1094,8 +1101,7 @@ class ComplotCrawler:
                             else:
                                 total_errors += 1
 
-                        pbar.update(len(batch))
-                        pbar.set_postfix(ok=total_success, err=total_errors)
+                        progress.update(task, advance=len(batch), description=f"[yellow]Retrying failed [ok={total_success}, err={total_errors}]")
 
         # Save updated results
         details_list = list(all_details.values())
@@ -1172,7 +1178,8 @@ class ComplotCrawler:
             worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(request_chunks)]
 
             with multiprocessing.Pool(self.workers) as pool:
-                with tqdm(total=len(remaining), desc="Fetching requests", unit="requests") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[magenta]Fetching requests", total=len(remaining))
                     for i, result in enumerate(pool.imap(_worker_fetch_requests, worker_args)):
                         for r in result:
                             detail = RequestDetail(**r)
@@ -1182,8 +1189,7 @@ class ComplotCrawler:
                             else:
                                 total_errors += 1
                         # Update by actual chunk size
-                        pbar.update(len(request_chunks[i]))
-                        pbar.set_postfix(ok=total_success, err=total_errors)
+                        progress.update(task, advance=len(request_chunks[i]), description=f"[magenta]Fetching requests [ok={total_success}, err={total_errors}]")
 
             elapsed = time.time() - start_time
             logger.info(f"All workers completed in {elapsed:.1f}s")
@@ -1196,7 +1202,8 @@ class ComplotCrawler:
             async with aiohttp.ClientSession(connector=connector) as session:
                 batch_size = SAVE_INTERVAL
 
-                with tqdm(total=len(remaining), desc="Fetching requests", unit="requests") as pbar:
+                with create_progress() as progress:
+                    task = progress.add_task("[magenta]Fetching requests", total=len(remaining))
                     for batch_idx in range(0, len(remaining), batch_size):
                         batch = remaining[batch_idx:batch_idx + batch_size]
 
@@ -1215,8 +1222,7 @@ class ComplotCrawler:
                             else:
                                 total_errors += 1
 
-                        pbar.update(len(batch))
-                        pbar.set_postfix(ok=total_success, err=total_errors)
+                        progress.update(task, advance=len(batch), description=f"[magenta]Fetching requests [ok={total_success}, err={total_errors}]")
 
                         # Save checkpoint periodically
                         self.checkpoint.save_requests(list(completed.values()), requests_file)
@@ -1264,7 +1270,8 @@ class ComplotCrawler:
         async with aiohttp.ClientSession(connector=connector) as session:
             batch_size = SAVE_INTERVAL
 
-            with tqdm(total=len(remaining), desc="Fetching bakasha details", unit="requests") as pbar:
+            with create_progress() as progress:
+                task = progress.add_task("[magenta]Fetching bakasha details", total=len(remaining))
                 for batch_idx in range(0, len(remaining), batch_size):
                     batch = remaining[batch_idx:batch_idx + batch_size]
 
@@ -1287,8 +1294,7 @@ class ComplotCrawler:
                         if r.fetch_status == 'error':
                             logger.debug(f"Error fetching request {r.tik_number}: {r.fetch_error}")
 
-                    pbar.update(len(batch))
-                    pbar.set_postfix(ok=total_success, err=total_errors)
+                    progress.update(task, advance=len(batch), description=f"[magenta]Fetching bakasha details [ok={total_success}, err={total_errors}]")
 
                     # Save checkpoint
                     logger.debug(f"Saving checkpoint with {len(completed)} records")
