@@ -14,33 +14,32 @@ Examples:
 
 import argparse
 import asyncio
-import csv
 import json
-import logging
 import multiprocessing
 import re
-import sys
 import time
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 import aiohttp
 from bs4 import BeautifulSoup
-from tqdm import tqdm
+from tqdm.rich import tqdm
+from tqdm.asyncio import tqdm_asyncio
+from rich.console import Console
 
-from src.config import CityConfig, get_city_config, list_cities, CITIES
-from src.config import CrawlerSettings, DEFAULT_SETTINGS
+# Rich console for phase headers
+console = Console()
+
+from src.config import CityConfig, get_city_config, list_cities
+from src.config import DEFAULT_SETTINGS
 from src.models import BuildingRecord, BuildingDetail, RequestDetail
-from src.parsers.building_parser import parse_building_detail
-from src.parsers.request_parser import parse_request_detail
 from src.utils.logging import setup_logging, get_logger
 from src.storage import CheckpointManager, DataExporter
-from src.fetchers.base import build_url
-from src.fetchers.street_fetcher import async_test_street, async_discover_range
+from src.fetchers.street_fetcher import async_discover_range
 from src.fetchers.record_fetcher import async_fetch_records_for_street
-from src.fetchers.building_fetcher import async_fetch_building_detail, async_fetch_details_batch
+from src.fetchers.building_fetcher import async_fetch_details_batch
 from src.fetchers.request_fetcher import async_fetch_request_detail, async_fetch_requests_batch
 
 # API Configuration (using settings for consistency, will be fully migrated later)
@@ -59,18 +58,7 @@ logger = get_logger()
 # ============================================================================
 # MULTIPROCESSING WORKER FUNCTIONS
 # These must be at module level to be picklable for multiprocessing.Pool
-# Note: Core logic moved to src.fetchers module
 # ============================================================================
-
-def _build_url(program: str, **params) -> str:
-    """Build API URL with parameters (delegates to fetchers.base)"""
-    return build_url(program, **params)
-
-
-async def _async_test_street(session: aiohttp.ClientSession, config_dict: dict, street_code: int) -> Optional[dict]:
-    """Test if a street code is valid (delegates to fetchers.street_fetcher)"""
-    return await async_test_street(session, config_dict, street_code)
-
 
 async def _async_discover_range(config_dict: dict, start: int, end: int) -> list[dict]:
     """Async street discovery for a specific range (delegates to fetchers.street_fetcher)"""
@@ -116,27 +104,6 @@ def _worker_fetch_records(args: tuple) -> list[dict]:
     result = asyncio.run(_async_fetch_records_batch(config_dict, streets))
     print(f"[Worker {worker_id}] Found {len(result)} records")
     return result
-
-
-async def _async_fetch_single_detail(session: aiohttp.ClientSession, config_dict: dict, tik_number: str, retry: int = 0) -> dict:
-    """Fetch details for a single building (delegates to fetchers.building_fetcher)"""
-    return await async_fetch_building_detail(session, config_dict, tik_number, retry)
-
-
-def _parse_building_detail_standalone(html: str, tik_number: str) -> dict:
-    """Parse building detail HTML response (standalone version for workers).
-
-    Note: This function delegates to src.parsers.building_parser.parse_building_detail
-    """
-    return parse_building_detail(html, tik_number)
-
-
-def _parse_request_detail_standalone(html: str, request_number: str, tik_number: str = "") -> dict:
-    """Parse permit request detail HTML response (GetBakashaFile).
-
-    Note: This function delegates to src.parsers.request_parser.parse_request_detail
-    """
-    return parse_request_detail(html, request_number, tik_number)
 
 
 async def _async_fetch_single_request(
@@ -193,11 +160,14 @@ class ComplotCrawler:
         self.output_dir = Path(output_dir) / config.name_en
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Output file names
+        # Initialize storage utilities
+        self.checkpoint = CheckpointManager(self.output_dir, config.name, config.name_en)
+        self.exporter = DataExporter(self.output_dir, config.name, config.name_en)
+
+        # File paths for reading cached data
         self.streets_file = self.output_dir / "streets.json"
         self.records_file = self.output_dir / "building_records.json"
         self.details_file = self.output_dir / "building_details.json"
-        self.checkpoint_file = self.output_dir / "checkpoint.json"
 
     def _build_url(self, program: str, **params) -> str:
         """Build API URL with parameters"""
@@ -309,14 +279,16 @@ class ComplotCrawler:
 
             # Prepare worker arguments
             worker_args = [(config_dict, r[0], r[1], i) for i, r in enumerate(ranges)]
+            # Calculate actual range sizes for accurate progress
+            range_sizes = [r[1] - r[0] + 1 for r in ranges]
 
             # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
                 with tqdm(total=total_range, desc="Discovering streets", unit="codes") as pbar:
-                    for result in pool.imap_unordered(_worker_discover_streets, worker_args):
+                    for i, result in enumerate(pool.imap(_worker_discover_streets, worker_args)):
                         streets.extend(result)
-                        # Update progress by chunk size (approximate)
-                        pbar.update(chunk_size)
+                        # Update by actual range size (handles uneven chunks)
+                        pbar.update(range_sizes[i])
                         pbar.set_postfix(found=len(streets))
 
             elapsed = time.time() - start_time
@@ -395,23 +367,9 @@ class ComplotCrawler:
 
         # Save streets with incremental metadata
         sorted_streets = sorted(fresh_streets, key=lambda x: x["code"])
-        output = {
-            "city": self.config.name,
-            "city_en": self.config.name_en,
-            "site_id": self.config.site_id,
-            "city_code": self.config.city_code,
-            "discovered_at": datetime.now().isoformat(),
-            "total_streets": len(fresh_streets),
-            "previous_total": previous_total,
-            "new_streets_count": len(new_streets),
-            "new_streets": sorted(new_streets, key=lambda x: x["code"]) if new_streets else [],
-            "streets": sorted_streets
-        }
+        self.exporter.export_streets(sorted_streets, new_streets, previous_total)
 
-        with open(self.streets_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
-
-        logger.info(f"Discovered {len(fresh_streets)} streets (previous: {previous_total}, new: {len(new_streets)}). Saved to {self.streets_file}")
+        logger.info(f"Discovered {len(sorted_streets)} streets (previous: {previous_total}, new: {len(new_streets)}). Saved to {self.streets_file}")
         return sorted_streets, new_streets
 
     async def _fetch_records_for_street(
@@ -576,13 +534,15 @@ class ComplotCrawler:
             # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
                 with tqdm(total=len(streets), desc="Fetching records", unit="streets") as pbar:
-                    for result in pool.imap_unordered(_worker_fetch_records, worker_args):
+                    for i, result in enumerate(pool.imap(_worker_fetch_records, worker_args)):
                         # Merge and deduplicate results
                         for r in result:
                             if r['tik_number'] not in seen_tiks:
                                 seen_tiks.add(r['tik_number'])
                                 all_records.append(BuildingRecord(**r))
-                        pbar.update(chunk_size)
+                        # Update by actual chunk size (handles uneven last chunk)
+                        actual_chunk_size = len(street_chunks[i])
+                        pbar.update(actual_chunk_size)
                         pbar.set_postfix(records=len(all_records))
 
             elapsed = time.time() - start_time
@@ -611,33 +571,13 @@ class ComplotCrawler:
                         # Save checkpoint every 10 streets
                         if (i + 1) % 10 == 0:
                             logger.debug(f"Saving checkpoint at street {i+1}")
-                            self._save_records_checkpoint(all_records)
+                            self.checkpoint.save_records(all_records)
 
         # Save final records
-        output = {
-            "city": self.config.name,
-            "city_en": self.config.name_en,
-            "crawled_at": datetime.now().isoformat(),
-            "total_records": len(all_records),
-            "records": [asdict(r) for r in all_records]
-        }
-
-        with open(self.records_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
+        self.exporter.export_records(all_records)
 
         logger.info(f"Fetched {len(all_records)} unique building records. Saved to {self.records_file}")
         return all_records
-
-    def _save_records_checkpoint(self, records: list[BuildingRecord]):
-        """Save records checkpoint"""
-        output = {
-            "city": self.config.name,
-            "checkpoint_at": datetime.now().isoformat(),
-            "total_records": len(records),
-            "records": [asdict(r) for r in records]
-        }
-        with open(self.checkpoint_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
 
     def _parse_building_detail(self, html: str, tik_number: str) -> BuildingDetail:
         """Parse building detail HTML response"""
@@ -975,15 +915,10 @@ class ComplotCrawler:
 
         # Load checkpoint if resuming
         completed = {}
-        if resume and self.checkpoint_file.exists():
-            try:
-                with open(self.checkpoint_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    if 'details' in data:
-                        completed = {d['tik_number']: BuildingDetail(**d) for d in data['details']}
-                        logger.info(f"Loaded {len(completed)} records from checkpoint")
-            except Exception as e:
-                logger.warning(f"Failed to load checkpoint: {e}")
+        if resume:
+            data = self.checkpoint.load_details_checkpoint()
+            if 'details' in data:
+                completed = {d['tik_number']: BuildingDetail(**d) for d in data['details']}
 
         remaining = [t for t in tik_numbers if t not in completed]
 
@@ -1023,7 +958,7 @@ class ComplotCrawler:
             # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
                 with tqdm(total=len(remaining), desc="Fetching details", unit="buildings") as pbar:
-                    for result in pool.imap_unordered(_worker_fetch_details, worker_args):
+                    for i, result in enumerate(pool.imap(_worker_fetch_details, worker_args)):
                         # Merge results
                         for d in result:
                             detail = BuildingDetail(**d)
@@ -1032,7 +967,8 @@ class ComplotCrawler:
                                 total_success += 1
                             else:
                                 total_errors += 1
-                        pbar.update(len(result))
+                        # Update by actual chunk size
+                        pbar.update(len(tik_chunks[i]))
                         pbar.set_postfix(ok=total_success, err=total_errors)
 
             elapsed = time.time() - start_time
@@ -1072,22 +1008,11 @@ class ComplotCrawler:
 
                         # Save checkpoint
                         logger.debug(f"Saving checkpoint with {len(completed)} records")
-                        self._save_details_checkpoint(list(completed.values()))
+                        self.checkpoint.save_details(list(completed.values()))
 
         # Save final results
         all_details = list(completed.values())
-        output = {
-            "city": self.config.name,
-            "city_en": self.config.name_en,
-            "fetched_at": datetime.now().isoformat(),
-            "total_records": len(all_details),
-            "success_count": sum(1 for d in all_details if d.fetch_status == 'success'),
-            "error_count": sum(1 for d in all_details if d.fetch_status == 'error'),
-            "records": [asdict(d) for d in all_details]
-        }
-
-        with open(self.details_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
+        self.exporter.export_details(all_details)
 
         logger.info(f"Fetched {len(all_details)} building details ({total_success} ok, {total_errors} errors). Saved to {self.details_file}")
         return all_details
@@ -1135,7 +1060,7 @@ class ComplotCrawler:
 
             with multiprocessing.Pool(self.workers) as pool:
                 with tqdm(total=len(failed_tiks), desc="Retrying failed", unit="buildings") as pbar:
-                    for result in pool.imap_unordered(_worker_fetch_details, worker_args):
+                    for i, result in enumerate(pool.imap(_worker_fetch_details, worker_args)):
                         for d in result:
                             detail = BuildingDetail(**d)
                             all_details[d['tik_number']] = detail
@@ -1143,7 +1068,8 @@ class ComplotCrawler:
                                 total_success += 1
                             else:
                                 total_errors += 1
-                        pbar.update(len(result))
+                        # Update by actual chunk size
+                        pbar.update(len(tik_chunks[i]))
                         pbar.set_postfix(ok=total_success, err=total_errors)
 
         else:
@@ -1173,22 +1099,13 @@ class ComplotCrawler:
 
         # Save updated results
         details_list = list(all_details.values())
-        output = {
-            "city": self.config.name,
-            "city_en": self.config.name_en,
-            "fetched_at": datetime.now().isoformat(),
-            "total_records": len(details_list),
-            "success_count": sum(1 for d in details_list if d.fetch_status == 'success'),
-            "error_count": sum(1 for d in details_list if d.fetch_status == 'error'),
-            "records": [asdict(d) for d in details_list]
-        }
-
-        with open(self.details_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
+        self.exporter.export_details(details_list)
 
         elapsed = time.time() - start_time
+        success_count = sum(1 for d in details_list if d.fetch_status == 'success')
+        error_count = sum(1 for d in details_list if d.fetch_status == 'error')
         logger.info(f"Retry complete in {elapsed:.1f}s. Retried {len(failed_tiks)}: {total_success} ok, {total_errors} still failing")
-        logger.info(f"Total: {output['success_count']} ok, {output['error_count']} errors. Saved to {self.details_file}")
+        logger.info(f"Total: {success_count} ok, {error_count} errors. Saved to {self.details_file}")
 
         return details_list
 
@@ -1217,15 +1134,10 @@ class ComplotCrawler:
         # Load existing request details if not forcing
         requests_file = self.output_dir / "request_details.json"
         completed = {}
-        if not force and requests_file.exists():
-            try:
-                with open(requests_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    for r in data.get('records', []):
-                        completed[r['request_number']] = RequestDetail(**r)
-                    logger.info(f"Loaded {len(completed)} request details from cache")
-            except Exception as e:
-                logger.warning(f"Failed to load request cache: {e}")
+        if not force:
+            data = self.checkpoint.load_requests_checkpoint(requests_file)
+            for r in data.get('records', []):
+                completed[r['request_number']] = RequestDetail(**r)
 
         # Filter out already fetched requests
         remaining = [(req_num, tik_num) for req_num, tik_num in request_items if req_num not in completed]
@@ -1261,7 +1173,7 @@ class ComplotCrawler:
 
             with multiprocessing.Pool(self.workers) as pool:
                 with tqdm(total=len(remaining), desc="Fetching requests", unit="requests") as pbar:
-                    for result in pool.imap_unordered(_worker_fetch_requests, worker_args):
+                    for i, result in enumerate(pool.imap(_worker_fetch_requests, worker_args)):
                         for r in result:
                             detail = RequestDetail(**r)
                             completed[r['request_number']] = detail
@@ -1269,7 +1181,8 @@ class ComplotCrawler:
                                 total_success += 1
                             else:
                                 total_errors += 1
-                        pbar.update(len(result))
+                        # Update by actual chunk size
+                        pbar.update(len(request_chunks[i]))
                         pbar.set_postfix(ok=total_success, err=total_errors)
 
             elapsed = time.time() - start_time
@@ -1306,22 +1219,11 @@ class ComplotCrawler:
                         pbar.set_postfix(ok=total_success, err=total_errors)
 
                         # Save checkpoint periodically
-                        self._save_request_checkpoint(list(completed.values()), requests_file)
+                        self.checkpoint.save_requests(list(completed.values()), requests_file)
 
         # Save final results
         all_requests = list(completed.values())
-        output = {
-            "city": self.config.name,
-            "city_en": self.config.name_en,
-            "fetched_at": datetime.now().isoformat(),
-            "total_records": len(all_requests),
-            "success_count": sum(1 for r in all_requests if r.fetch_status == 'success'),
-            "error_count": sum(1 for r in all_requests if r.fetch_status == 'error'),
-            "records": [asdict(r) for r in all_requests]
-        }
-
-        with open(requests_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
+        self.exporter.export_requests(all_requests)
 
         elapsed = time.time() - start_time
         logger.info(f"Fetched {len(all_requests)} request details ({total_success} ok, {total_errors} errors) in {elapsed:.1f}s")
@@ -1329,35 +1231,16 @@ class ComplotCrawler:
 
         return all_requests
 
-    def _save_request_checkpoint(self, requests: list[RequestDetail], file_path: Path):
-        """Save request details checkpoint"""
-        output = {
-            "city": self.config.name,
-            "city_en": self.config.name_en,
-            "fetched_at": datetime.now().isoformat(),
-            "total_records": len(requests),
-            "success_count": sum(1 for r in requests if r.fetch_status == 'success'),
-            "error_count": sum(1 for r in requests if r.fetch_status == 'error'),
-            "records": [asdict(r) for r in requests]
-        }
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
-
     async def _fetch_bakasha_details_authenticated(self, records: list[BuildingRecord], resume: bool = True) -> list[BuildingDetail]:
         """Fetch bakasha details using authenticated API"""
         tik_numbers = list(set(r.tik_number for r in records))
 
         # Load checkpoint if resuming
         completed = {}
-        if resume and self.checkpoint_file.exists():
-            try:
-                with open(self.checkpoint_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    if 'details' in data:
-                        completed = {d['tik_number']: BuildingDetail(**d) for d in data['details']}
-                        logger.info(f"Loaded {len(completed)} records from checkpoint")
-            except Exception as e:
-                logger.warning(f"Failed to load checkpoint: {e}")
+        if resume:
+            data = self.checkpoint.load_details_checkpoint()
+            if 'details' in data:
+                completed = {d['tik_number']: BuildingDetail(**d) for d in data['details']}
 
         remaining = [t for t in tik_numbers if t not in completed]
 
@@ -1381,168 +1264,42 @@ class ComplotCrawler:
         async with aiohttp.ClientSession(connector=connector) as session:
             batch_size = SAVE_INTERVAL
 
-            for batch_idx in range(0, len(remaining), batch_size):
-                batch = remaining[batch_idx:batch_idx + batch_size]
-                batch_start = time.time()
+            with tqdm(total=len(remaining), desc="Fetching bakasha details", unit="requests") as pbar:
+                for batch_idx in range(0, len(remaining), batch_size):
+                    batch = remaining[batch_idx:batch_idx + batch_size]
 
-                tasks = [
-                    self._fetch_single_bakasha_detail(session, semaphore, tik, self.israeli_id)
-                    for tik in batch
-                ]
-                results = await asyncio.gather(*tasks)
+                    tasks = [
+                        self._fetch_single_bakasha_detail(session, semaphore, tik, self.israeli_id)
+                        for tik in batch
+                    ]
+                    results = await asyncio.gather(*tasks)
 
-                for result in results:
-                    completed[result.tik_number] = result
+                    for result in results:
+                        completed[result.tik_number] = result
 
-                processed = batch_idx + len(batch)
-                elapsed = time.time() - start_time
-                batch_elapsed = time.time() - batch_start
-                rate = processed / elapsed if elapsed > 0 else 0
-                batch_rate = len(batch) / batch_elapsed if batch_elapsed > 0 else 0
-                eta = (len(remaining) - processed) / rate if rate > 0 else 0
+                    success = sum(1 for r in results if r.fetch_status == 'success')
+                    errors = sum(1 for r in results if r.fetch_status == 'error')
+                    total_success += success
+                    total_errors += errors
 
-                success = sum(1 for r in results if r.fetch_status == 'success')
-                errors = sum(1 for r in results if r.fetch_status == 'error')
-                total_success += success
-                total_errors += errors
+                    # Log any errors in this batch
+                    for r in results:
+                        if r.fetch_status == 'error':
+                            logger.debug(f"Error fetching request {r.tik_number}: {r.fetch_error}")
 
-                # Log any errors in this batch
-                for r in results:
-                    if r.fetch_status == 'error':
-                        logger.debug(f"Error fetching request {r.tik_number}: {r.fetch_error}")
+                    pbar.update(len(batch))
+                    pbar.set_postfix(ok=total_success, err=total_errors)
 
-                logger.info(
-                    f"Details: {processed}/{len(remaining)} ({100*processed/len(remaining):.1f}%) | "
-                    f"Rate: {rate:.1f}/sec (batch: {batch_rate:.1f}/sec) | "
-                    f"ETA: {eta/60:.1f}min | Batch: {success} ok, {errors} err"
-                )
-
-                # Save checkpoint
-                logger.debug(f"Saving checkpoint with {len(completed)} records")
-                self._save_details_checkpoint(list(completed.values()))
+                    # Save checkpoint
+                    logger.debug(f"Saving checkpoint with {len(completed)} records")
+                    self.checkpoint.save_details(list(completed.values()))
 
         # Save final results
         all_details = list(completed.values())
-        output = {
-            "city": self.config.name,
-            "city_en": self.config.name_en,
-            "fetched_at": datetime.now().isoformat(),
-            "total_records": len(all_details),
-            "success_count": sum(1 for d in all_details if d.fetch_status == 'success'),
-            "error_count": sum(1 for d in all_details if d.fetch_status == 'error'),
-            "records": [asdict(d) for d in all_details]
-        }
-
-        with open(self.details_file, 'w', encoding='utf-8') as f:
-            json.dump(output, f, ensure_ascii=False, indent=2)
+        self.exporter.export_details(all_details)
 
         logger.info(f"Fetched {len(all_details)} bakasha details ({total_success} ok, {total_errors} errors). Saved to {self.details_file}")
         return all_details
-
-    def _save_details_checkpoint(self, details: list[BuildingDetail]):
-        """Save details checkpoint"""
-        checkpoint = {
-            "city": self.config.name,
-            "checkpoint_at": datetime.now().isoformat(),
-            "total": len(details),
-            "details": [asdict(d) for d in details]
-        }
-        checkpoint_file = self.output_dir / "details_checkpoint.json"
-        with open(checkpoint_file, 'w', encoding='utf-8') as f:
-            json.dump(checkpoint, f, ensure_ascii=False, indent=2)
-
-    def export_csv(self, details: list[BuildingDetail], request_details: list[RequestDetail] = None):
-        """Export results to CSV files"""
-        # Main details CSV
-        csv_file = self.output_dir / "buildings.csv"
-        with open(csv_file, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(['tik_number', 'address', 'neighborhood', 'num_requests', 'num_plans'])
-            for d in details:
-                writer.writerow([d.tik_number, d.address, d.neighborhood, len(d.requests), len(d.plans)])
-
-        # Basic permits CSV (from building details)
-        permits_file = self.output_dir / "permits.csv"
-        with open(permits_file, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerow(['tik_number', 'address', 'request_number', 'submission_date',
-                           'last_event', 'applicant_name', 'permit_number', 'permit_date'])
-            for d in details:
-                for req in d.requests:
-                    writer.writerow([
-                        d.tik_number, d.address,
-                        req['request_number'], req['submission_date'],
-                        req['last_event'], req['applicant_name'],
-                        req['permit_number'], req['permit_date']
-                    ])
-
-        exported_files = [csv_file, permits_file]
-
-        # Detailed permits CSV (from request details with full lifecycle)
-        if request_details:
-            detailed_file = self.output_dir / "permits_detailed.csv"
-            with open(detailed_file, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow([
-                    'request_number', 'tik_number', 'address', 'submission_date',
-                    'request_type', 'primary_use', 'description',
-                    'permit_number', 'permit_date',
-                    'main_area_sqm', 'service_area_sqm', 'housing_units',
-                    'num_stakeholders', 'num_events', 'num_requirements', 'num_meetings', 'num_documents'
-                ])
-                for r in request_details:
-                    if r.fetch_status == 'success':
-                        writer.writerow([
-                            r.request_number, r.tik_number, r.address, r.submission_date,
-                            r.request_type, r.primary_use, r.description,
-                            r.permit_number, r.permit_date,
-                            r.main_area_sqm, r.service_area_sqm, r.housing_units,
-                            len(r.stakeholders), len(r.events), len(r.requirements),
-                            len(r.meetings), len(r.documents)
-                        ])
-            exported_files.append(detailed_file)
-
-            # Stakeholders CSV
-            stakeholders_file = self.output_dir / "stakeholders.csv"
-            with open(stakeholders_file, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow(['request_number', 'tik_number', 'role', 'name'])
-                for r in request_details:
-                    if r.fetch_status == 'success':
-                        for s in r.stakeholders:
-                            writer.writerow([r.request_number, r.tik_number, s.get('role', ''), s.get('name', '')])
-            exported_files.append(stakeholders_file)
-
-            # Events CSV (permit timeline)
-            events_file = self.output_dir / "permit_events.csv"
-            with open(events_file, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow(['request_number', 'tik_number', 'status', 'event_type', 'start_date', 'end_date'])
-                for r in request_details:
-                    if r.fetch_status == 'success':
-                        for e in r.events:
-                            writer.writerow([
-                                r.request_number, r.tik_number,
-                                e.get('status', ''), e.get('event_type', ''),
-                                e.get('start_date', ''), e.get('end_date', '')
-                            ])
-            exported_files.append(events_file)
-
-            # Requirements CSV
-            requirements_file = self.output_dir / "requirements.csv"
-            with open(requirements_file, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow(['request_number', 'tik_number', 'requirement', 'status'])
-                for r in request_details:
-                    if r.fetch_status == 'success':
-                        for req in r.requirements:
-                            writer.writerow([
-                                r.request_number, r.tik_number,
-                                req.get('requirement', ''), req.get('status', '')
-                            ])
-            exported_files.append(requirements_file)
-
-        logger.info(f"Exported CSV files: {', '.join(str(f.name) for f in exported_files)}")
 
     async def run_full_crawl(self, streets_only: bool = False, skip_details: bool = False, skip_requests: bool = False, force: bool = False, verbose: bool = False, retry_errors: bool = False):
         """Run the complete crawl process
@@ -1571,13 +1328,14 @@ class ComplotCrawler:
             logger.info("RETRY-ERRORS MODE: Only retrying failed building details")
             details = await self.retry_failed_details()
             if details:
-                self.export_csv(details)
+                self.exporter.export_csv(details)
             logger.info("#" * 60)
             logger.info("RETRY COMPLETE")
             logger.info("#" * 60)
             return
 
         # Step 1: Discover streets (returns all_streets and new_streets)
+        console.rule("[bold cyan]Phase 1: Discovering Streets")
         all_streets, new_streets = await self.discover_streets(force=force)
 
         if streets_only:
@@ -1585,6 +1343,7 @@ class ComplotCrawler:
             return
 
         # Step 2: Fetch building records
+        console.rule("[bold green]Phase 2: Fetching Building Records")
         # If we have new streets and not forcing, do incremental fetch
         if new_streets and not force:
             logger.info("=" * 60)
@@ -1639,17 +1398,19 @@ class ComplotCrawler:
             return
 
         # Step 3: Fetch building details
+        console.rule("[bold yellow]Phase 3: Fetching Building Details")
         details = await self.fetch_building_details(records)
 
         # Step 4: Fetch request details (permit lifecycle)
         request_details = []
         if not skip_requests:
+            console.rule("[bold magenta]Phase 4: Fetching Request Details")
             request_details = await self.fetch_request_details(details, force=force)
         else:
             logger.info("Skipping request details fetch.")
 
         # Step 5: Export CSV
-        self.export_csv(details, request_details)
+        self.exporter.export_csv(details, request_details)
 
         logger.info("#" * 60)
         logger.info("CRAWL COMPLETE")
