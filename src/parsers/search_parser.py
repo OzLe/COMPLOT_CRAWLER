@@ -170,18 +170,3 @@ class SearchResultParser(BaseParser):
             gush = numeric_cells[1]
 
         return gush, helka
-
-
-# Standalone functions for backward compatibility
-def extract_street_name(html: str, city_name: str) -> Optional[str]:
-    """Extract street name from search results (standalone function)."""
-    parser = SearchResultParser()
-    return parser.extract_street_name(html, city_name)
-
-
-def parse_search_results(html: str, city_name: str, street_code: int,
-                         street_name: str, house_number: int) -> list:
-    """Parse building records from search results (standalone function)."""
-    parser = SearchResultParser()
-    return parser.parse_building_records(html, city_name, street_code,
-                                         street_name, house_number)

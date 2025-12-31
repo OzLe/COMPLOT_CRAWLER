@@ -21,7 +21,7 @@ import multiprocessing
 import re
 import sys
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
@@ -32,6 +32,7 @@ from tqdm import tqdm
 
 from src.config import CityConfig, get_city_config, list_cities, CITIES
 from src.config import CrawlerSettings, DEFAULT_SETTINGS
+from src.models import BuildingRecord, BuildingDetail, RequestDetail
 from src.parsers.building_parser import parse_building_detail
 from src.parsers.request_parser import parse_request_detail
 from src.utils.logging import setup_logging, get_logger
@@ -53,68 +54,6 @@ SAVE_INTERVAL = _settings.save_interval
 
 # Logger setup (using centralized logging from src.utils.logging)
 logger = get_logger()
-
-
-@dataclass
-class BuildingRecord:
-    """A building file record from the search results"""
-    tik_number: str
-    address: str = ""
-    gush: str = ""
-    helka: str = ""
-    migrash: str = ""
-    street_code: int = 0
-    street_name: str = ""
-    house_number: int = 0
-
-
-@dataclass
-class BuildingDetail:
-    """Detailed building file information"""
-    tik_number: str
-    address: str = ""
-    neighborhood: str = ""
-    addresses: list = field(default_factory=list)
-    gush_helka: list = field(default_factory=list)
-    plans: list = field(default_factory=list)
-    requests: list = field(default_factory=list)
-    stakeholders: list = field(default_factory=list)
-    documents: list = field(default_factory=list)
-    fetch_status: str = "pending"
-    fetch_error: str = ""
-    fetched_at: str = ""
-
-
-@dataclass
-class RequestDetail:
-    """Detailed permit request information from GetBakashaFile"""
-    request_number: str
-    tik_number: str = ""  # Associated building file
-    address: str = ""
-    submission_date: str = ""
-
-    # General info
-    request_type: str = ""  # סוג הבקשה (e.g., בקשה להיתר)
-    primary_use: str = ""  # שימוש עיקרי (e.g., בית דו משפחתי)
-    description: str = ""  # תיאור הבקשה
-    permit_number: str = ""
-    permit_date: str = ""
-    main_area_sqm: str = ""  # שטח עיקרי
-    service_area_sqm: str = ""  # שטח שירות
-    housing_units: str = ""  # יחידות דיור
-
-    # Related data
-    stakeholders: list = field(default_factory=list)  # בעלי עניין
-    events: list = field(default_factory=list)  # אירועים (timeline)
-    requirements: list = field(default_factory=list)  # דרישות
-    meetings: list = field(default_factory=list)  # ישיבות ועדה
-    documents: list = field(default_factory=list)  # ארכיב מסמכים
-    gush_helka: list = field(default_factory=list)  # גוש וחלקה
-
-    # Fetch metadata
-    fetch_status: str = "pending"
-    fetch_error: str = ""
-    fetched_at: str = ""
 
 
 # ============================================================================
