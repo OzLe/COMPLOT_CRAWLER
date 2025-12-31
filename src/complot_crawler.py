@@ -30,48 +30,29 @@ import aiohttp
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from src.city_config import CityConfig, get_city_config, list_cities, CITIES
+from src.config import CityConfig, get_city_config, list_cities, CITIES
+from src.config import CrawlerSettings, DEFAULT_SETTINGS
+from src.parsers.building_parser import parse_building_detail
+from src.parsers.request_parser import parse_request_detail
+from src.utils.logging import setup_logging, get_logger
+from src.storage import CheckpointManager, DataExporter
+from src.fetchers.base import build_url
+from src.fetchers.street_fetcher import async_test_street, async_discover_range
+from src.fetchers.record_fetcher import async_fetch_records_for_street
+from src.fetchers.building_fetcher import async_fetch_building_detail, async_fetch_details_batch
+from src.fetchers.request_fetcher import async_fetch_request_detail, async_fetch_requests_batch
 
-# API Configuration
-API_BASE = "https://handasi.complot.co.il/magicscripts/mgrqispi.dll"
-MAX_CONCURRENT = 20
-REQUEST_TIMEOUT = 30
-MAX_RETRIES = 3
-RETRY_DELAY = 2
-SAVE_INTERVAL = 100
+# API Configuration (using settings for consistency, will be fully migrated later)
+_settings = DEFAULT_SETTINGS
+API_BASE = _settings.api_base
+MAX_CONCURRENT = _settings.max_concurrent
+REQUEST_TIMEOUT = _settings.request_timeout
+MAX_RETRIES = _settings.max_retries
+RETRY_DELAY = _settings.retry_delay
+SAVE_INTERVAL = _settings.save_interval
 
-# Logger setup
-logger = logging.getLogger("complot_crawler")
-
-
-def setup_logging(output_dir: Path, verbose: bool = False):
-    """Configure logging with console and file handlers"""
-    log_level = logging.DEBUG if verbose else logging.INFO
-
-    # Create formatter with timestamp
-    formatter = logging.Formatter(
-        '%(asctime)s | %(levelname)-8s | %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-
-    # Console handler
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setLevel(log_level)
-    console_handler.setFormatter(formatter)
-
-    # File handler
-    log_file = output_dir / "crawler.log"
-    file_handler = logging.FileHandler(log_file, encoding='utf-8')
-    file_handler.setLevel(logging.DEBUG)  # Always log debug to file
-    file_handler.setFormatter(formatter)
-
-    # Configure logger
-    logger.setLevel(logging.DEBUG)
-    logger.handlers.clear()  # Remove existing handlers
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
-
-    logger.info(f"Logging initialized. Log file: {log_file}")
+# Logger setup (using centralized logging from src.utils.logging)
+logger = get_logger()
 
 
 @dataclass
@@ -139,98 +120,22 @@ class RequestDetail:
 # ============================================================================
 # MULTIPROCESSING WORKER FUNCTIONS
 # These must be at module level to be picklable for multiprocessing.Pool
+# Note: Core logic moved to src.fetchers module
 # ============================================================================
 
 def _build_url(program: str, **params) -> str:
-    """Build API URL with parameters (standalone version for workers)"""
-    param_str = "&".join(f"{k}={v}" for k, v in params.items())
-    return f"{API_BASE}?appname=cixpa&prgname={program}&{param_str}"
+    """Build API URL with parameters (delegates to fetchers.base)"""
+    return build_url(program, **params)
 
 
 async def _async_test_street(session: aiohttp.ClientSession, config_dict: dict, street_code: int) -> Optional[dict]:
-    """Test if a street code is valid (standalone async function for workers)"""
-    house_numbers = [1, 2, 3, 5, 10, 20, 50]
-    city_name = config_dict['name']
-
-    for h in house_numbers:
-        if config_dict['api_type'] == "tikim":
-            url = _build_url(
-                "GetTikimByAddress",
-                siteid=config_dict['site_id'],
-                c=config_dict['city_code'],
-                s=street_code,
-                h=h,
-                l="true",
-                arguments="siteid,c,s,h,l"
-            )
-        else:  # bakashot
-            url = _build_url(
-                "GetBakashotByAddress",
-                siteid=config_dict['site_id'],
-                grp=0,
-                t=1,
-                c=config_dict['city_code'],
-                s=street_code,
-                h=h,
-                l="true",
-                arguments="siteId,grp,t,c,s,h,l"
-            )
-
-        try:
-            async with session.get(url, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
-                if resp.status != 200:
-                    continue
-                html = await resp.text()
-                soup = BeautifulSoup(html, 'html.parser')
-                text = soup.get_text()
-
-                if "נמצאו" in text and ("תיקי בניין" in text or "בקשות" in text):
-                    table = soup.find("table", {"id": "results-table"})
-                    if table:
-                        rows = table.select("tbody tr")
-                        if rows:
-                            cells = rows[0].find_all("td")
-                            addr = None
-                            for cell in cells:
-                                cell_text = cell.get_text(strip=True)
-                                if city_name in cell_text:
-                                    addr = cell_text
-                                    break
-
-                            if addr:
-                                parts = addr.replace(city_name, '').strip().rsplit(' ', 1)
-                                street_name = parts[0].strip() if parts else addr
-                                if street_name and len(street_name) > 1:
-                                    return {"code": street_code, "name": street_name}
-        except Exception:
-            continue
-
-    return None
+    """Test if a street code is valid (delegates to fetchers.street_fetcher)"""
+    return await async_test_street(session, config_dict, street_code)
 
 
 async def _async_discover_range(config_dict: dict, start: int, end: int) -> list[dict]:
-    """Async street discovery for a specific range (worker function)"""
-    streets = []
-    semaphore = asyncio.Semaphore(MAX_CONCURRENT)
-
-    async def test_with_semaphore(session, street_code):
-        async with semaphore:
-            return await _async_test_street(session, config_dict, street_code)
-
-    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
-    async with aiohttp.ClientSession(connector=connector) as session:
-        tasks = [test_with_semaphore(session, s) for s in range(start, end + 1)]
-
-        batch_size = 100
-        for i in range(0, len(tasks), batch_size):
-            batch = tasks[i:i + batch_size]
-            results = await asyncio.gather(*batch, return_exceptions=True)
-
-            for result in results:
-                if isinstance(result, dict) and result:
-                    streets.append(result)
-
-    return streets
+    """Async street discovery for a specific range (delegates to fetchers.street_fetcher)"""
+    return await async_discover_range(config_dict, start, end)
 
 
 def _worker_discover_streets(args: tuple) -> list[dict]:
@@ -243,123 +148,18 @@ def _worker_discover_streets(args: tuple) -> list[dict]:
 
 
 async def _async_fetch_records_for_street(session: aiohttp.ClientSession, config_dict: dict, street: dict) -> list[dict]:
-    """Fetch all building records for a single street (worker function)"""
-    records = []
-    street_code = street['code']
-    street_name = street['name']
-    city_name = config_dict['name']
-
-    for house_num in range(1, 500):
-        if config_dict['api_type'] == "tikim":
-            url = _build_url(
-                "GetTikimByAddress",
-                siteid=config_dict['site_id'],
-                c=config_dict['city_code'],
-                s=street_code,
-                h=house_num,
-                l="true",
-                arguments="siteid,c,s,h,l"
-            )
-        else:
-            url = _build_url(
-                "GetBakashotByAddress",
-                siteid=config_dict['site_id'],
-                grp=0,
-                t=1,
-                c=config_dict['city_code'],
-                s=street_code,
-                h=house_num,
-                l="true",
-                arguments="siteId,grp,t,c,s,h,l"
-            )
-
-        try:
-            async with session.get(url, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
-                if resp.status != 200:
-                    continue
-                html = await resp.text()
-                soup = BeautifulSoup(html, 'html.parser')
-
-                if "לא אותרו" in soup.get_text() or "לא ניתן" in soup.get_text():
-                    continue
-
-                table = soup.find("table", {"id": "results-table"})
-                if not table:
-                    continue
-
-                rows = table.select("tbody tr")
-                for row in rows:
-                    cells = row.find_all("td")
-                    if len(cells) < 3:
-                        continue
-
-                    tik = None
-                    for link in row.find_all("a", href=True):
-                        href = str(link.get("href", ""))
-                        if "getBuilding" in href:
-                            match = re.search(r'getBuilding\((\d+)\)', href)
-                            if match:
-                                tik = match.group(1)
-                                break
-
-                    if not tik:
-                        link = row.find("a", href=True)
-                        if link:
-                            text = link.get_text(strip=True)
-                            if text.isdigit():
-                                tik = text
-                            else:
-                                match = re.search(r'\d+', text)
-                                if match:
-                                    tik = match.group()
-
-                    if not tik:
-                        continue
-
-                    address = ""
-                    for cell in cells:
-                        text = cell.get_text(strip=True)
-                        if city_name in text:
-                            address = text
-                            break
-
-                    gush = ""
-                    helka = ""
-                    numeric_cells = []
-                    for cell in reversed(cells):
-                        text = cell.get_text(strip=True)
-                        if text.isdigit() and len(text) <= 6:
-                            numeric_cells.append(text)
-                        elif numeric_cells:
-                            break
-                    if len(numeric_cells) >= 2:
-                        helka = numeric_cells[0]
-                        gush = numeric_cells[1]
-
-                    records.append({
-                        "tik_number": tik,
-                        "address": address,
-                        "gush": gush,
-                        "helka": helka,
-                        "migrash": "",
-                        "street_code": street_code,
-                        "street_name": street_name,
-                        "house_number": house_num
-                    })
-        except Exception:
-            continue
-
-    return records
+    """Fetch all building records for a single street (delegates to fetchers.record_fetcher)"""
+    return await async_fetch_records_for_street(session, config_dict, street)
 
 
 async def _async_fetch_records_batch(config_dict: dict, streets: list[dict]) -> list[dict]:
     """Async records fetch for a batch of streets (worker function)"""
     all_records = []
-    semaphore = asyncio.Semaphore(5)  # Lower concurrency for full street scans
+    semaphore = asyncio.Semaphore(5)
 
     async def fetch_with_semaphore(session, street):
         async with semaphore:
-            return await _async_fetch_records_for_street(session, config_dict, street)
+            return await async_fetch_records_for_street(session, config_dict, street)
 
     connector = aiohttp.TCPConnector(limit=20)
     async with aiohttp.ClientSession(connector=connector) as session:
@@ -380,350 +180,24 @@ def _worker_fetch_records(args: tuple) -> list[dict]:
 
 
 async def _async_fetch_single_detail(session: aiohttp.ClientSession, config_dict: dict, tik_number: str, retry: int = 0) -> dict:
-    """Fetch details for a single building (worker function)"""
-    url = _build_url(
-        "GetTikFile",
-        siteid=config_dict['site_id'],
-        t=tik_number,
-        arguments="siteid,t"
-    )
-
-    headers = {
-        "Referer": config_dict['base_url'],
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
-    }
-
-    try:
-        async with session.get(url, headers=headers, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
-            if resp.status == 200:
-                html = await resp.text()
-                return _parse_building_detail_standalone(html, tik_number)
-            else:
-                return {
-                    "tik_number": tik_number,
-                    "fetch_status": "error",
-                    "fetch_error": f"HTTP {resp.status}",
-                    "fetched_at": datetime.now().isoformat()
-                }
-    except asyncio.TimeoutError:
-        if retry < MAX_RETRIES:
-            await asyncio.sleep(RETRY_DELAY * (2 ** retry))
-            return await _async_fetch_single_detail(session, config_dict, tik_number, retry + 1)
-        return {
-            "tik_number": tik_number,
-            "fetch_status": "error",
-            "fetch_error": "Timeout",
-            "fetched_at": datetime.now().isoformat()
-        }
-    except Exception as e:
-        return {
-            "tik_number": tik_number,
-            "fetch_status": "error",
-            "fetch_error": str(e),
-            "fetched_at": datetime.now().isoformat()
-        }
+    """Fetch details for a single building (delegates to fetchers.building_fetcher)"""
+    return await async_fetch_building_detail(session, config_dict, tik_number, retry)
 
 
 def _parse_building_detail_standalone(html: str, tik_number: str) -> dict:
-    """Parse building detail HTML response (standalone version for workers)"""
-    soup = BeautifulSoup(html, 'html.parser')
-    detail = {
-        "tik_number": tik_number,
-        "address": "",
-        "neighborhood": "",
-        "addresses": [],
-        "gush_helka": [],
-        "plans": [],
-        "requests": [],
-        "stakeholders": [],
-        "documents": [],
-        "fetch_status": "pending",
-        "fetch_error": "",
-        "fetched_at": datetime.now().isoformat()
-    }
+    """Parse building detail HTML response (standalone version for workers).
 
-    text = soup.get_text()
-    if 'לא ניתן להציג את המידע המבוקש' in text or 'לא אותרו תוצאות' in text:
-        detail["fetch_status"] = "error"
-        detail["fetch_error"] = "No data available"
-        return detail
-
-    # Extract address from header
-    header_divs = soup.select('#result-title-div-id .top-navbar-info-desc')
-    for i, div in enumerate(header_divs):
-        if 'כתובת' in div.get_text():
-            if i + 1 < len(header_divs):
-                detail["address"] = header_divs[i + 1].get_text(strip=True)
-
-    # Extract neighborhood
-    info_main = soup.select_one('#info-main')
-    if info_main:
-        for row in info_main.select('tr'):
-            cells = row.select('td')
-            if len(cells) >= 2:
-                label = cells[0].get_text(strip=True)
-                value = cells[1].get_text(strip=True)
-                if 'שכונה' in label:
-                    detail["neighborhood"] = value
-
-    # Extract addresses
-    addresses_div = soup.select_one('#addresses')
-    if addresses_div:
-        for row in addresses_div.select('tbody tr'):
-            addr = row.get_text(strip=True)
-            if addr:
-                detail["addresses"].append(addr)
-
-    # Extract gush/helka
-    gush_table = soup.select_one('#table-gushim-helkot')
-    if gush_table:
-        for row in gush_table.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 5:
-                gush_info = {
-                    'gush': cells[1].get_text(strip=True),
-                    'helka': cells[2].get_text(strip=True),
-                    'migrash': cells[3].get_text(strip=True),
-                    'plan_number': cells[4].get_text(strip=True)
-                }
-                if gush_info['gush']:
-                    detail["gush_helka"].append(gush_info)
-
-    # Extract requests/permits
-    requests_table = soup.select_one('#table-requests')
-    if requests_table:
-        for row in requests_table.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 7:
-                request_info = {
-                    'request_number': cells[1].get_text(strip=True),
-                    'submission_date': cells[2].get_text(strip=True),
-                    'last_event': cells[3].get_text(strip=True),
-                    'applicant_name': cells[4].get_text(strip=True),
-                    'permit_number': cells[5].get_text(strip=True),
-                    'permit_date': cells[6].get_text(strip=True)
-                }
-                if request_info['request_number']:
-                    detail["requests"].append(request_info)
-
-    # Extract plans
-    plans_table = soup.select_one('#table-taba')
-    if plans_table:
-        for row in plans_table.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 5 and 'לא אותרו' not in row.get_text():
-                plan_info = {
-                    'plan_number': cells[1].get_text(strip=True),
-                    'plan_name': cells[2].get_text(strip=True),
-                    'status': cells[3].get_text(strip=True),
-                    'status_date': cells[4].get_text(strip=True)
-                }
-                if plan_info['plan_number']:
-                    detail["plans"].append(plan_info)
-
-    detail["fetch_status"] = "success"
-    return detail
+    Note: This function delegates to src.parsers.building_parser.parse_building_detail
+    """
+    return parse_building_detail(html, tik_number)
 
 
 def _parse_request_detail_standalone(html: str, request_number: str, tik_number: str = "") -> dict:
-    """Parse permit request detail HTML response (GetBakashaFile)"""
-    soup = BeautifulSoup(html, 'html.parser')
-    detail = {
-        "request_number": request_number,
-        "tik_number": tik_number,
-        "address": "",
-        "submission_date": "",
-        "request_type": "",
-        "primary_use": "",
-        "description": "",
-        "permit_number": "",
-        "permit_date": "",
-        "main_area_sqm": "",
-        "service_area_sqm": "",
-        "housing_units": "",
-        "stakeholders": [],
-        "events": [],
-        "requirements": [],
-        "meetings": [],
-        "documents": [],
-        "gush_helka": [],
-        "fetch_status": "pending",
-        "fetch_error": "",
-        "fetched_at": datetime.now().isoformat()
-    }
+    """Parse permit request detail HTML response (GetBakashaFile).
 
-    text = soup.get_text()
-    if 'לא ניתן להציג את המידע המבוקש' in text or 'לא אותרו תוצאות' in text:
-        detail["fetch_status"] = "error"
-        detail["fetch_error"] = "No data available"
-        return detail
-
-    # Extract header info (address, submission date)
-    header = soup.select_one('#result-title-div-id')
-    if header:
-        divs = header.select('.top-navbar-info-desc')
-        for i, div in enumerate(divs):
-            text_content = div.get_text(strip=True)
-            if 'כתובת' in text_content and i + 1 < len(divs):
-                detail["address"] = divs[i + 1].get_text(strip=True)
-            elif 'תאריך הגשה' in text_content and i + 1 < len(divs):
-                detail["submission_date"] = divs[i + 1].get_text(strip=True)
-
-    # Extract general info from #info-main table
-    info_main = soup.select_one('#info-main')
-    if info_main:
-        field_map = {
-            'מספר תיק בניין': 'tik_number',
-            'סוג הבקשה': 'request_type',
-            'שימוש עיקרי': 'primary_use',
-            'תיאור הבקשה': 'description',
-            'מספר היתר': 'permit_number',
-            'תאריך הפקת היתר': 'permit_date',
-            'שטח עיקרי': 'main_area_sqm',
-            'שטח שירות': 'service_area_sqm',
-            'סך מספר יחידות דיור': 'housing_units',
-        }
-        for row in info_main.select('tr'):
-            cells = row.select('td')
-            if len(cells) >= 2:
-                label = cells[0].get_text(strip=True).rstrip(':')
-                value = cells[1].get_text(strip=True)
-                for hebrew, field_name in field_map.items():
-                    if hebrew in label:
-                        detail[field_name] = value
-                        break
-
-    # Extract stakeholders from #table-baaley-inyan
-    stakeholders_table = soup.select_one('#table-baaley-inyan')
-    if stakeholders_table:
-        for row in stakeholders_table.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 2:
-                stakeholder = {
-                    'role': cells[0].get_text(strip=True),
-                    'name': cells[1].get_text(strip=True)
-                }
-                if stakeholder['name']:
-                    detail["stakeholders"].append(stakeholder)
-
-    # Extract events from #table-events
-    events_table = soup.select_one('#table-events')
-    if events_table:
-        for row in events_table.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 4:
-                event = {
-                    'status': cells[0].get_text(strip=True),
-                    'event_type': cells[1].get_text(strip=True),
-                    'start_date': cells[2].get_text(strip=True),
-                    'end_date': cells[3].get_text(strip=True) if len(cells) > 3 else ""
-                }
-                if event['event_type']:
-                    detail["events"].append(event)
-
-    # Extract requirements from #requirments (note: typo in original HTML)
-    requirements_div = soup.select_one('#requirments')
-    if requirements_div:
-        for row in requirements_div.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 2:
-                req = {
-                    'requirement': cells[0].get_text(strip=True),
-                    'status': cells[1].get_text(strip=True)
-                }
-                if req['requirement'] and req['requirement'] != '-':
-                    detail["requirements"].append(req)
-
-    # Extract committee meetings from #vaada
-    vaada_div = soup.select_one('#vaada')
-    if vaada_div:
-        # Each meeting is in a panel/accordion structure
-        for panel in vaada_div.select('.panel, .meeting-panel, [id^="meeting"]'):
-            meeting = _extract_meeting_from_panel(panel)
-            if meeting:
-                detail["meetings"].append(meeting)
-
-        # Alternative: try parsing from table structure if panels not found
-        if not detail["meetings"]:
-            for table in vaada_div.select('table'):
-                meeting_info = {}
-                for row in table.select('tr'):
-                    cells = row.select('td, th')
-                    if len(cells) >= 2:
-                        header = cells[0].get_text(strip=True)
-                        value = cells[1].get_text(strip=True) if len(cells) > 1 else ""
-                        if 'מהות' in header:
-                            meeting_info['description'] = value
-                        elif 'החלטות' in header:
-                            meeting_info['decisions'] = value
-                if meeting_info:
-                    detail["meetings"].append(meeting_info)
-
-    # Extract documents from #archive
-    archive_div = soup.select_one('#archive')
-    if archive_div:
-        for row in archive_div.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 3:
-                doc = {
-                    'name': cells[0].get_text(strip=True),
-                    'type': cells[1].get_text(strip=True),
-                    'date': cells[2].get_text(strip=True)
-                }
-                if doc['name']:
-                    detail["documents"].append(doc)
-
-    # Extract gush/helka from #gushim-helkot
-    gush_table = soup.select_one('#gushim-helkot')
-    if gush_table:
-        for row in gush_table.select('tbody tr'):
-            cells = row.select('td')
-            if len(cells) >= 4:
-                gush_info = {
-                    'gush': cells[0].get_text(strip=True),
-                    'helka': cells[1].get_text(strip=True),
-                    'migrash': cells[2].get_text(strip=True),
-                    'plan_number': cells[3].get_text(strip=True) if len(cells) > 3 else ""
-                }
-                if gush_info['gush'] or gush_info['helka']:
-                    detail["gush_helka"].append(gush_info)
-
-    detail["fetch_status"] = "success"
-    return detail
-
-
-def _extract_meeting_from_panel(panel) -> Optional[dict]:
-    """Extract meeting info from a panel/accordion element"""
-    meeting = {}
-
-    # Try to get meeting header info
-    header = panel.select_one('.panel-heading, .meeting-header, h4, h5')
-    if header:
-        meeting['header'] = header.get_text(strip=True)
-
-    # Look for date, type, description, decisions
-    text = panel.get_text()
-
-    # Try structured extraction
-    for row in panel.select('tr'):
-        cells = row.select('td, th')
-        if len(cells) >= 1:
-            cell_text = cells[0].get_text(strip=True)
-            if 'מהות' in cell_text and len(cells) > 1:
-                meeting['description'] = cells[1].get_text(strip=True)
-            elif 'החלטות' in cell_text and len(cells) > 1:
-                meeting['decisions'] = cells[1].get_text(strip=True)
-
-    # Try to extract meeting type and date from header or panel
-    type_elem = panel.select_one('.vaada-type, .meeting-type')
-    if type_elem:
-        meeting['type'] = type_elem.get_text(strip=True)
-
-    date_elem = panel.select_one('.vaada-date, .meeting-date')
-    if date_elem:
-        meeting['date'] = date_elem.get_text(strip=True)
-
-    return meeting if meeting else None
+    Note: This function delegates to src.parsers.request_parser.parse_request_detail
+    """
+    return parse_request_detail(html, request_number, tik_number)
 
 
 async def _async_fetch_single_request(
@@ -732,76 +206,13 @@ async def _async_fetch_single_request(
     request_number: str,
     tik_number: str = ""
 ) -> dict:
-    """Fetch a single request detail from GetBakashaFile API"""
-    url = _build_url(
-        "GetBakashaFile",
-        siteid=config_dict['site_id'],
-        b=request_number,
-        arguments="siteid,b"
-    )
-
-    for attempt in range(MAX_RETRIES):
-        try:
-            async with session.get(url, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
-                if resp.status != 200:
-                    continue
-                html = await resp.text()
-                return _parse_request_detail_standalone(html, request_number, tik_number)
-        except Exception as e:
-            if attempt == MAX_RETRIES - 1:
-                return {
-                    "request_number": request_number,
-                    "tik_number": tik_number,
-                    "fetch_status": "error",
-                    "fetch_error": str(e),
-                    "fetched_at": datetime.now().isoformat(),
-                    "address": "", "submission_date": "", "request_type": "",
-                    "primary_use": "", "description": "", "permit_number": "",
-                    "permit_date": "", "main_area_sqm": "", "service_area_sqm": "",
-                    "housing_units": "", "stakeholders": [], "events": [],
-                    "requirements": [], "meetings": [], "documents": [], "gush_helka": []
-                }
-            await asyncio.sleep(RETRY_DELAY)
-
-    return {
-        "request_number": request_number,
-        "tik_number": tik_number,
-        "fetch_status": "error",
-        "fetch_error": "Max retries exceeded",
-        "fetched_at": datetime.now().isoformat(),
-        "address": "", "submission_date": "", "request_type": "",
-        "primary_use": "", "description": "", "permit_number": "",
-        "permit_date": "", "main_area_sqm": "", "service_area_sqm": "",
-        "housing_units": "", "stakeholders": [], "events": [],
-        "requirements": [], "meetings": [], "documents": [], "gush_helka": []
-    }
+    """Fetch a single request detail (delegates to fetchers.request_fetcher)"""
+    return await async_fetch_request_detail(session, config_dict, request_number, tik_number)
 
 
 async def _async_fetch_requests_batch(config_dict: dict, request_items: list[tuple]) -> list[dict]:
-    """Async request details fetch for a batch of (request_number, tik_number) tuples"""
-    results = []
-    semaphore = asyncio.Semaphore(MAX_CONCURRENT)
-
-    async def fetch_with_semaphore(session, req_num, tik_num):
-        async with semaphore:
-            return await _async_fetch_single_request(session, config_dict, req_num, tik_num)
-
-    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
-    async with aiohttp.ClientSession(connector=connector) as session:
-        tasks = [fetch_with_semaphore(session, req_num, tik_num) for req_num, tik_num in request_items]
-
-        batch_size = 100
-        for i in range(0, len(tasks), batch_size):
-            batch = tasks[i:i + batch_size]
-            batch_results = await asyncio.gather(*batch, return_exceptions=True)
-
-            for result in batch_results:
-                if isinstance(result, dict):
-                    results.append(result)
-                elif isinstance(result, Exception):
-                    pass
-
-    return results
+    """Async request details fetch (delegates to fetchers.request_fetcher)"""
+    return await async_fetch_requests_batch(config_dict, request_items)
 
 
 def _worker_fetch_requests(args: tuple) -> list[dict]:
@@ -814,31 +225,8 @@ def _worker_fetch_requests(args: tuple) -> list[dict]:
 
 
 async def _async_fetch_details_batch(config_dict: dict, tik_numbers: list[str]) -> list[dict]:
-    """Async details fetch for a batch of tik numbers (worker function)"""
-    details = []
-    semaphore = asyncio.Semaphore(MAX_CONCURRENT)
-
-    async def fetch_with_semaphore(session, tik):
-        async with semaphore:
-            return await _async_fetch_single_detail(session, config_dict, tik)
-
-    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
-    async with aiohttp.ClientSession(connector=connector) as session:
-        tasks = [fetch_with_semaphore(session, tik) for tik in tik_numbers]
-
-        batch_size = 100
-        for i in range(0, len(tasks), batch_size):
-            batch = tasks[i:i + batch_size]
-            results = await asyncio.gather(*batch, return_exceptions=True)
-
-            for result in results:
-                if isinstance(result, dict):
-                    details.append(result)
-                elif isinstance(result, Exception):
-                    # Handle exception case
-                    pass
-
-    return details
+    """Async details fetch (delegates to fetchers.building_fetcher)"""
+    return await async_fetch_details_batch(config_dict, tik_numbers)
 
 
 def _worker_fetch_details(args: tuple) -> list[dict]:

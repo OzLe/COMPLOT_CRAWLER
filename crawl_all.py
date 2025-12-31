@@ -25,7 +25,7 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from src.city_config import CITIES, list_cities
+from src.config import CITIES, list_cities
 
 
 def crawl_city(city_key: str, workers: int = 1, force: bool = False,
