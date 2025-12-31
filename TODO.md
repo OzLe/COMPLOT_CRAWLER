@@ -1,6 +1,6 @@
 # Complot Crawler - TODO
 
-## Last Updated: 2025-12-30
+## Last Updated: 2025-12-31
 
 ---
 
@@ -37,6 +37,18 @@
 - [x] Fixed Modiin site_id (was 75, now 82)
 - [x] Fixed empty CSV exports issue (caused by stale cache)
 
+### Progress Bars (Dec 31, 2025)
+- [x] Added tqdm progress bars for all long-running operations:
+  - Street discovery: shows codes tested, found count
+  - Building records fetching: shows streets processed, records found
+  - Building details fetching: shows buildings processed, success/error counts
+
+### Incremental Street Detection (Dec 31, 2025)
+- [x] When streets.json exists, automatically detects new streets
+- [x] Compares fresh API scan against cached baseline
+- [x] Only fetches building records for newly discovered streets
+- [x] Updated streets.json schema with incremental metadata (previous_total, new_streets_count, new_streets)
+
 ---
 
 ## Pending Tasks
@@ -57,7 +69,6 @@ Cities with no accessible subdomain:
 - givatayim, holon, petahtikva, netanya, herzliya, raanana (connection refused)
 
 ### Feature Ideas
-- [ ] Add progress bars for long-running operations
 - [ ] Add email/webhook notifications when crawl completes
 - [ ] Create a web dashboard for viewing crawled data
 - [ ] Add data validation/sanity checks after crawl

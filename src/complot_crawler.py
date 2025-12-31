@@ -28,6 +28,7 @@ from typing import Any, Optional
 
 import aiohttp
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 from src.city_config import CityConfig, get_city_config, list_cities, CITIES
 
@@ -629,14 +630,8 @@ class ComplotCrawler:
 
             return None
 
-    async def discover_streets(self, force: bool = False) -> list[dict]:
-        """Discover all valid street codes for the city"""
-        if self.streets_file.exists() and not force:
-            logger.info(f"Loading cached streets from {self.streets_file}")
-            with open(self.streets_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                return data.get('streets', [])
-
+    async def _run_discovery(self) -> list[dict]:
+        """Run the actual street discovery process (API calls)"""
         logger.info("=" * 60)
         logger.info(f"DISCOVERING STREETS FOR {self.config.name} ({self.config.name_en})")
         logger.info("=" * 60)
@@ -691,36 +686,85 @@ class ComplotCrawler:
                 ]
 
                 batch_size = 100
-                for i in range(0, len(tasks), batch_size):
-                    batch = tasks[i:i + batch_size]
-                    results = await asyncio.gather(*batch, return_exceptions=True)
 
-                    for result in results:
-                        if isinstance(result, dict) and result:
-                            streets.append(result)
-                            logger.debug(f"Found street {result['code']}: {result['name']}")
+                with tqdm(total=len(tasks), desc="Discovering streets", unit="codes") as pbar:
+                    for i in range(0, len(tasks), batch_size):
+                        batch = tasks[i:i + batch_size]
+                        results = await asyncio.gather(*batch, return_exceptions=True)
 
-                    progress = min(i + batch_size, len(tasks))
-                    elapsed = time.time() - start_time
-                    rate = progress / elapsed if elapsed > 0 else 0
-                    logger.info(f"Streets: {progress}/{len(tasks)} tested ({len(streets)} found) | Rate: {rate:.1f}/sec")
+                        for result in results:
+                            if isinstance(result, dict) and result:
+                                streets.append(result)
+                                logger.debug(f"Found street {result['code']}: {result['name']}")
 
-        # Save streets
+                        pbar.update(len(batch))
+                        pbar.set_postfix(found=len(streets))
+
+        return streets
+
+    async def discover_streets(self, force: bool = False) -> tuple[list[dict], list[dict]]:
+        """
+        Discover all valid street codes for the city.
+
+        Returns:
+            tuple: (all_streets, new_streets)
+            - all_streets: Complete list of discovered streets
+            - new_streets: Streets that are new since last run (empty if no baseline or force=True)
+        """
+        baseline_streets = []
+        baseline_codes = set()
+        previous_total = 0
+
+        # Load baseline for comparison (if exists and not forcing)
+        if self.streets_file.exists() and not force:
+            logger.info(f"Loading baseline streets from {self.streets_file} for incremental detection")
+            with open(self.streets_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                baseline_streets = data.get('streets', [])
+                baseline_codes = {s['code'] for s in baseline_streets}
+                previous_total = len(baseline_streets)
+                logger.info(f"Baseline has {previous_total} streets")
+
+        # Run fresh discovery
+        fresh_streets = await self._run_discovery()
+        fresh_codes = {s['code'] for s in fresh_streets}
+
+        # Compute diff
+        new_codes = fresh_codes - baseline_codes
+        removed_codes = baseline_codes - fresh_codes
+        new_streets = [s for s in fresh_streets if s['code'] in new_codes]
+
+        # Log changes
+        if new_streets:
+            logger.info(f"Found {len(new_streets)} NEW streets:")
+            for s in new_streets:
+                logger.info(f"  + {s['code']}: {s['name']}")
+        elif baseline_streets:
+            logger.info("No new streets found since last run")
+
+        if removed_codes:
+            logger.warning(f"Found {len(removed_codes)} streets that no longer exist: {removed_codes}")
+
+        # Save streets with incremental metadata
+        sorted_streets = sorted(fresh_streets, key=lambda x: x["code"])
         output = {
             "city": self.config.name,
             "city_en": self.config.name_en,
             "site_id": self.config.site_id,
             "city_code": self.config.city_code,
             "discovered_at": datetime.now().isoformat(),
-            "total_streets": len(streets),
-            "streets": sorted(streets, key=lambda x: x["code"])
+            "total_streets": len(fresh_streets),
+            "previous_total": previous_total,
+            "new_streets_count": len(new_streets),
+            "new_streets": sorted(new_streets, key=lambda x: x["code"]) if new_streets else [],
+            "streets": sorted_streets
         }
 
         with open(self.streets_file, 'w', encoding='utf-8') as f:
             json.dump(output, f, ensure_ascii=False, indent=2)
 
-        logger.info(f"Discovered {len(streets)} streets. Saved to {self.streets_file}")
-        return streets
+        logger.info(f"Discovered {len(fresh_streets)} streets (previous: {previous_total}, new: {len(new_streets)}). Saved to {self.streets_file}")
+        return sorted_streets, new_streets
 
     async def _fetch_records_for_street(
         self,
@@ -901,25 +945,24 @@ class ComplotCrawler:
 
             connector = aiohttp.TCPConnector(limit=20)
             async with aiohttp.ClientSession(connector=connector) as session:
-                for i, street in enumerate(streets):
-                    records = await self._fetch_records_for_street(session, semaphore, street)
+                with tqdm(streets, desc="Fetching records", unit="streets") as pbar:
+                    for i, street in enumerate(pbar):
+                        records = await self._fetch_records_for_street(session, semaphore, street)
 
-                    # Deduplicate
-                    new_records = 0
-                    for r in records:
-                        if r.tik_number not in seen_tiks:
-                            seen_tiks.add(r.tik_number)
-                            all_records.append(r)
-                            new_records += 1
+                        # Deduplicate
+                        new_records = 0
+                        for r in records:
+                            if r.tik_number not in seen_tiks:
+                                seen_tiks.add(r.tik_number)
+                                all_records.append(r)
+                                new_records += 1
 
-                    elapsed = time.time() - start_time
-                    rate = len(all_records) / elapsed if elapsed > 0 else 0
-                    logger.info(f"Street {i+1}/{len(streets)}: {street['name']} | +{new_records} new | Total: {len(all_records)} | Rate: {rate:.1f}/sec")
+                        pbar.set_postfix(records=len(all_records), street=street['name'][:12])
 
-                    # Save checkpoint every 10 streets
-                    if (i + 1) % 10 == 0:
-                        logger.debug(f"Saving checkpoint at street {i+1}")
-                        self._save_records_checkpoint(all_records)
+                        # Save checkpoint every 10 streets
+                        if (i + 1) % 10 == 0:
+                            logger.debug(f"Saving checkpoint at street {i+1}")
+                            self._save_records_checkpoint(all_records)
 
         # Save final records
         output = {
@@ -1353,42 +1396,33 @@ class ComplotCrawler:
             async with aiohttp.ClientSession(connector=connector) as session:
                 batch_size = SAVE_INTERVAL
 
-                for batch_idx in range(0, len(remaining), batch_size):
-                    batch = remaining[batch_idx:batch_idx + batch_size]
-                    batch_start = time.time()
+                with tqdm(total=len(remaining), desc="Fetching details", unit="buildings") as pbar:
+                    for batch_idx in range(0, len(remaining), batch_size):
+                        batch = remaining[batch_idx:batch_idx + batch_size]
+                        batch_start = time.time()
 
-                    tasks = [self._fetch_single_detail(session, semaphore, tik) for tik in batch]
-                    results = await asyncio.gather(*tasks)
+                        tasks = [self._fetch_single_detail(session, semaphore, tik) for tik in batch]
+                        results = await asyncio.gather(*tasks)
 
-                    for result in results:
-                        completed[result.tik_number] = result
+                        for result in results:
+                            completed[result.tik_number] = result
 
-                    processed = batch_idx + len(batch)
-                    elapsed = time.time() - start_time
-                    batch_elapsed = time.time() - batch_start
-                    rate = processed / elapsed if elapsed > 0 else 0
-                    batch_rate = len(batch) / batch_elapsed if batch_elapsed > 0 else 0
-                    eta = (len(remaining) - processed) / rate if rate > 0 else 0
+                        success = sum(1 for r in results if r.fetch_status == 'success')
+                        errors = sum(1 for r in results if r.fetch_status == 'error')
+                        total_success += success
+                        total_errors += errors
 
-                    success = sum(1 for r in results if r.fetch_status == 'success')
-                    errors = sum(1 for r in results if r.fetch_status == 'error')
-                    total_success += success
-                    total_errors += errors
+                        # Log any errors in this batch
+                        for r in results:
+                            if r.fetch_status == 'error':
+                                logger.debug(f"Error fetching tik {r.tik_number}: {r.fetch_error}")
 
-                    # Log any errors in this batch
-                    for r in results:
-                        if r.fetch_status == 'error':
-                            logger.debug(f"Error fetching tik {r.tik_number}: {r.fetch_error}")
+                        pbar.update(len(batch))
+                        pbar.set_postfix(ok=total_success, err=total_errors)
 
-                    logger.info(
-                        f"Details: {processed}/{len(remaining)} ({100*processed/len(remaining):.1f}%) | "
-                        f"Rate: {rate:.1f}/sec (batch: {batch_rate:.1f}/sec) | "
-                        f"ETA: {eta/60:.1f}min | Batch: {success} ok, {errors} err"
-                    )
-
-                    # Save checkpoint
-                    logger.debug(f"Saving checkpoint with {len(completed)} records")
-                    self._save_details_checkpoint(list(completed.values()))
+                        # Save checkpoint
+                        logger.debug(f"Saving checkpoint with {len(completed)} records")
+                        self._save_details_checkpoint(list(completed.values()))
 
         # Save final results
         all_details = list(completed.values())
@@ -1557,15 +1591,62 @@ class ComplotCrawler:
         logger.info(f"Output Directory: {self.output_dir}")
         logger.info(f"Workers: {self.workers}")
 
-        # Step 1: Discover streets
-        streets = await self.discover_streets(force=force)
+        # Step 1: Discover streets (returns all_streets and new_streets)
+        all_streets, new_streets = await self.discover_streets(force=force)
 
         if streets_only:
             logger.info("Streets-only mode. Stopping here.")
             return
 
         # Step 2: Fetch building records
-        records = await self.fetch_building_records(streets, force=force)
+        # If we have new streets and not forcing, do incremental fetch
+        if new_streets and not force:
+            logger.info("=" * 60)
+            logger.info(f"INCREMENTAL MODE: Fetching records for {len(new_streets)} new streets only")
+            logger.info("=" * 60)
+
+            # Load existing records
+            existing_records = []
+            if self.records_file.exists():
+                with open(self.records_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    existing_records = [BuildingRecord(**r) for r in data.get('records', [])]
+                logger.info(f"Loaded {len(existing_records)} existing records from cache")
+
+            # Fetch records for new streets only (bypass cache with force=True)
+            new_records = await self.fetch_building_records(new_streets, force=True)
+
+            # Merge records (dedupe by tik_number)
+            seen_tiks = {r.tik_number for r in existing_records}
+            added_count = 0
+            for r in new_records:
+                if r.tik_number not in seen_tiks:
+                    existing_records.append(r)
+                    seen_tiks.add(r.tik_number)
+                    added_count += 1
+
+            records = existing_records
+            logger.info(f"Merged {added_count} new records. Total: {len(records)}")
+
+            # Save merged records
+            output = {
+                "city": self.config.name,
+                "city_en": self.config.name_en,
+                "crawled_at": datetime.now().isoformat(),
+                "total_records": len(records),
+                "records": [asdict(r) for r in records]
+            }
+            with open(self.records_file, 'w', encoding='utf-8') as f:
+                json.dump(output, f, ensure_ascii=False, indent=2)
+        elif not new_streets and self.records_file.exists() and not force:
+            # No new streets and cache exists - just load from cache
+            logger.info("No new streets found. Loading records from cache.")
+            with open(self.records_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                records = [BuildingRecord(**r) for r in data.get('records', [])]
+        else:
+            # Full fetch (no baseline, force, or first run)
+            records = await self.fetch_building_records(all_streets, force=force)
 
         if skip_details:
             logger.info("Skipping details fetch.")
@@ -1581,7 +1662,8 @@ class ComplotCrawler:
         logger.info("CRAWL COMPLETE")
         logger.info("#" * 60)
         logger.info(f"City: {self.config.name}")
-        logger.info(f"Streets: {len(streets)}")
+        logger.info(f"Streets: {len(all_streets)}")
+        logger.info(f"New Streets: {len(new_streets)}")
         logger.info(f"Building Records: {len(records)}")
         logger.info(f"Building Details: {len(details)}")
         logger.info("#" * 60)
