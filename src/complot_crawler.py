@@ -270,15 +270,14 @@ class ComplotCrawler:
             # Multi-process mode: split range across workers
             logger.info(f"Using {self.workers} workers for parallel street discovery")
             total_range = end - start + 1
-            chunk_size = max(1, total_range // self.workers)
+            # Use small fixed chunk size for granular progress updates
+            chunk_size = 100  # Small chunks for responsive progress bar
 
-            # Create ranges for each worker
+            # Create ranges for each chunk
             ranges = []
-            for i in range(self.workers):
-                chunk_start = start + i * chunk_size
-                chunk_end = start + (i + 1) * chunk_size - 1 if i < self.workers - 1 else end
-                if chunk_start <= end:
-                    ranges.append((chunk_start, chunk_end))
+            for chunk_start in range(start, end + 1, chunk_size):
+                chunk_end = min(chunk_start + chunk_size - 1, end)
+                ranges.append((chunk_start, chunk_end))
 
             # Prepare config dict for workers (must be picklable)
             config_dict = asdict(self.config)
@@ -523,8 +522,9 @@ class ComplotCrawler:
             # Multi-process mode: split streets across workers
             logger.info(f"Using {self.workers} workers for parallel records fetching")
 
-            # Split streets into chunks for each worker
-            chunk_size = max(1, len(streets) // self.workers)
+            # Use small fixed chunk size for granular progress updates
+            # Each chunk completes quickly, providing frequent progress updates
+            chunk_size = 10  # Small chunks for responsive progress bar
             street_chunks = []
             for i in range(0, len(streets), chunk_size):
                 chunk = streets[i:i + chunk_size]
@@ -948,8 +948,8 @@ class ComplotCrawler:
             # Multi-process mode: split tik numbers across workers
             logger.info(f"Using {self.workers} workers for parallel details fetching")
 
-            # Split tik numbers into chunks for each worker
-            chunk_size = max(1, len(remaining) // self.workers)
+            # Use small fixed chunk size for granular progress updates
+            chunk_size = 20  # Small chunks for responsive progress bar
             tik_chunks = []
             for i in range(0, len(remaining), chunk_size):
                 chunk = remaining[i:i + chunk_size]
@@ -1054,7 +1054,8 @@ class ComplotCrawler:
             # Multi-process mode
             logger.info(f"Using {self.workers} workers for parallel retry")
 
-            chunk_size = max(1, len(failed_tiks) // self.workers)
+            # Use small fixed chunk size for granular progress updates
+            chunk_size = 20  # Small chunks for responsive progress bar
             tik_chunks = []
             for i in range(0, len(failed_tiks), chunk_size):
                 chunk = failed_tiks[i:i + chunk_size]
@@ -1167,7 +1168,8 @@ class ComplotCrawler:
             # Multi-process mode
             logger.info(f"Using {self.workers} workers for parallel request fetching")
 
-            chunk_size = max(1, len(remaining) // self.workers)
+            # Use small fixed chunk size for granular progress updates
+            chunk_size = 20  # Small chunks for responsive progress bar
             request_chunks = []
             for i in range(0, len(remaining), chunk_size):
                 chunk = remaining[i:i + chunk_size]
