@@ -104,6 +104,38 @@ class BuildingDetail:
     fetched_at: str = ""
 
 
+@dataclass
+class RequestDetail:
+    """Detailed permit request information from GetBakashaFile"""
+    request_number: str
+    tik_number: str = ""  # Associated building file
+    address: str = ""
+    submission_date: str = ""
+
+    # General info
+    request_type: str = ""  # סוג הבקשה (e.g., בקשה להיתר)
+    primary_use: str = ""  # שימוש עיקרי (e.g., בית דו משפחתי)
+    description: str = ""  # תיאור הבקשה
+    permit_number: str = ""
+    permit_date: str = ""
+    main_area_sqm: str = ""  # שטח עיקרי
+    service_area_sqm: str = ""  # שטח שירות
+    housing_units: str = ""  # יחידות דיור
+
+    # Related data
+    stakeholders: list = field(default_factory=list)  # בעלי עניין
+    events: list = field(default_factory=list)  # אירועים (timeline)
+    requirements: list = field(default_factory=list)  # דרישות
+    meetings: list = field(default_factory=list)  # ישיבות ועדה
+    documents: list = field(default_factory=list)  # ארכיב מסמכים
+    gush_helka: list = field(default_factory=list)  # גוש וחלקה
+
+    # Fetch metadata
+    fetch_status: str = "pending"
+    fetch_error: str = ""
+    fetched_at: str = ""
+
+
 # ============================================================================
 # MULTIPROCESSING WORKER FUNCTIONS
 # These must be at module level to be picklable for multiprocessing.Pool
@@ -491,6 +523,294 @@ def _parse_building_detail_standalone(html: str, tik_number: str) -> dict:
 
     detail["fetch_status"] = "success"
     return detail
+
+
+def _parse_request_detail_standalone(html: str, request_number: str, tik_number: str = "") -> dict:
+    """Parse permit request detail HTML response (GetBakashaFile)"""
+    soup = BeautifulSoup(html, 'html.parser')
+    detail = {
+        "request_number": request_number,
+        "tik_number": tik_number,
+        "address": "",
+        "submission_date": "",
+        "request_type": "",
+        "primary_use": "",
+        "description": "",
+        "permit_number": "",
+        "permit_date": "",
+        "main_area_sqm": "",
+        "service_area_sqm": "",
+        "housing_units": "",
+        "stakeholders": [],
+        "events": [],
+        "requirements": [],
+        "meetings": [],
+        "documents": [],
+        "gush_helka": [],
+        "fetch_status": "pending",
+        "fetch_error": "",
+        "fetched_at": datetime.now().isoformat()
+    }
+
+    text = soup.get_text()
+    if 'לא ניתן להציג את המידע המבוקש' in text or 'לא אותרו תוצאות' in text:
+        detail["fetch_status"] = "error"
+        detail["fetch_error"] = "No data available"
+        return detail
+
+    # Extract header info (address, submission date)
+    header = soup.select_one('#result-title-div-id')
+    if header:
+        divs = header.select('.top-navbar-info-desc')
+        for i, div in enumerate(divs):
+            text_content = div.get_text(strip=True)
+            if 'כתובת' in text_content and i + 1 < len(divs):
+                detail["address"] = divs[i + 1].get_text(strip=True)
+            elif 'תאריך הגשה' in text_content and i + 1 < len(divs):
+                detail["submission_date"] = divs[i + 1].get_text(strip=True)
+
+    # Extract general info from #info-main table
+    info_main = soup.select_one('#info-main')
+    if info_main:
+        field_map = {
+            'מספר תיק בניין': 'tik_number',
+            'סוג הבקשה': 'request_type',
+            'שימוש עיקרי': 'primary_use',
+            'תיאור הבקשה': 'description',
+            'מספר היתר': 'permit_number',
+            'תאריך הפקת היתר': 'permit_date',
+            'שטח עיקרי': 'main_area_sqm',
+            'שטח שירות': 'service_area_sqm',
+            'סך מספר יחידות דיור': 'housing_units',
+        }
+        for row in info_main.select('tr'):
+            cells = row.select('td')
+            if len(cells) >= 2:
+                label = cells[0].get_text(strip=True).rstrip(':')
+                value = cells[1].get_text(strip=True)
+                for hebrew, field_name in field_map.items():
+                    if hebrew in label:
+                        detail[field_name] = value
+                        break
+
+    # Extract stakeholders from #table-baaley-inyan
+    stakeholders_table = soup.select_one('#table-baaley-inyan')
+    if stakeholders_table:
+        for row in stakeholders_table.select('tbody tr'):
+            cells = row.select('td')
+            if len(cells) >= 2:
+                stakeholder = {
+                    'role': cells[0].get_text(strip=True),
+                    'name': cells[1].get_text(strip=True)
+                }
+                if stakeholder['name']:
+                    detail["stakeholders"].append(stakeholder)
+
+    # Extract events from #table-events
+    events_table = soup.select_one('#table-events')
+    if events_table:
+        for row in events_table.select('tbody tr'):
+            cells = row.select('td')
+            if len(cells) >= 4:
+                event = {
+                    'status': cells[0].get_text(strip=True),
+                    'event_type': cells[1].get_text(strip=True),
+                    'start_date': cells[2].get_text(strip=True),
+                    'end_date': cells[3].get_text(strip=True) if len(cells) > 3 else ""
+                }
+                if event['event_type']:
+                    detail["events"].append(event)
+
+    # Extract requirements from #requirments (note: typo in original HTML)
+    requirements_div = soup.select_one('#requirments')
+    if requirements_div:
+        for row in requirements_div.select('tbody tr'):
+            cells = row.select('td')
+            if len(cells) >= 2:
+                req = {
+                    'requirement': cells[0].get_text(strip=True),
+                    'status': cells[1].get_text(strip=True)
+                }
+                if req['requirement'] and req['requirement'] != '-':
+                    detail["requirements"].append(req)
+
+    # Extract committee meetings from #vaada
+    vaada_div = soup.select_one('#vaada')
+    if vaada_div:
+        # Each meeting is in a panel/accordion structure
+        for panel in vaada_div.select('.panel, .meeting-panel, [id^="meeting"]'):
+            meeting = _extract_meeting_from_panel(panel)
+            if meeting:
+                detail["meetings"].append(meeting)
+
+        # Alternative: try parsing from table structure if panels not found
+        if not detail["meetings"]:
+            for table in vaada_div.select('table'):
+                meeting_info = {}
+                for row in table.select('tr'):
+                    cells = row.select('td, th')
+                    if len(cells) >= 2:
+                        header = cells[0].get_text(strip=True)
+                        value = cells[1].get_text(strip=True) if len(cells) > 1 else ""
+                        if 'מהות' in header:
+                            meeting_info['description'] = value
+                        elif 'החלטות' in header:
+                            meeting_info['decisions'] = value
+                if meeting_info:
+                    detail["meetings"].append(meeting_info)
+
+    # Extract documents from #archive
+    archive_div = soup.select_one('#archive')
+    if archive_div:
+        for row in archive_div.select('tbody tr'):
+            cells = row.select('td')
+            if len(cells) >= 3:
+                doc = {
+                    'name': cells[0].get_text(strip=True),
+                    'type': cells[1].get_text(strip=True),
+                    'date': cells[2].get_text(strip=True)
+                }
+                if doc['name']:
+                    detail["documents"].append(doc)
+
+    # Extract gush/helka from #gushim-helkot
+    gush_table = soup.select_one('#gushim-helkot')
+    if gush_table:
+        for row in gush_table.select('tbody tr'):
+            cells = row.select('td')
+            if len(cells) >= 4:
+                gush_info = {
+                    'gush': cells[0].get_text(strip=True),
+                    'helka': cells[1].get_text(strip=True),
+                    'migrash': cells[2].get_text(strip=True),
+                    'plan_number': cells[3].get_text(strip=True) if len(cells) > 3 else ""
+                }
+                if gush_info['gush'] or gush_info['helka']:
+                    detail["gush_helka"].append(gush_info)
+
+    detail["fetch_status"] = "success"
+    return detail
+
+
+def _extract_meeting_from_panel(panel) -> Optional[dict]:
+    """Extract meeting info from a panel/accordion element"""
+    meeting = {}
+
+    # Try to get meeting header info
+    header = panel.select_one('.panel-heading, .meeting-header, h4, h5')
+    if header:
+        meeting['header'] = header.get_text(strip=True)
+
+    # Look for date, type, description, decisions
+    text = panel.get_text()
+
+    # Try structured extraction
+    for row in panel.select('tr'):
+        cells = row.select('td, th')
+        if len(cells) >= 1:
+            cell_text = cells[0].get_text(strip=True)
+            if 'מהות' in cell_text and len(cells) > 1:
+                meeting['description'] = cells[1].get_text(strip=True)
+            elif 'החלטות' in cell_text and len(cells) > 1:
+                meeting['decisions'] = cells[1].get_text(strip=True)
+
+    # Try to extract meeting type and date from header or panel
+    type_elem = panel.select_one('.vaada-type, .meeting-type')
+    if type_elem:
+        meeting['type'] = type_elem.get_text(strip=True)
+
+    date_elem = panel.select_one('.vaada-date, .meeting-date')
+    if date_elem:
+        meeting['date'] = date_elem.get_text(strip=True)
+
+    return meeting if meeting else None
+
+
+async def _async_fetch_single_request(
+    session: aiohttp.ClientSession,
+    config_dict: dict,
+    request_number: str,
+    tik_number: str = ""
+) -> dict:
+    """Fetch a single request detail from GetBakashaFile API"""
+    url = _build_url(
+        "GetBakashaFile",
+        siteid=config_dict['site_id'],
+        b=request_number,
+        arguments="siteid,b"
+    )
+
+    for attempt in range(MAX_RETRIES):
+        try:
+            async with session.get(url, timeout=aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)) as resp:
+                if resp.status != 200:
+                    continue
+                html = await resp.text()
+                return _parse_request_detail_standalone(html, request_number, tik_number)
+        except Exception as e:
+            if attempt == MAX_RETRIES - 1:
+                return {
+                    "request_number": request_number,
+                    "tik_number": tik_number,
+                    "fetch_status": "error",
+                    "fetch_error": str(e),
+                    "fetched_at": datetime.now().isoformat(),
+                    "address": "", "submission_date": "", "request_type": "",
+                    "primary_use": "", "description": "", "permit_number": "",
+                    "permit_date": "", "main_area_sqm": "", "service_area_sqm": "",
+                    "housing_units": "", "stakeholders": [], "events": [],
+                    "requirements": [], "meetings": [], "documents": [], "gush_helka": []
+                }
+            await asyncio.sleep(RETRY_DELAY)
+
+    return {
+        "request_number": request_number,
+        "tik_number": tik_number,
+        "fetch_status": "error",
+        "fetch_error": "Max retries exceeded",
+        "fetched_at": datetime.now().isoformat(),
+        "address": "", "submission_date": "", "request_type": "",
+        "primary_use": "", "description": "", "permit_number": "",
+        "permit_date": "", "main_area_sqm": "", "service_area_sqm": "",
+        "housing_units": "", "stakeholders": [], "events": [],
+        "requirements": [], "meetings": [], "documents": [], "gush_helka": []
+    }
+
+
+async def _async_fetch_requests_batch(config_dict: dict, request_items: list[tuple]) -> list[dict]:
+    """Async request details fetch for a batch of (request_number, tik_number) tuples"""
+    results = []
+    semaphore = asyncio.Semaphore(MAX_CONCURRENT)
+
+    async def fetch_with_semaphore(session, req_num, tik_num):
+        async with semaphore:
+            return await _async_fetch_single_request(session, config_dict, req_num, tik_num)
+
+    connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
+    async with aiohttp.ClientSession(connector=connector) as session:
+        tasks = [fetch_with_semaphore(session, req_num, tik_num) for req_num, tik_num in request_items]
+
+        batch_size = 100
+        for i in range(0, len(tasks), batch_size):
+            batch = tasks[i:i + batch_size]
+            batch_results = await asyncio.gather(*batch, return_exceptions=True)
+
+            for result in batch_results:
+                if isinstance(result, dict):
+                    results.append(result)
+                elif isinstance(result, Exception):
+                    pass
+
+    return results
+
+
+def _worker_fetch_requests(args: tuple) -> list[dict]:
+    """Worker function for request details - runs in separate process"""
+    config_dict, request_items, worker_id = args
+    print(f"[Worker {worker_id}] Fetching details for {len(request_items)} requests")
+    result = asyncio.run(_async_fetch_requests_batch(config_dict, request_items))
+    print(f"[Worker {worker_id}] Fetched {len(result)} request details")
+    return result
 
 
 async def _async_fetch_details_batch(config_dict: dict, tik_numbers: list[str]) -> list[dict]:
@@ -1545,6 +1865,157 @@ class ComplotCrawler:
 
         return details_list
 
+    async def fetch_request_details(self, building_details: list[BuildingDetail], force: bool = False) -> list[RequestDetail]:
+        """Fetch detailed permit information for all requests found in building details.
+
+        This calls GetBakashaFile for each request_number found in building_details.requests,
+        extracting rich permit data including events, stakeholders, requirements, and decisions.
+        """
+        # Extract all unique (request_number, tik_number) pairs from building details
+        request_items = []
+        seen_requests = set()
+        for detail in building_details:
+            if detail.fetch_status != 'success':
+                continue
+            for req in detail.requests:
+                req_num = req.get('request_number', '')
+                if req_num and req_num not in seen_requests:
+                    seen_requests.add(req_num)
+                    request_items.append((req_num, detail.tik_number))
+
+        if not request_items:
+            logger.info("No requests found in building details to fetch")
+            return []
+
+        # Load existing request details if not forcing
+        requests_file = self.output_dir / "request_details.json"
+        completed = {}
+        if not force and requests_file.exists():
+            try:
+                with open(requests_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    for r in data.get('records', []):
+                        completed[r['request_number']] = RequestDetail(**r)
+                    logger.info(f"Loaded {len(completed)} request details from cache")
+            except Exception as e:
+                logger.warning(f"Failed to load request cache: {e}")
+
+        # Filter out already fetched requests
+        remaining = [(req_num, tik_num) for req_num, tik_num in request_items if req_num not in completed]
+
+        logger.info("=" * 60)
+        logger.info(f"FETCHING REQUEST DETAILS FOR {self.config.name}")
+        logger.info("=" * 60)
+        logger.info(f"Total unique requests: {len(request_items)}")
+        logger.info(f"Already completed: {len(completed)}")
+        logger.info(f"Remaining: {len(remaining)}")
+
+        if not remaining:
+            logger.info("All request details already fetched!")
+            return list(completed.values())
+
+        start_time = time.time()
+        total_success = 0
+        total_errors = 0
+
+        if self.workers > 1 and len(remaining) > 1:
+            # Multi-process mode
+            logger.info(f"Using {self.workers} workers for parallel request fetching")
+
+            chunk_size = max(1, len(remaining) // self.workers)
+            request_chunks = []
+            for i in range(0, len(remaining), chunk_size):
+                chunk = remaining[i:i + chunk_size]
+                if chunk:
+                    request_chunks.append(chunk)
+
+            config_dict = asdict(self.config)
+            worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(request_chunks)]
+
+            with multiprocessing.Pool(self.workers) as pool:
+                with tqdm(total=len(remaining), desc="Fetching requests", unit="requests") as pbar:
+                    for result in pool.imap_unordered(_worker_fetch_requests, worker_args):
+                        for r in result:
+                            detail = RequestDetail(**r)
+                            completed[r['request_number']] = detail
+                            if r['fetch_status'] == 'success':
+                                total_success += 1
+                            else:
+                                total_errors += 1
+                        pbar.update(len(result))
+                        pbar.set_postfix(ok=total_success, err=total_errors)
+
+            elapsed = time.time() - start_time
+            logger.info(f"All workers completed in {elapsed:.1f}s")
+
+        else:
+            # Single-process mode
+            semaphore = asyncio.Semaphore(MAX_CONCURRENT)
+            connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
+
+            async with aiohttp.ClientSession(connector=connector) as session:
+                batch_size = SAVE_INTERVAL
+
+                with tqdm(total=len(remaining), desc="Fetching requests", unit="requests") as pbar:
+                    for batch_idx in range(0, len(remaining), batch_size):
+                        batch = remaining[batch_idx:batch_idx + batch_size]
+
+                        async def fetch_one(req_num: str, tik_num: str):
+                            async with semaphore:
+                                return await _async_fetch_single_request(session, asdict(self.config), req_num, tik_num)
+
+                        tasks = [fetch_one(req_num, tik_num) for req_num, tik_num in batch]
+                        results = await asyncio.gather(*tasks)
+
+                        for result in results:
+                            detail = RequestDetail(**result)
+                            completed[result['request_number']] = detail
+                            if result['fetch_status'] == 'success':
+                                total_success += 1
+                            else:
+                                total_errors += 1
+
+                        pbar.update(len(batch))
+                        pbar.set_postfix(ok=total_success, err=total_errors)
+
+                        # Save checkpoint periodically
+                        self._save_request_checkpoint(list(completed.values()), requests_file)
+
+        # Save final results
+        all_requests = list(completed.values())
+        output = {
+            "city": self.config.name,
+            "city_en": self.config.name_en,
+            "fetched_at": datetime.now().isoformat(),
+            "total_records": len(all_requests),
+            "success_count": sum(1 for r in all_requests if r.fetch_status == 'success'),
+            "error_count": sum(1 for r in all_requests if r.fetch_status == 'error'),
+            "records": [asdict(r) for r in all_requests]
+        }
+
+        with open(requests_file, 'w', encoding='utf-8') as f:
+            json.dump(output, f, ensure_ascii=False, indent=2)
+
+        elapsed = time.time() - start_time
+        logger.info(f"Fetched {len(all_requests)} request details ({total_success} ok, {total_errors} errors) in {elapsed:.1f}s")
+        logger.info(f"Saved to {requests_file}")
+
+        return all_requests
+
+    def _save_request_checkpoint(self, requests: list[RequestDetail], file_path: Path):
+        """Save request details checkpoint"""
+        output = {
+            "city": self.config.name,
+            "city_en": self.config.name_en,
+            "fetched_at": datetime.now().isoformat(),
+            "total_records": len(requests),
+            "success_count": sum(1 for r in requests if r.fetch_status == 'success'),
+            "error_count": sum(1 for r in requests if r.fetch_status == 'error'),
+            "records": [asdict(r) for r in requests]
+        }
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(output, f, ensure_ascii=False, indent=2)
+
     async def _fetch_bakasha_details_authenticated(self, records: list[BuildingRecord], resume: bool = True) -> list[BuildingDetail]:
         """Fetch bakasha details using authenticated API"""
         tik_numbers = list(set(r.tik_number for r in records))
@@ -1653,7 +2124,7 @@ class ComplotCrawler:
         with open(checkpoint_file, 'w', encoding='utf-8') as f:
             json.dump(checkpoint, f, ensure_ascii=False, indent=2)
 
-    def export_csv(self, details: list[BuildingDetail]):
+    def export_csv(self, details: list[BuildingDetail], request_details: list[RequestDetail] = None):
         """Export results to CSV files"""
         # Main details CSV
         csv_file = self.output_dir / "buildings.csv"
@@ -1663,7 +2134,7 @@ class ComplotCrawler:
             for d in details:
                 writer.writerow([d.tik_number, d.address, d.neighborhood, len(d.requests), len(d.plans)])
 
-        # Permits CSV
+        # Basic permits CSV (from building details)
         permits_file = self.output_dir / "permits.csv"
         with open(permits_file, 'w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
@@ -1678,10 +2149,84 @@ class ComplotCrawler:
                         req['permit_number'], req['permit_date']
                     ])
 
-        logger.info(f"Exported CSV files: {csv_file}, {permits_file}")
+        exported_files = [csv_file, permits_file]
 
-    async def run_full_crawl(self, streets_only: bool = False, skip_details: bool = False, force: bool = False, verbose: bool = False, retry_errors: bool = False):
-        """Run the complete crawl process"""
+        # Detailed permits CSV (from request details with full lifecycle)
+        if request_details:
+            detailed_file = self.output_dir / "permits_detailed.csv"
+            with open(detailed_file, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow([
+                    'request_number', 'tik_number', 'address', 'submission_date',
+                    'request_type', 'primary_use', 'description',
+                    'permit_number', 'permit_date',
+                    'main_area_sqm', 'service_area_sqm', 'housing_units',
+                    'num_stakeholders', 'num_events', 'num_requirements', 'num_meetings', 'num_documents'
+                ])
+                for r in request_details:
+                    if r.fetch_status == 'success':
+                        writer.writerow([
+                            r.request_number, r.tik_number, r.address, r.submission_date,
+                            r.request_type, r.primary_use, r.description,
+                            r.permit_number, r.permit_date,
+                            r.main_area_sqm, r.service_area_sqm, r.housing_units,
+                            len(r.stakeholders), len(r.events), len(r.requirements),
+                            len(r.meetings), len(r.documents)
+                        ])
+            exported_files.append(detailed_file)
+
+            # Stakeholders CSV
+            stakeholders_file = self.output_dir / "stakeholders.csv"
+            with open(stakeholders_file, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(['request_number', 'tik_number', 'role', 'name'])
+                for r in request_details:
+                    if r.fetch_status == 'success':
+                        for s in r.stakeholders:
+                            writer.writerow([r.request_number, r.tik_number, s.get('role', ''), s.get('name', '')])
+            exported_files.append(stakeholders_file)
+
+            # Events CSV (permit timeline)
+            events_file = self.output_dir / "permit_events.csv"
+            with open(events_file, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(['request_number', 'tik_number', 'status', 'event_type', 'start_date', 'end_date'])
+                for r in request_details:
+                    if r.fetch_status == 'success':
+                        for e in r.events:
+                            writer.writerow([
+                                r.request_number, r.tik_number,
+                                e.get('status', ''), e.get('event_type', ''),
+                                e.get('start_date', ''), e.get('end_date', '')
+                            ])
+            exported_files.append(events_file)
+
+            # Requirements CSV
+            requirements_file = self.output_dir / "requirements.csv"
+            with open(requirements_file, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerow(['request_number', 'tik_number', 'requirement', 'status'])
+                for r in request_details:
+                    if r.fetch_status == 'success':
+                        for req in r.requirements:
+                            writer.writerow([
+                                r.request_number, r.tik_number,
+                                req.get('requirement', ''), req.get('status', '')
+                            ])
+            exported_files.append(requirements_file)
+
+        logger.info(f"Exported CSV files: {', '.join(str(f.name) for f in exported_files)}")
+
+    async def run_full_crawl(self, streets_only: bool = False, skip_details: bool = False, skip_requests: bool = False, force: bool = False, verbose: bool = False, retry_errors: bool = False):
+        """Run the complete crawl process
+
+        Phases:
+        1. Discover streets (brute-force scan)
+        2. Fetch building records (GetTikimByAddress)
+        3. Fetch building details (GetTikFile)
+        4. Fetch request details (GetBakashaFile) - detailed permit lifecycle
+        5. Export CSV
+        """
         # Initialize logging
         setup_logging(self.output_dir, verbose=verbose)
 
@@ -1769,8 +2314,15 @@ class ComplotCrawler:
         # Step 3: Fetch building details
         details = await self.fetch_building_details(records)
 
-        # Step 4: Export CSV
-        self.export_csv(details)
+        # Step 4: Fetch request details (permit lifecycle)
+        request_details = []
+        if not skip_requests:
+            request_details = await self.fetch_request_details(details, force=force)
+        else:
+            logger.info("Skipping request details fetch.")
+
+        # Step 5: Export CSV
+        self.export_csv(details, request_details)
 
         logger.info("#" * 60)
         logger.info("CRAWL COMPLETE")
@@ -1780,6 +2332,7 @@ class ComplotCrawler:
         logger.info(f"New Streets: {len(new_streets)}")
         logger.info(f"Building Records: {len(records)}")
         logger.info(f"Building Details: {len(details)}")
+        logger.info(f"Request Details: {len(request_details)}")
         logger.info("#" * 60)
 
 
@@ -1799,7 +2352,8 @@ Examples:
     parser.add_argument("city", nargs="?", help="City name or Complot URL")
     parser.add_argument("--list-cities", action="store_true", help="List available cities")
     parser.add_argument("--streets-only", action="store_true", help="Only discover streets")
-    parser.add_argument("--skip-details", action="store_true", help="Skip detailed info fetch")
+    parser.add_argument("--skip-details", action="store_true", help="Skip building details fetch (Phase 3)")
+    parser.add_argument("--skip-requests", action="store_true", help="Skip request details fetch (Phase 4 - permit lifecycle)")
     parser.add_argument("--force", action="store_true", help="Force re-fetch even if cached")
     parser.add_argument("--output-dir", default="data", help="Output directory (default: data/)")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging (debug level)")
@@ -1835,6 +2389,7 @@ Examples:
     asyncio.run(crawler.run_full_crawl(
         streets_only=args.streets_only,
         skip_details=args.skip_details,
+        skip_requests=args.skip_requests,
         force=args.force,
         verbose=args.verbose,
         retry_errors=args.retry_errors

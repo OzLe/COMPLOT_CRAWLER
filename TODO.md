@@ -60,6 +60,21 @@
 - [x] Documented GetBakashaFile response structure (events, stakeholders, requirements, meetings)
 - [x] Added Hebrew-English glossary
 
+### Request Details Feature (Dec 31, 2025)
+- [x] Added `RequestDetail` dataclass for detailed permit info
+- [x] Implemented `GetBakashaFile` parser with full data extraction:
+  - General info (request type, primary use, areas, housing units)
+  - Stakeholders (applicant, architect, structural engineer)
+  - Events timeline (23+ events per permit)
+  - Requirements with completion status
+  - Committee meetings and decisions
+  - Document archive
+- [x] Added `fetch_request_details()` method with multiprocessing support
+- [x] Integrated as Phase 4 in the crawl flow (after building details)
+- [x] Added `--skip-requests` CLI flag to skip this phase
+- [x] New CSV exports: `permits_detailed.csv`, `stakeholders.csv`, `permit_events.csv`, `requirements.csv`
+- [x] New JSON output: `request_details.json`
+
 ---
 
 ## Pending Tasks
@@ -91,8 +106,8 @@ Cities with no accessible subdomain:
 - [ ] Add examples of common queries on crawled data
 
 ### Future Enhancements
-- [ ] Add GetBakashaFile support for detailed permit data (events, stakeholders, requirements, meetings)
-- [ ] Parse document archive links from GetBakashaFile responses
+- [x] Add GetBakashaFile support for detailed permit data (events, stakeholders, requirements, meetings) - **DONE**
+- [ ] Parse document archive links and enable document downloads from GetBakashaFile responses
 
 ---
 

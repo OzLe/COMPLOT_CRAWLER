@@ -6,15 +6,27 @@ A unified crawler for Israeli municipality building permit systems powered by th
 
 - **Multi-city support** - Pre-configured for 9 Israeli municipalities
 - **Two API types** - Supports both "tikim" (building files) and "bakashot" (requests) systems
+- **Full permit lifecycle** - Extracts detailed permit data including events, stakeholders, requirements, and decisions
 - **Multi-process parallelization** - Use `--workers N` to run N parallel processes for faster crawling
 - **Batch crawling** - `crawl_all.py` script to crawl all cities with parallel execution
 - **ID authentication** - Optional Israeli ID authentication for bakashot systems
 - **Smart street discovery** - Automatically finds all valid street codes by brute-force testing
+- **Incremental updates** - Detects new streets and only fetches records for newly discovered areas
 - **Async HTTP** - Concurrent requests with configurable concurrency (20 concurrent per process)
 - **Resume capability** - Checkpoint system to resume interrupted crawls
 - **Logging** - Timestamped console and file logging with verbose mode
-- **Multiple output formats** - JSON and CSV exports
+- **Multiple output formats** - JSON and CSV exports (buildings, permits, stakeholders, events, requirements)
 - **URL auto-detection** - Pass a Complot URL to auto-configure city settings
+
+## Crawl Phases
+
+The crawler operates in 5 phases:
+
+1. **Street Discovery** - Brute-force scan of street codes (1-2000) to find valid streets
+2. **Building Records** - Fetch basic building file records for each street (`GetTikimByAddress`)
+3. **Building Details** - Fetch detailed building file info for each record (`GetTikFile`)
+4. **Request Details** - Fetch full permit lifecycle for each request (`GetBakashaFile`)
+5. **CSV Export** - Export all data to CSV files for analysis
 
 ## Installation
 
@@ -196,11 +208,16 @@ crawltest/
 ├── data/                   # Output data (by city)
 │   ├── crawl_summary.json  # Summary from crawl_all.py
 │   ├── batyam/
-│   │   ├── streets.json
-│   │   ├── building_records.json
-│   │   ├── building_details.json
-│   │   ├── buildings.csv
-│   │   ├── permits.csv
+│   │   ├── streets.json           # Discovered streets
+│   │   ├── building_records.json  # Basic building records
+│   │   ├── building_details.json  # Building file details (GetTikFile)
+│   │   ├── request_details.json   # Detailed permit lifecycle (GetBakashaFile)
+│   │   ├── buildings.csv          # Building summary
+│   │   ├── permits.csv            # Basic permit list
+│   │   ├── permits_detailed.csv   # Full permit info with areas
+│   │   ├── stakeholders.csv       # Applicants, architects, engineers
+│   │   ├── permit_events.csv      # Permit timeline events
+│   │   ├── requirements.csv       # Permit requirements
 │   │   └── crawler.log
 │   └── ofaqim/
 │       └── ...
