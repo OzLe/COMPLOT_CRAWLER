@@ -168,6 +168,14 @@ Results are saved to `data/crawl_summary.json`.
 - **tikim** (תיקים) - Building files system. Permit details are publicly accessible via `GetTikFile` API.
 - **bakashot** (בקשות) - Requests system. Permit details require Israeli ID authentication via `GetBakashaFile` API.
 
+## Documentation
+
+See [docs/COMPLOT_API.md](docs/COMPLOT_API.md) for comprehensive API documentation including:
+- All available endpoints and parameters
+- Response structure and field descriptions
+- Data relationships between building files and permits
+- Hebrew-English glossary
+
 ## Project Structure
 
 ```
@@ -181,6 +189,9 @@ crawltest/
 │   ├── __init__.py
 │   ├── city_config.py      # City configurations and URL parsing
 │   └── complot_crawler.py  # Main crawler logic (with multiprocessing)
+│
+├── docs/                   # Documentation
+│   └── COMPLOT_API.md      # Full API documentation
 │
 ├── data/                   # Output data (by city)
 │   ├── crawl_summary.json  # Summary from crawl_all.py

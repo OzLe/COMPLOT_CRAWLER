@@ -49,6 +49,17 @@
 - [x] Only fetches building records for newly discovered streets
 - [x] Updated streets.json schema with incremental metadata (previous_total, new_streets_count, new_streets)
 
+### Retry Errors Feature (Dec 31, 2025)
+- [x] Added `--retry-errors` CLI flag to re-fetch failed building details
+- [x] Loads existing building_details.json and retries only error records
+- [x] Updates file in-place with recovered records
+
+### API Documentation (Dec 31, 2025)
+- [x] Created comprehensive API documentation at `docs/COMPLOT_API.md`
+- [x] Documented all endpoints: GetTikimByAddress, GetBakashotByAddress, GetTikFile, GetBakashaFile
+- [x] Documented GetBakashaFile response structure (events, stakeholders, requirements, meetings)
+- [x] Added Hebrew-English glossary
+
 ---
 
 ## Pending Tasks
@@ -75,9 +86,13 @@ Cities with no accessible subdomain:
 - [ ] Export to SQLite/PostgreSQL for easier querying
 
 ### Documentation
+- [x] Created comprehensive API documentation (docs/COMPLOT_API.md)
 - [ ] Add troubleshooting section to README
-- [ ] Document how to find site_id for new cities
 - [ ] Add examples of common queries on crawled data
+
+### Future Enhancements
+- [ ] Add GetBakashaFile support for detailed permit data (events, stakeholders, requirements, meetings)
+- [ ] Parse document archive links from GetBakashaFile responses
 
 ---
 

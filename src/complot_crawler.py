@@ -663,13 +663,14 @@ class ComplotCrawler:
             # Prepare worker arguments
             worker_args = [(config_dict, r[0], r[1], i) for i, r in enumerate(ranges)]
 
-            # Run workers in parallel
+            # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
-                results = pool.map(_worker_discover_streets, worker_args)
-
-            # Merge results from all workers
-            for result in results:
-                streets.extend(result)
+                with tqdm(total=total_range, desc="Discovering streets", unit="codes") as pbar:
+                    for result in pool.imap_unordered(_worker_discover_streets, worker_args):
+                        streets.extend(result)
+                        # Update progress by chunk size (approximate)
+                        pbar.update(chunk_size)
+                        pbar.set_postfix(found=len(streets))
 
             elapsed = time.time() - start_time
             logger.info(f"All workers completed in {elapsed:.1f}s. Total streets found: {len(streets)}")
@@ -925,16 +926,17 @@ class ComplotCrawler:
             # Prepare worker arguments
             worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(street_chunks)]
 
-            # Run workers in parallel
+            # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
-                results = pool.map(_worker_fetch_records, worker_args)
-
-            # Merge and deduplicate results from all workers
-            for result in results:
-                for r in result:
-                    if r['tik_number'] not in seen_tiks:
-                        seen_tiks.add(r['tik_number'])
-                        all_records.append(BuildingRecord(**r))
+                with tqdm(total=len(streets), desc="Fetching records", unit="streets") as pbar:
+                    for result in pool.imap_unordered(_worker_fetch_records, worker_args):
+                        # Merge and deduplicate results
+                        for r in result:
+                            if r['tik_number'] not in seen_tiks:
+                                seen_tiks.add(r['tik_number'])
+                                all_records.append(BuildingRecord(**r))
+                        pbar.update(chunk_size)
+                        pbar.set_postfix(records=len(all_records))
 
             elapsed = time.time() - start_time
             logger.info(f"All workers completed in {elapsed:.1f}s. Total records found: {len(all_records)}")
@@ -1371,19 +1373,20 @@ class ComplotCrawler:
             # Prepare worker arguments
             worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(tik_chunks)]
 
-            # Run workers in parallel
+            # Run workers in parallel with progress bar
             with multiprocessing.Pool(self.workers) as pool:
-                results = pool.map(_worker_fetch_details, worker_args)
-
-            # Merge results from all workers
-            for result in results:
-                for d in result:
-                    detail = BuildingDetail(**d)
-                    completed[d['tik_number']] = detail
-                    if d['fetch_status'] == 'success':
-                        total_success += 1
-                    else:
-                        total_errors += 1
+                with tqdm(total=len(remaining), desc="Fetching details", unit="buildings") as pbar:
+                    for result in pool.imap_unordered(_worker_fetch_details, worker_args):
+                        # Merge results
+                        for d in result:
+                            detail = BuildingDetail(**d)
+                            completed[d['tik_number']] = detail
+                            if d['fetch_status'] == 'success':
+                                total_success += 1
+                            else:
+                                total_errors += 1
+                        pbar.update(len(result))
+                        pbar.set_postfix(ok=total_success, err=total_errors)
 
             elapsed = time.time() - start_time
             logger.info(f"All workers completed in {elapsed:.1f}s. Total details fetched: {len(remaining)}")
@@ -1441,6 +1444,106 @@ class ComplotCrawler:
 
         logger.info(f"Fetched {len(all_details)} building details ({total_success} ok, {total_errors} errors). Saved to {self.details_file}")
         return all_details
+
+    async def retry_failed_details(self) -> list[BuildingDetail]:
+        """Retry fetching only the records that previously failed"""
+        if not self.details_file.exists():
+            logger.error(f"No details file found at {self.details_file}. Run a full crawl first.")
+            return []
+
+        # Load existing details
+        with open(self.details_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        all_details = {d['tik_number']: BuildingDetail(**d) for d in data.get('records', [])}
+        failed_tiks = [tik for tik, detail in all_details.items() if detail.fetch_status == 'error']
+
+        if not failed_tiks:
+            logger.info("No failed records to retry!")
+            return list(all_details.values())
+
+        logger.info("=" * 60)
+        logger.info(f"RETRYING FAILED DETAILS FOR {self.config.name}")
+        logger.info("=" * 60)
+        logger.info(f"Total records: {len(all_details)}")
+        logger.info(f"Failed records to retry: {len(failed_tiks)}")
+
+        start_time = time.time()
+        total_success = 0
+        total_errors = 0
+
+        if self.workers > 1 and len(failed_tiks) > 1:
+            # Multi-process mode
+            logger.info(f"Using {self.workers} workers for parallel retry")
+
+            chunk_size = max(1, len(failed_tiks) // self.workers)
+            tik_chunks = []
+            for i in range(0, len(failed_tiks), chunk_size):
+                chunk = failed_tiks[i:i + chunk_size]
+                if chunk:
+                    tik_chunks.append(chunk)
+
+            config_dict = asdict(self.config)
+            worker_args = [(config_dict, chunk, i) for i, chunk in enumerate(tik_chunks)]
+
+            with multiprocessing.Pool(self.workers) as pool:
+                with tqdm(total=len(failed_tiks), desc="Retrying failed", unit="buildings") as pbar:
+                    for result in pool.imap_unordered(_worker_fetch_details, worker_args):
+                        for d in result:
+                            detail = BuildingDetail(**d)
+                            all_details[d['tik_number']] = detail
+                            if d['fetch_status'] == 'success':
+                                total_success += 1
+                            else:
+                                total_errors += 1
+                        pbar.update(len(result))
+                        pbar.set_postfix(ok=total_success, err=total_errors)
+
+        else:
+            # Single-process mode
+            semaphore = asyncio.Semaphore(MAX_CONCURRENT)
+            connector = aiohttp.TCPConnector(limit=MAX_CONCURRENT)
+
+            async with aiohttp.ClientSession(connector=connector) as session:
+                batch_size = SAVE_INTERVAL
+
+                with tqdm(total=len(failed_tiks), desc="Retrying failed", unit="buildings") as pbar:
+                    for batch_idx in range(0, len(failed_tiks), batch_size):
+                        batch = failed_tiks[batch_idx:batch_idx + batch_size]
+
+                        tasks = [self._fetch_single_detail(session, semaphore, tik) for tik in batch]
+                        results = await asyncio.gather(*tasks)
+
+                        for result in results:
+                            all_details[result.tik_number] = result
+                            if result.fetch_status == 'success':
+                                total_success += 1
+                            else:
+                                total_errors += 1
+
+                        pbar.update(len(batch))
+                        pbar.set_postfix(ok=total_success, err=total_errors)
+
+        # Save updated results
+        details_list = list(all_details.values())
+        output = {
+            "city": self.config.name,
+            "city_en": self.config.name_en,
+            "fetched_at": datetime.now().isoformat(),
+            "total_records": len(details_list),
+            "success_count": sum(1 for d in details_list if d.fetch_status == 'success'),
+            "error_count": sum(1 for d in details_list if d.fetch_status == 'error'),
+            "records": [asdict(d) for d in details_list]
+        }
+
+        with open(self.details_file, 'w', encoding='utf-8') as f:
+            json.dump(output, f, ensure_ascii=False, indent=2)
+
+        elapsed = time.time() - start_time
+        logger.info(f"Retry complete in {elapsed:.1f}s. Retried {len(failed_tiks)}: {total_success} ok, {total_errors} still failing")
+        logger.info(f"Total: {output['success_count']} ok, {output['error_count']} errors. Saved to {self.details_file}")
+
+        return details_list
 
     async def _fetch_bakasha_details_authenticated(self, records: list[BuildingRecord], resume: bool = True) -> list[BuildingDetail]:
         """Fetch bakasha details using authenticated API"""
@@ -1577,7 +1680,7 @@ class ComplotCrawler:
 
         logger.info(f"Exported CSV files: {csv_file}, {permits_file}")
 
-    async def run_full_crawl(self, streets_only: bool = False, skip_details: bool = False, force: bool = False, verbose: bool = False):
+    async def run_full_crawl(self, streets_only: bool = False, skip_details: bool = False, force: bool = False, verbose: bool = False, retry_errors: bool = False):
         """Run the complete crawl process"""
         # Initialize logging
         setup_logging(self.output_dir, verbose=verbose)
@@ -1590,6 +1693,17 @@ class ComplotCrawler:
         logger.info(f"API Type: {self.config.api_type}")
         logger.info(f"Output Directory: {self.output_dir}")
         logger.info(f"Workers: {self.workers}")
+
+        # Handle retry-errors mode: only retry failed details, skip everything else
+        if retry_errors:
+            logger.info("RETRY-ERRORS MODE: Only retrying failed building details")
+            details = await self.retry_failed_details()
+            if details:
+                self.export_csv(details)
+            logger.info("#" * 60)
+            logger.info("RETRY COMPLETE")
+            logger.info("#" * 60)
+            return
 
         # Step 1: Discover streets (returns all_streets and new_streets)
         all_streets, new_streets = await self.discover_streets(force=force)
@@ -1691,6 +1805,7 @@ Examples:
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose logging (debug level)")
     parser.add_argument("--id", dest="israeli_id", help="Israeli ID number for bakashot authentication (required for permit details in some cities)")
     parser.add_argument("--workers", type=int, default=1, help="Number of worker processes for parallel crawling (default: 1)")
+    parser.add_argument("--retry-errors", action="store_true", help="Retry fetching only the records that previously failed")
 
     args = parser.parse_args()
 
@@ -1721,7 +1836,8 @@ Examples:
         streets_only=args.streets_only,
         skip_details=args.skip_details,
         force=args.force,
-        verbose=args.verbose
+        verbose=args.verbose,
+        retry_errors=args.retry_errors
     ))
 
 
