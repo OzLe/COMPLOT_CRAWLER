@@ -1,10 +1,16 @@
 # Complot Crawler - TODO
 
-## Last Updated: 2025-12-25
+## Last Updated: 2025-12-30
 
 ---
 
 ## Completed Tasks
+
+### City Investigation (Dec 30, 2025)
+- [x] Investigated ksaba (Kfar Saba) and hodhasharon - confirmed non-functional with standard API
+- [x] Tested partial access cities - most use different systems (ONECity, municipal portals)
+- [x] Verified GetTikFile API works for all 3 new cities (Haifa, Yavne, Ramat HaSharon)
+- [x] Confirmed all new cities support full building details (not just basic records)
 
 ### Multi-Worker Parallelization
 - [x] Added `--workers N` CLI argument for parallel processing
@@ -35,27 +41,20 @@
 
 ## Pending Tasks
 
-### Cities to Investigate Further
-These cities have accessible Complot portals but returned 0 streets with current API:
+### Non-Functional Cities (Investigated Dec 30, 2025)
+These cities were investigated and confirmed non-functional with the standard Complot API:
 
-| City | Hebrew | Site ID | Notes |
-|------|--------|---------|-------|
-| ksaba | כפר סבא | 13 | Portal accessible, API returns no data |
+| City | Hebrew | Site ID | Status |
+|------|--------|---------|--------|
+| ksaba | כפר סבא | 13 | Portal accessible, API returns no data for any city_code/street combo |
 | hodhasharon | הוד השרון | 33 | Portal accessible, API returns no data |
+| ashdod | אשדוד | N/A | Redirects to municipal portal (digital.ashdod.muni.il) |
+| rishonlezion | ראשון לציון | N/A | Uses ONECity platform (WordPress), not Complot handasi |
+| dimona | דימונה | N/A | Subdomain exists but no site_id, likely different system |
+| eilat | אילת | N/A | Subdomain exists but no site_id |
 
-Possible reasons:
-- Different API structure (not standard tikim/bakashot)
-- Different city_code format needed
-- May require authentication
-
-### Cities with Partial Access (from validation script)
-These had accessible subdomains but site_id wasn't found automatically:
-- givatayim, ramatgan, holon, petahtikva, netanya, herzliya, raanana, rishonlezion (different subdomain?)
-
-### API Coverage Testing
-- [ ] Test GetTikFile API for new cities (yavne returned "no data available" for details)
-- [ ] Verify if some cities only support basic records without detailed permit info
-- [ ] Consider adding a "details_available" flag to CityConfig
+Cities with no accessible subdomain:
+- givatayim, holon, petahtikva, netanya, herzliya, raanana (connection refused)
 
 ### Feature Ideas
 - [ ] Add progress bars for long-running operations
@@ -124,3 +123,10 @@ python main.py modiin --force --workers 4
 - Some cities (like Bat Yam) require Israeli ID for detailed permit info
 - Street codes are discovered by brute-force (1-2000 range)
 - Some cities may have limited public data access
+
+### City Infrastructure Findings (Dec 2025)
+Many Israeli municipalities have migrated away from the standard Complot handasi backend:
+- **ONECity Platform**: rishonlezion uses WordPress-based ONECity (dpo@onecity.co.il)
+- **Municipal Portals**: ashdod redirects to digital.ashdod.muni.il
+- **Legacy Complot (non-functional)**: ksaba, hodhasharon have portals but API returns no data
+- **Working Cities**: ofaqim, batyam, ashkelon, beersheva, rehovot, modiin, haifa, yavne, ramathasharon
